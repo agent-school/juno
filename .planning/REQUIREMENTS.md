@@ -99,39 +99,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BRWS-01 | TBD | Pending |
-| BRWS-02 | TBD | Pending |
-| BRWS-03 | TBD | Pending |
-| BRWS-04 | TBD | Pending |
-| SAFE-01 | TBD | Pending |
-| SAFE-02 | TBD | Pending |
-| SAFE-03 | TBD | Pending |
-| SAFE-04 | TBD | Pending |
-| SAFE-05 | TBD | Pending |
-| SAFE-06 | TBD | Pending |
-| COMP-01 | TBD | Pending |
-| COMP-02 | TBD | Pending |
-| MEM-01 | TBD | Pending |
-| MEM-02 | TBD | Pending |
-| MEM-03 | TBD | Pending |
-| EXEC-01 | TBD | Pending |
-| EXEC-02 | TBD | Pending |
-| EXEC-03 | TBD | Pending |
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
-| LEARN-01 | TBD | Pending |
-| LEARN-02 | TBD | Pending |
-| LEARN-03 | TBD | Pending |
-| PORT-01 | TBD | Pending |
-| PORT-02 | TBD | Pending |
-| VOICE-01 | TBD | Pending |
-| VOICE-02 | TBD | Pending |
+| BRWS-01 | Phase 1 | Pending |
+| BRWS-02 | Phase 1 | Pending |
+| BRWS-03 | Phase 1 | Pending |
+| BRWS-04 | Phase 1 | Pending |
+| SAFE-01 | Phase 2 | Pending |
+| SAFE-02 | Phase 2 | Pending |
+| SAFE-03 | Phase 2 | Pending |
+| SAFE-04 | Phase 2 | Pending |
+| SAFE-05 | Phase 2 | Pending |
+| SAFE-06 | Phase 2 | Pending |
+| COMP-01 | Phase 3 | Pending |
+| COMP-02 | Phase 4 | Pending |
+| MEM-01 | Phase 3 | Pending |
+| MEM-02 | Phase 3 | Pending |
+| MEM-03 | Phase 3 | Pending |
+| EXEC-01 | Phase 4 | Pending |
+| EXEC-02 | Phase 4 | Pending |
+| EXEC-03 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| LEARN-01 | Phase 5 | Pending |
+| LEARN-02 | Phase 5 | Pending |
+| LEARN-03 | Phase 5 | Pending |
+| PORT-01 | Phase 6 | Pending |
+| PORT-02 | Phase 6 | Pending |
+| VOICE-01 | Phase 7 | Pending |
+| VOICE-02 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27 ⚠️
+- Mapped to phases: 27
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-08-21*
-*Last updated: 2026-08-21 after initial definition*
+*Last updated: 2026-08-21 after roadmap creation (traceability mapped)*
