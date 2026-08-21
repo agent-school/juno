@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.pnpm-store/
+
+# Playwright artifacts
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# Logs
+*.log
+
+# OS
+.DS_Store

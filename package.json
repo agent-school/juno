@@ -1,0 +1,22 @@
+{
+  "name": "juno",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Juno — a semantic website compiler: durable per-site understanding learned through safe exploration and teach-by-showing",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm -r test:e2e"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.1",
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.2",
+    "vitest": "4.1.11"
+  }
+}
