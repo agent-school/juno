@@ -1,0 +1,75 @@
+# Juno
+
+## What This Is
+
+Juno is a semantic website compiler: a tool that takes any website, builds a durable semantic model of its structure and behavior through exploration and testing, and permanently saves that understanding per site (Instagram, Outlook, any job portal). The user can teach Juno how a site works by demonstrating an action, and Juno learns, persists, and later replays that knowledge to automate things that are otherwise very hard to automate. It is also voice-first — the same capability can be driven by speaking.
+
+## Core Value
+
+Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions (messaging someone on Instagram, signing a contract, sending email when no API is exposed, applying to jobs) can be automated reliably without destructive guessing.
+
+## Requirements
+
+### Validated
+
+(None yet — ship to validate)
+
+### Active
+
+- [ ] Juno can load any website and explore it to build a semantic model of its structure (pages, navigation, elements)
+- [ ] Juno can test interactions safely, without performing destructive or irreversible actions
+- [ ] User can teach Juno an action by demonstrating it once, and Juno learns how to reproduce it
+- [ ] Learned knowledge is permanently saved and reloaded per website, so it persists across sessions
+- [ ] Juno can execute saved automations end-to-end (e.g., message on Instagram, sign a contract, send email in Outlook, apply to a job)
+- [ ] Juno recognizes shared portals across sites (e.g., many job applications use the same portal) and reuses learned knowledge
+- [ ] Juno can be driven by voice
+
+### Out of Scope
+
+- Nothing explicit yet — boundaries to be refined during requirements definition.
+
+## Context
+
+Juno sits in the "AI browser agent / computer use" space (OpenAI Operator, Anthropic Computer Use, Skyvern, Browserbase, etc.), but its core differentiator is the combination of three things: (1) a *compiler* mental model — a website is compiled into a semantic model rather than driven one-off, (2) *teach-by-showing* — instead of the AI guessing how a site works (and breaking things), the user demonstrates and the AI learns, and (3) *persistent per-site memory* — learned knowledge is permanently saved and reused, turning each site into an automatable surface.
+
+The motivating use cases are concrete automation jobs that normal tooling can't reach because there is no exposed API:
+- Messaging people on Instagram
+- Signing a contract
+- Sending email in Outlook when the API is not exposed
+- Updating time tracking on whatever web app you're in
+- Extracting data you otherwise can't get
+- Applying to jobs — where many different applications share the same underlying portal, so one learned skill generalizes
+
+A key constraint the user emphasized: **websites often cannot be freely tested**, because a wrong test can cause real damage (send the wrong message, submit a form, sign something). Safe exploration and human-in-the-loop demonstration are therefore central, not optional polish.
+
+## Constraints
+
+- **Safety**: Never perform destructive or irreversible actions during autonomous exploration/testing; destructive actions require either an explicit demonstration or an explicit confirmation.
+- **Persistence**: Learned site knowledge must survive across sessions — it is not ephemeral per-task context.
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| Voice is a first-class input modality | User framed the idea as "when you do it in voice, it's that idea" | — Pending |
+| Teach-by-showing over autonomous guessing | Testing can be destructive, so the user demonstrates to teach safely | — Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-08-21 after initialization*
