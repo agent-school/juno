@@ -4,6 +4,8 @@
 
 Juno is built bottom-up along its dependency chain: first a browser primitive that can load, read (via the accessibility tree), and act on any website with semantic references; then a code-enforced safe-execution guard so the primitive can never destroy anything silently; then the novel core — a semantic site compiler writing durable knowledge into per-site persistent memory. On top of that substrate come the user-facing capabilities in dependency order: intent-driven multi-step execution (including authenticated sites and self-healing replay), teach-by-showing (demonstration → parameterized skill), cross-site portal recognition (one learned skill generalizes across sites sharing a portal), and finally voice as a pure input modality over the same pipeline. Safety is co-developed with execution, never deferred — every phase after Phase 2 inherits its guards.
 
+The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website → semantic graph → planner → deterministic executor → verifier`): Phase 3 compiles sites into versioned typed operation graphs (compile once), Phase 4 executes them through a verified, locally-recovering runtime (execute many, recompile on divergence), and Phase 5 turns demonstrations into compositions of typed operations rather than opaque trajectories.
+
 **Milestone:** v1 (MVP)
 
 ## Phases
@@ -16,9 +18,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile
 - [ ] **Phase 2: Safe-Execution Guard** - Code-enforced action classification, destructive-action gates, audit log, kill switch, injection defense
-- [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable typed semantic models that persist across sessions
-- [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows with self-healing replay on any site, including authenticated ones
-- [ ] **Phase 5: Teach-by-Showing** - Demonstrate an action once; Juno learns a parameterized, secret-free, reusable skill
+- [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
+- [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
+- [ ] **Phase 5: Teach-by-Showing** - Demonstrate an action once; Juno learns a parameterized, secret-free skill composed of typed operations
 - [ ] **Phase 6: Portal Recognition** - Recognize shared portals across sites and reuse learned skills without re-teaching
 - [ ] **Phase 7: Voice Control** - Drive the full pipeline by voice, with the same confirmation guardrails
 
@@ -50,40 +52,46 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 
 ### Phase 3: Site Compiler & Per-Site Memory
-**Goal**: Juno compiles explored sites into durable typed semantic models that are saved per site and reloaded automatically across sessions
+**Goal**: Juno compiles explored sites into durable, versioned typed semantic models — entities plus operation contracts — that are saved per site and reloaded automatically across sessions
 **Mode:** mvp
 **Depends on**: Phase 2
-**Requirements**: COMP-01, MEM-01, MEM-02, MEM-03
+**Requirements**: COMP-01, OPS-01, VERS-01, MEM-01, MEM-02, MEM-03
 **Success Criteria** (what must be TRUE):
   1. After safe exploration of a site, Juno has a saved typed semantic model of its pages, navigation, elements, and actions
-  2. After restarting Juno completely, revisiting the site reloads its knowledge automatically — nothing is relearned
-  3. Stored knowledge consists of semantic descriptions (role/label/text), not brittle locators or coordinates
-  4. Secret session/credential state lives in a separate store from shareable semantic knowledge, and a semantic-knowledge export contains no secrets
+  2. Actions in the compiled model are typed first-class operations (OperationSpec: declared inputs, preconditions, effects, risk level, verification requirements) — not raw interaction sequences or selector collections
+  3. Compiled knowledge is versioned (schema version, grounding versions, observed UI version), so drift from a prior compilation is detectable, regressions are localizable to the affected region, and cached-execution safety is knowable
+  4. After restarting Juno completely, revisiting the site reloads its knowledge automatically — nothing is relearned
+  5. Stored knowledge consists of semantic descriptions (role/label/text), not brittle locators or coordinates
+  6. Secret session/credential state lives in a separate store from shareable semantic knowledge, and a semantic-knowledge export contains no secrets
 **Plans**: TBD
 
 ### Phase 4: Planner, Execution & Authenticated Sites
-**Goal**: The user states an intent and Juno executes multi-step workflows end-to-end on any site — including authenticated sites — with self-healing replay
+**Goal**: The user states an intent and Juno executes multi-step workflows end-to-end on any site — including authenticated sites — through a deterministic runtime that verifies consequences, records receipts, retries idempotently, and recovers locally
 **Mode:** mvp
 **Depends on**: Phase 3
-**Requirements**: EXEC-01, EXEC-02, EXEC-03, COMP-02, AUTH-01, AUTH-02
+**Requirements**: EXEC-01, EXEC-02, EXEC-03, VERIF-01, VERIF-02, IDMP-01, COMP-02, RECOV-01, RECOV-02, AUTH-01, AUTH-02
 **Success Criteria** (what must be TRUE):
   1. User gives Juno an intent and it plans and executes a multi-step workflow end-to-end, prompting for confirmation on destructive steps
-  2. Juno fills forms and enters data into dynamic fields that appear or change during interaction
-  3. Juno extracts data from a page into structured output
-  4. A saved workflow still executes correctly after the site's layout changes (elements are re-identified against the live page, not stale selectors)
-  5. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
+  2. Juno fills forms and enters data into dynamic fields that appear or change during interaction, and extracts data from a page into structured output
+  3. After executing an operation, Juno verifies the expected state transition actually occurred — the consequence, not the gesture: a "Success" toast or click-completion alone never satisfies a postcondition
+  4. Every state-mutating operation produces an inspectable execution receipt (operation, inputs, observations before/after, expected vs verified effects, confidence, recovery taken)
+  5. Before retrying a failed state-mutating operation, Juno checks whether the intended effect already occurred — no duplicate sends, submissions, or orders from blind retries
+  6. When a UI change breaks a grounding, Juno repairs the smallest affected layer via the local recovery hierarchy (retry grounding → equivalent semantic element → reobserve/recompile region → alternate path → replan → escalate to human) without discarding the site model — and saved workflows still execute correctly after layout changes
+  7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
+  8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 **Plans**: TBD
 
 ### Phase 5: Teach-by-Showing
-**Goal**: The user demonstrates an action once and Juno learns a parameterized, reusable, secret-free skill — the core differentiator
+**Goal**: The user demonstrates an action once and Juno learns a parameterized, reusable, secret-free skill — composed of typed operations, not an opaque recorded trajectory — the core differentiator
 **Mode:** mvp
 **Depends on**: Phase 4
-**Requirements**: LEARN-01, LEARN-02, LEARN-03
+**Requirements**: LEARN-01, LEARN-02, LEARN-03, OPS-02
 **Success Criteria** (what must be TRUE):
   1. User demonstrates an action once in the browser and Juno records it semantically (accessibility tree + input events — no pixels or raw coordinates)
-  2. The learned skill is parameterized: a demonstration of "message Alice" becomes "message {recipient}", and invoking it with a different recipient works end-to-end
-  3. Secrets entered during the demonstration (passwords, tokens) are redacted from the persisted skill
-  4. The learned skill replays end-to-end on the real site in a later session, with destructive steps still gated by confirmation
+  2. The learned skill decomposes into composable typed operations (with inputs, outputs, preconditions, effects) from the operation library — not a single opaque recorded macro
+  3. The learned skill is parameterized: a demonstration of "message Alice" becomes "message {recipient}", and invoking it with a different recipient works end-to-end
+  4. Secrets entered during the demonstration (passwords, tokens) are redacted from the persisted skill
+  5. The learned skill replays end-to-end on the real site in a later session, with destructive steps still gated by confirmation
 **Plans**: TBD
 
 ### Phase 6: Portal Recognition

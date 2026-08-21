@@ -61,6 +61,26 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **VOICE-01**: User can drive Juno by speaking; voice input maps to the same execution pipeline
 - [ ] **VOICE-02**: Voice-driven destructive actions go through the same confirmation guardrail as typed input
 
+### Operation Contracts
+
+- [ ] **OPS-01**: Operations are typed first-class objects with declared inputs, preconditions, effects, risk level, and verification requirements (not raw interaction sequences)
+- [ ] **OPS-02**: A learned skill decomposes into composable typed operations rather than one opaque recorded trajectory
+
+### Verification
+
+- [ ] **VERIF-01**: After executing an operation, Juno verifies the expected state transition actually occurred (consequence, not gesture — a "Success" toast alone never satisfies a postcondition)
+- [ ] **VERIF-02**: Every state-mutating operation produces an execution receipt (operation, inputs, observations before/after, expected vs verified effects, confidence, recovery taken)
+
+### Recovery
+
+- [ ] **RECOV-01**: When a grounding breaks (UI changed), Juno repairs the smallest affected layer locally (retry grounding → equivalent semantic element → recompile region → alternate path → replan → escalate) without discarding the site model
+- [ ] **RECOV-02**: Self-healing is evidence-based — a candidate re-grounding must match semantic context (role, entity, expected effect) before use, with stronger evidence required for high-risk operations
+
+### Knowledge Versioning & Idempotency
+
+- [ ] **VERS-01**: Compiled site knowledge is versioned (schema, groundings, observed UI version) so drift is detectable, regressions are localizable, and cached execution safety is knowable
+- [ ] **IDMP-01**: Before retrying a failed state-mutating operation, Juno checks whether the intended effect already occurred (no duplicate sends, submissions, or orders from blind retries)
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -72,6 +92,14 @@ Deferred to future release. Tracked but not in current roadmap.
 ### Credential Management
 
 - **CRED-01**: Managed credential vault with 2FA automation
+
+### Advanced Execution
+
+- **EXEC-04**: Multi-path execution routing — an operation executes via the best available mechanism (API, observed network call, DOM/AX, visual), not just the browser UI
+
+### Learning
+
+- **LRN-04**: Causal state-transition learning — predict semantic state S→S' per operation and improve from verified outcomes (prediction-before-action as a training signal)
 
 ## Out of Scope
 
@@ -110,28 +138,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SAFE-05 | Phase 2 | Pending |
 | SAFE-06 | Phase 2 | Pending |
 | COMP-01 | Phase 3 | Pending |
-| COMP-02 | Phase 4 | Pending |
+| OPS-01 | Phase 3 | Pending |
+| VERS-01 | Phase 3 | Pending |
 | MEM-01 | Phase 3 | Pending |
 | MEM-02 | Phase 3 | Pending |
 | MEM-03 | Phase 3 | Pending |
 | EXEC-01 | Phase 4 | Pending |
 | EXEC-02 | Phase 4 | Pending |
 | EXEC-03 | Phase 4 | Pending |
+| VERIF-01 | Phase 4 | Pending |
+| VERIF-02 | Phase 4 | Pending |
+| IDMP-01 | Phase 4 | Pending |
+| COMP-02 | Phase 4 | Pending |
+| RECOV-01 | Phase 4 | Pending |
+| RECOV-02 | Phase 4 | Pending |
 | AUTH-01 | Phase 4 | Pending |
 | AUTH-02 | Phase 4 | Pending |
 | LEARN-01 | Phase 5 | Pending |
 | LEARN-02 | Phase 5 | Pending |
 | LEARN-03 | Phase 5 | Pending |
+| OPS-02 | Phase 5 | Pending |
 | PORT-01 | Phase 6 | Pending |
 | PORT-02 | Phase 6 | Pending |
 | VOICE-01 | Phase 7 | Pending |
 | VOICE-02 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 27 total
-- Mapped to phases: 27
+- v1 requirements: 35 total
+- Mapped to phases: 35
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-08-21*
-*Last updated: 2026-08-21 after roadmap creation (traceability mapped)*
+*Last updated: 2026-08-21 after doctrine ingestion (DOCTRINE.md) and roadmap revision — 35/35 mapped*

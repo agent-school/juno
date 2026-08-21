@@ -30,7 +30,18 @@ Turn any website into a durable, reusable semantic understanding — learned thr
 
 ## Context
 
-Juno sits in the "AI browser agent / computer use" space (OpenAI Operator, Anthropic Computer Use, Skyvern, Browserbase, etc.), but its core differentiator is the combination of three things: (1) a *compiler* mental model — a website is compiled into a semantic model rather than driven one-off, (2) *teach-by-showing* — instead of the AI guessing how a site works (and breaking things), the user demonstrates and the AI learns, and (3) *persistent per-site memory* — learned knowledge is permanently saved and reused, turning each site into an automatable surface.
+**Authoritative technical vision:** [.planning/DOCTRINE.md](./DOCTRINE.md) — "The Semantic Website Compiler" doctrine. It defines the architecture Juno must implement: `website → semantic graph → planner → deterministic executor → verifier`, with recovery and learning. When any plan or artifact conflicts with the doctrine, the doctrine wins.
+
+Juno sits in the "AI browser agent / computer use" space (OpenAI Operator, Anthropic Computer Use, Skyvern, Browserbase, etc.), but its core differentiator is the combination of three things: (1) a *compiler* mental model — a website is compiled into a typed, task-conditioned semantic representation (entities, state, operations with contracts) rather than driven one-off, (2) *teach-by-showing* — instead of the AI guessing how a site works (and breaking things), the user demonstrates and the AI learns, and (3) *persistent per-site memory* — learned knowledge is versioned and reused, turning each site into an automatable surface.
+
+The doctrine's load-bearing principles (see DOCTRINE.md for the full set):
+- **Compile once, execute many. Recompile on divergence.** Planning and deterministic execution are strictly separated; the LLM reasons at semantic boundaries only.
+- **Operations are typed first-class objects** with inputs, preconditions, effects, risk level, idempotency semantics, verification requirements, and recovery behavior.
+- **Verify the consequence, not the gesture.** Every meaningful operation predicts its expected state transition and produces an execution receipt proving whether it occurred.
+- **Recovery is local and evidence-based.** Repair the smallest broken layer; never blindly swap look-alike elements for high-risk operations.
+- **Ground as late as possible.** Semantic intention → reusable operation → website-specific execution are three separate layers.
+- **Compilation is task-conditioned** — build only the semantic slice the task needs.
+- **Anti-patterns (explicitly banned):** LLM-controls-every-click as permanent architecture, giant DOM dumps, selector collections disguised as semantics, workflow macros, trusting UI toasts, unbounded self-healing, natural-language skills without contracts.
 
 The motivating use cases are concrete automation jobs that normal tooling can't reach because there is no exposed API:
 - Messaging people on Instagram
@@ -53,6 +64,9 @@ A key constraint the user emphasized: **websites often cannot be freely tested**
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
+| Architecture governed by DOCTRINE.md: observe → compile → plan → deterministic execute → verify → recover | Planning/execution separation, typed operation contracts, consequence verification — the core thesis | — Pending |
+| Operations are typed first-class objects (OperationSpec, ExecutionReceipt, Grounding, etc. as core repo types) | Transforms automation from gestures into a transactional system; enables permissions, idempotency, verification | — Pending |
+| Compile once, execute many; LLM used only at interpretation boundaries | Cost (affordable-model constraint) and reliability both depend on minimizing per-step LLM inference | — Pending |
 | Product form: Chromium-based browser with built-in chat panel (open-source Chromium scaffolding) | User interacts by chatting beside the live page — demonstration and observation happen in the same surface | — Pending |
 | Instagram messaging is the first v1 proof use case | It is the motivating vision; accepted anti-bot risk, mitigated by real persistent profile + human handoff + early feasibility spike | — Pending |
 | Affordable LLMs (DeepSeek flash-tier) via provider-agnostic layer, not premium-tier models | Cost constraint; teach-by-showing + deterministic replay reduce reliance on per-step LLM reasoning | — Pending |

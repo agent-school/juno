@@ -4,7 +4,7 @@
 
 **Juno**
 
-Juno is a semantic website compiler: a tool that takes any website, builds a durable semantic model of its structure and behavior through exploration and testing, and permanently saves that understanding per site (Instagram, Outlook, any job portal). The user can teach Juno how a site works by demonstrating an action, and Juno learns, persists, and later replays that knowledge to automate things that are otherwise very hard to automate. It is also voice-first — the same capability can be driven by speaking.
+Juno is a semantic website compiler: a tool that takes any website, builds a durable semantic model of its structure and behavior through exploration and testing, and permanently saves that understanding per site (Instagram, Outlook, any job portal). The user can teach Juno how a site works by demonstrating an action, and Juno learns, persists, and later replays that knowledge to automate things that are otherwise very hard to automate. Its product form is a Chromium-based browser with a built-in chat panel (built on open-source Chromium scaffolding) — the user talks to Juno beside the page it is learning or driving. Voice is a planned later modality over the same pipeline.
 
 **Core Value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions (messaging someone on Instagram, signing a contract, sending email when no API is exposed, applying to jobs) can be automated reliably without destructive guessing.
 
@@ -12,6 +12,8 @@ Juno is a semantic website compiler: a tool that takes any website, builds a dur
 
 - **Safety**: Never perform destructive or irreversible actions during autonomous exploration/testing; destructive actions require either an explicit demonstration or an explicit confirmation.
 - **Persistence**: Learned site knowledge must survive across sessions — it is not ephemeral per-task context.
+- **Cost**: Prefer affordable LLMs (e.g. DeepSeek flash-tier models) via a provider-agnostic layer; lean on user demonstration and deterministic replay to minimize per-step LLM usage.
+- **First validation target**: Instagram messaging is the v1 proof use case — highest anti-bot risk, so it needs an early feasibility spike rather than a late one.
 
 <!-- GSD:project-end -->
 

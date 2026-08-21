@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-08-21)
 Phase: 1 of 7 (Browser Core)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-08-21 — Roadmap created (7 phases, 27/27 requirements mapped)
+Last activity: 2026-08-21 — Roadmap revised per DOCTRINE.md: 8 doctrine requirements mapped (35/35), Phases 3–5 criteria updated for typed operation contracts, versioned knowledge, consequence verification, execution receipts, idempotent retries, and local evidence-based recovery
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -56,6 +56,8 @@ Recent decisions affecting current work:
 - Roadmap: Safety guard (Phase 2) is co-developed immediately after the browser primitive — never deferred past first destructive-capable build
 - Roadmap: COMP-02 (self-healing replay) placed in Phase 4 where replay is observable, not in the Phase 3 compiler phase
 - Roadmap: Teach-by-showing (Phase 5) deliberately arrives after IR/planner/replay (Phase 4) — demonstrations need something to compile into
+- Doctrine mapping: OPS-01 (typed operation contracts) and VERS-01 (versioned knowledge) live in Phase 3 — they are properties of what the compiler emits and stores; OPS-02 (compositional skills) lives in Phase 5 — decomposition needs Phase 4's operation library to exist
+- Doctrine mapping: VERIF-01/02, IDMP-01, RECOV-01/02 all landed in Phase 4 — they are runtime-loop behaviors (predict → execute → verify → receipt → recover locally → retry safely), making Phase 4 the full doctrine runtime (11 requirements)
 
 ### Pending Todos
 
