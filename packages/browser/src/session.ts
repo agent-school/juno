@@ -4,6 +4,7 @@ import { chromium, type BrowserContext, type Page } from 'playwright';
 import { z } from 'zod';
 import pino from 'pino';
 import { InvalidUrlError, ProfileInUseError } from './errors.js';
+import { resolveProfileDir } from './profile.js';
 
 const logger = pino({
   name: 'juno.browser',
@@ -96,14 +97,19 @@ export class BrowserSession {
 
   /**
    * Launch the persistent browser context and acquire the session page.
+   *
+   * The profile directory is Juno's dedicated dir (resolveProfileDir, with
+   * JUNO_PROFILE_DIR env override) unless an explicit dir was provided.
+   *
    * Throws ProfileInUseError when the profile directory is already locked
-   * by another Chromium process (ProcessSingleton).
+   * by another Chromium process (ProcessSingleton) — raw Playwright errors
+   * never escape for this condition.
    */
   async launch(): Promise<Page> {
     if (this.context) {
       throw new Error('BrowserSession is already launched; call close() first.');
     }
-    const profileDir = this.profileDirOverride ?? defaultProfileDir();
+    const profileDir = this.profileDirOverride ?? resolveProfileDir();
     try {
       this.context = await chromium.launchPersistentContext(profileDir, {
         ...(this.channel === 'chrome' ? { channel: 'chrome' } : {}),
@@ -164,12 +170,4 @@ export class BrowserSession {
     }
     return this._page;
   }
-}
-
-/**
- * Task 1 temporary default — replaced by resolveProfileDir() (profile.ts)
- * when the profile lifecycle lands in Task 2.
- */
-function defaultProfileDir(): string {
-  return path.join(os.homedir(), '.juno', 'profile');
 }
