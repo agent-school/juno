@@ -1,0 +1,1 @@
+{"content":"Local agent memory: better-sqlite3 + sqlite-vec (co-located in one .db, Mozilla-sponsored) replaces LanceDB/Chroma/pgvector. Structured retrieval -> row store + B-tree + FTS5 beats vector path.","source":"web","provider":"firecrawl","confidence":"MEDIUM","fetched_at":"2026-08-21T06:47:07.086Z","ttl":86400000,"kind":"web"}
