@@ -36,7 +36,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Juno can describe a loaded page's semantic structure (roles, labels, text, element states) derived from the accessibility tree
   3. Juno can click, type, scroll, and select elements by semantic reference — and when the page changes, the reference fails safe (errors out) rather than acting on the wrong element
   4. The browser runs under the user's persistent real-user profile with no stealth-evasion tooling
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Walking Skeleton: monorepo scaffold + persistent-session load/read/act tracer + profile lifecycle & no-stealth gate (BRWS-01, BRWS-04)
+- [ ] 01-02-PLAN.md — Perception pipeline: ariaSnapshot YAML → zod-typed PageTree via SemanticPageReader (BRWS-02)
+- [ ] 01-03-PLAN.md — Acting surface: two-layer refs + SemanticActor with fail-safe grounding under page mutation (BRWS-03)
 
 ### Phase 2: Safe-Execution Guard
 **Goal**: Every action Juno takes passes through code-enforced safety — destructive actions can never execute silently
@@ -123,7 +128,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Browser Core | 0/TBD | Not started | - |
+| 1. Browser Core | 0/3 | Not started | - |
 | 2. Safe-Execution Guard | 0/TBD | Not started | - |
 | 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |

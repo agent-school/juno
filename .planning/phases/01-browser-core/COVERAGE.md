@@ -1,0 +1,1 @@
+No external API integration: Phase 1 wraps only local libraries (Playwright browser automation, zod, yaml, pino) running in-process against a locally installed Chrome — no network API, hosted SDK, or external service is integrated.
