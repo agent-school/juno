@@ -363,19 +363,22 @@ packages:
 | A4 | "Real-user profile" (BRWS-04) is correctly interpreted as a *dedicated persistent profile* rather than the daily Chrome User Data dir (official docs forbid automating the daily profile) | Pattern 4, Pitfall 3 | If the user intended literal daily-profile reuse, Phase 1 needs a requirements conversation — planning should surface this interpretation explicitly |
 | A5 | TypeScript ~5.9 is the right pin (npm `latest` shows 7.0.2 pre-release line) | Standard Stack | Minor; planner may confirm team preference |
 
-## Open Questions
+## Open Questions — RESOLVED (all decided during planning; see cited plans/tasks)
 
 1. **Does BRWS-04 mean "dedicated persistent profile" or literally the user's daily Chrome profile?**
    - What we know: Official Playwright/Chrome docs forbid automating the default profile; dedicated dir is the only workable reading.
    - What's unclear: Where the user expects to log in (Juno's profile vs their existing session).
    - Recommendation: Plan for dedicated profile + first-run human login handoff (A4); confirm at plan review.
+   - **RESOLVED:** Dedicated persistent profile directory (`~/.juno/profile`, `JUNO_PROFILE_DIR` env override) — implemented in 01-01-PLAN.md Task 2 (`profile.ts` / `resolveProfileDir`). Juno never touches the user's daily-driver User Data dir.
 
 2. **Bundled Chromium vs system Chrome as the default launch channel?**
    - What we know: Both work; system Chrome verified on this machine; bundled needs a browser-download setup step (revision mismatch present).
    - Recommendation: `channel: 'chrome'` default with `chromium` fallback option; setup task runs `playwright install chromium` regardless.
+   - **RESOLVED:** `channel: 'chrome'` is the launch default (system Chrome verified available); bundled Chromium remains an explicit fallback option — implemented in 01-01-PLAN.md Task 1/Task 2 (`BrowserSession → chromium.launchPersistentContext(..., { channel: 'chrome' })`).
 
 3. **Scroll semantics** — "scroll" in BRWS-03 can mean `scrollIntoViewIfNeeded()` on an element, or viewport scrolling (`page.mouse.wheel`). Which counts as done?
    - Recommendation: implement element-scoped `scrollIntoViewIfNeeded` as the semantic action, plus a viewport scroll helper; both behind the SemanticActor API.
+   - **RESOLVED:** Both flavors shipped behind the SemanticActor API — element-scoped `scrollIntoViewIfNeeded` as the semantic action plus a viewport scroll helper — implemented in 01-03-PLAN.md.
 
 ## Environment Availability
 
