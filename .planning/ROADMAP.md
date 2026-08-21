@@ -40,12 +40,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Juno can click, type, scroll, and select elements by semantic reference — and when the page changes, the reference fails safe (errors out) rather than acting on the wrong element
   4. The browser runs under the user's persistent real-user profile with no stealth-evasion tooling
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Walking Skeleton: monorepo scaffold + persistent-session load/read/act tracer + profile lifecycle & no-stealth gate (BRWS-01, BRWS-04)
+- [x] 01-01-PLAN.md — Walking Skeleton: monorepo scaffold + persistent-session load/read/act tracer + profile lifecycle & no-stealth gate (BRWS-01, BRWS-04)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -158,7 +158,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Browser Core | 0/3 | Not started | - |
+| 1. Browser Core | 1/3 | In Progress|  |
 | 2. Safe-Execution Guard | 0/TBD | Not started | - |
 | 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
