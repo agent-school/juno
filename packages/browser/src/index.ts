@@ -8,6 +8,8 @@ export {
 export { resolveProfileDir } from './profile.js';
 export { parseAriaYaml } from './parse-yaml.js';
 export { SemanticPageReader } from './reader.js';
+export { SemanticActor } from './actor.js';
+export type { SemanticActorOptions } from './actor.js';
 export {
   BoxSchema,
   PageTreeSchema,
