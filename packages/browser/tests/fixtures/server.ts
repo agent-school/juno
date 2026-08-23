@@ -4,14 +4,29 @@ import http from 'node:http';
  * Deterministic fixture HTTP server for @juno/browser e2e tests.
  *
  * Listens on 127.0.0.1:8931. Serves one control page with the exact set of
- * semantic widgets the specs need, plus a POST /remove-button mutation
- * endpoint used by the failsafe tests (Plan 03).
+ * semantic widgets the specs need, plus:
+ * - POST /remove-button — mutation endpoint used by the failsafe tests (Plan 03)
+ * - GET /empty — a page with no interactive or labeled elements (a single
+ *   unlabeled div) for the empty-state perception edge (Plan 02)
  */
 
 const HOST = '127.0.0.1';
 const PORT = 8931;
 
 let buttonRemoved = false;
+
+function emptyPage(): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Empty</title>
+</head>
+<body>
+  <div></div>
+</body>
+</html>`;
+}
 
 function controlPage(): string {
   const addButton = buttonRemoved
@@ -59,6 +74,12 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     res.end(controlPage());
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/empty') {
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    res.end(emptyPage());
     return;
   }
 
