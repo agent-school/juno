@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 /**
- * Typed snapshot model — mirrors the documented future `ariaSnapshotJSON`
- * node schema (role, name, text, children, checked, disabled, expanded,
- * active, invalid, level, pressed, selected, url, placeholder, ref, cursor,
- * box) so migration to the JSON API is a one-line swap at the reader.
+ * Typed snapshot model — mirrors the documented future JSON node schema
+ * (role, name, text, children, checked, disabled, expanded, active, invalid,
+ * level, pressed, selected, url, placeholder, ref, cursor, box) so migration
+ * to the not-yet-released JSON snapshot API is a one-line swap at the reader.
  *
  * The semantic model contains ONLY what the accessibility tree reports —
  * no synthesized roles, names, or states, no enrichment beyond observed
