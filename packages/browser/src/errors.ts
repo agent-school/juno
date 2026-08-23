@@ -2,8 +2,54 @@
  * Typed error taxonomy for the Juno browser layer.
  *
  * Raw Playwright errors never escape the package public API: boundary modules
- * (`session.ts`, later `actor.ts`) map them onto these classes.
+ * (`session.ts`, `actor.ts`) map them onto these classes.
  */
+
+/**
+ * Base class for the grounding failure family — Phase 2's safety guard
+ * catches this family to intercept every fail-safe grounding outcome.
+ */
+export class GroundingError extends Error {
+  /** Semantic description of the attempted reference — never raw eN ids (T-1-09). */
+  readonly refDescription: string;
+
+  constructor(message: string, refDescription: string) {
+    super(message);
+    this.name = 'GroundingError';
+    this.refDescription = refDescription;
+  }
+}
+
+/** Zero matches (or an action timeout) for a strict locator / aria-ref action. */
+export class GroundingTimeout extends GroundingError {
+  readonly code = 'GROUNDING_TIMEOUT' as const;
+
+  constructor(message: string, refDescription: string) {
+    super(message, refDescription);
+    this.name = 'GroundingTimeout';
+  }
+}
+
+/** A semantic reference matched more than one element (strict-mode violation). */
+export class AmbiguousReference extends GroundingError {
+  readonly code = 'AMBIGUOUS_REFERENCE' as const;
+
+  constructor(message: string, refDescription: string) {
+    super(message, refDescription);
+    this.name = 'AmbiguousReference';
+  }
+}
+
+/** A reference no longer resolves to the semantic identity it was captured with. */
+export class StaleReference extends GroundingError {
+  readonly code = 'STALE_REFERENCE' as const;
+
+  constructor(message: string, refDescription: string) {
+    super(message, refDescription);
+    this.name = 'StaleReference';
+  }
+}
+
 export class ProfileInUseError extends Error {
   readonly code = 'PROFILE_IN_USE' as const;
 
