@@ -21,3 +21,22 @@ export class InvalidUrlError extends Error {
     this.name = 'InvalidUrlError';
   }
 }
+
+export class SnapshotParseError extends Error {
+  readonly code = 'SNAPSHOT_PARSE' as const;
+
+  /** Zod issues (schema rejection) or the underlying YAML parse error, when available. */
+  readonly issues: unknown;
+
+  constructor(
+    message: string,
+    options: { issues?: unknown; cause?: unknown } = {},
+  ) {
+    super(
+      message,
+      options.cause !== undefined ? { cause: options.cause } : undefined,
+    );
+    this.name = 'SnapshotParseError';
+    this.issues = options.issues ?? null;
+  }
+}
