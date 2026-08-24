@@ -11,7 +11,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **BRWS-01**: User can open any website and have Juno load and navigate it
 - [x] **BRWS-02**: Juno can read a page's semantic structure via the accessibility tree (roles, labels, text, state)
-- [ ] **BRWS-03**: Juno can locate and interact with elements (click, type, scroll, select) using semantic refs that fail safe when the page changes
+- [x] **BRWS-03**: Juno can locate and interact with elements (click, type, scroll, select) using semantic refs that fail safe when the page changes
 - [ ] **BRWS-04**: Juno drives the browser through a persistent real-user profile (no stealth evasion)
 
 ### Safety
@@ -129,7 +129,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | BRWS-01 | Phase 1 | Pending |
 | BRWS-02 | Phase 1 | Complete |
-| BRWS-03 | Phase 1 | Pending |
+| BRWS-03 | Phase 1 | Complete |
 | BRWS-04 | Phase 1 | Pending |
 | SAFE-01 | Phase 2 | Pending |
 | SAFE-02 | Phase 2 | Pending |
