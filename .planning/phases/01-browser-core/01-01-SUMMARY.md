@@ -211,7 +211,7 @@ Each task was committed atomically:
 - **Issue:** Plan's verify runs vitest from packages/browser, but the root config's include pattern is root-relative → "No test files found"
 - **Fix:** Added packages/browser/vitest.config.ts with package-relative include
 - **Files modified:** packages/browser/vitest.config.ts
-- **Verification:** `pnpm --filter @juno/browser exec vitest run tests/unit/no-stealth-deps.test.ts` → 3 passed
+- **Verification:** `vitest run tests/unit/no-stealth-deps.test.ts` (in packages/browser) → 3 passed
 - **Committed in:** fa61054 (part of Task 3 commit)
 
 **3. [Rule 3 - Blocking] Test's repo-root path resolution was wrong depth**

@@ -17,7 +17,7 @@ The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website �
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile
+- [x] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile (completed 2026-08-24)
 - [ ] **Phase 2: Safe-Execution Guard** - Code-enforced action classification, destructive-action gates, audit log, kill switch, injection defense
 - [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
 - [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
@@ -40,7 +40,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Juno can click, type, scroll, and select elements by semantic reference — and when the page changes, the reference fails safe (errors out) rather than acting on the wrong element
   4. The browser runs under the user's persistent real-user profile with no stealth-evasion tooling
 
-**Plans:** 3/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -158,7 +158,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Browser Core | 3/3 | In Progress|  |
+| 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
 | 2. Safe-Execution Guard | 0/TBD | Not started | - |
 | 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |

@@ -154,7 +154,7 @@ See key-decisions above. Primary: the wrapper PageTree root, forced by the empir
 - **Found during:** Task 1 design (pre-implementation empirical probe)
 - **Issue:** Plan text ("Export PageTreeSchema as the root node type") reads as a single synthesized root; the probe proved empty pages capture as `''`, making a root-only model impossible without synthesizing a role (prohibited by must_haves)
 - **Fix:** PageTree = top-level reported nodes; empty capture → `children: []`. All plan behaviors and Task 2 assertions hold; flagged here for phase review alongside the plan's own flagged assumptions
-- **Files:** `packages/browser/src/snapshot-schema.ts`, `src/parse-yaml.ts`
+- **Files:** `packages/browser/src/snapshot-schema.ts`, `packages/browser/src/parse-yaml.ts`
 - **Verification:** unit + e2e green, both flagged-assumption behaviors asserted
 - **Commit:** `39e0f3f`
 
