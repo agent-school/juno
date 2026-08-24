@@ -20,10 +20,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-21)
+See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Phase 1 — Browser Core
+**Current focus:** Phase 2 — Safe-Execution Guard
 
 ## Current Position
 
@@ -32,7 +32,7 @@ Plan: Not started
 Status: Ready to plan
 Last activity: 2026-08-24 — Phase 01 complete, transitioned to Phase 2
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░] 14%
 
 ## Performance Metrics
 
@@ -68,6 +68,9 @@ Progress: [░░░░░░░░░░] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [Phase 1] Browser core established: persistent dedicated profile, SemanticPageReader (zod-validated a11y perception), SemanticActor (fail-safe semantic actions, GroundingError family for Phase 2 guard)
+- [Phase 1] Empty pages capture as empty-string snapshots — PageTree root is a children wrapper, never a synthesized root node
+- [Phase 1] Ephemeral eN refs carry captured identity and are re-validated against fresh snapshots before every action
 - Roadmap: Safety guard (Phase 2) is co-developed immediately after the browser primitive — never deferred past first destructive-capable build
 - Roadmap: COMP-02 (self-healing replay) placed in Phase 4 where replay is observable, not in the Phase 3 compiler phase
 - Roadmap: Teach-by-showing (Phase 5) deliberately arrives after IR/planner/replay (Phase 4) — demonstrations need something to compile into
@@ -92,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-24T00:02:31.899Z
-Stopped at: Phase 01 complete, ready to plan Phase 2
+Last session: 2026-08-24T00:18:23.559Z
+Stopped at: Phase 1 complete, ready to plan Phase 2
 Resume file: None
