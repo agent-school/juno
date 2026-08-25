@@ -5,29 +5,12 @@ import { z } from 'zod';
 import pino from 'pino';
 import { InvalidUrlError, ProfileInUseError } from './errors.js';
 import { assertDedicatedProfileDir, resolveProfileDir } from './profile.js';
+import { redactUrlForLogs } from './url.js';
 
 const logger = pino({
   name: 'juno.browser',
   level: process.env.JUNO_LOG_LEVEL ?? 'info',
 });
-
-/**
- * Redact a URL for logging: strip userinfo, query, and fragment. Authenticated
- * targets can carry credentials, OAuth codes, or session-bearing query
- * parameters — none of those may reach logs (CR-02).
- */
-function redactUrlForLog(raw: string): string {
-  try {
-    const url = new URL(raw);
-    url.username = '';
-    url.password = '';
-    url.search = '';
-    url.hash = '';
-    return `${url.origin}${url.pathname}`;
-  } catch {
-    return '<unparseable-url>';
-  }
-}
 
 /**
  * URL validation at the session boundary (threat T-1-01).
@@ -170,7 +153,7 @@ export class BrowserSession {
     const url = validateUrl(rawUrl);
     await page.goto(url.toString(), { waitUntil: 'load' });
     logger.info(
-      { event: 'session.goto', url: redactUrlForLog(url.toString()) },
+      { event: 'session.goto', url: redactUrlForLogs(url.toString()) },
       'navigated',
     );
     return page;

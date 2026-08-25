@@ -3,28 +3,12 @@ import type { Page } from 'playwright';
 import { SnapshotParseError } from './errors.js';
 import { parseAriaYaml } from './parse-yaml.js';
 import { PageTreeSchema, type PageTree } from './snapshot-schema.js';
+import { redactUrlForLogs } from './url.js';
 
 const logger = pino({
   name: 'juno.browser',
   level: process.env.JUNO_LOG_LEVEL ?? 'info',
 });
-
-/**
- * Redact a URL for logging: strip userinfo, query, and fragment —
- * session-bearing query parameters must never reach logs (CR-02).
- */
-function redactUrlForLog(raw: string): string {
-  try {
-    const url = new URL(raw);
-    url.username = '';
-    url.password = '';
-    url.search = '';
-    url.hash = '';
-    return `${url.origin}${url.pathname}`;
-  } catch {
-    return '<unparseable-url>';
-  }
-}
 
 /**
  * SemanticPageReader — the perception pipeline.
@@ -53,7 +37,7 @@ export class SemanticPageReader {
     logger.info(
       {
         event: 'reader.read',
-        url: redactUrlForLog(page.url()),
+        url: redactUrlForLogs(page.url()),
         nodes: countNodes(result.data),
       },
       'page read into validated semantic tree',
