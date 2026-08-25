@@ -14,3 +14,10 @@ blob-report/
 
 # OS
 .DS_Store
+
+# Local tooling / agent dumps (not product source)
+.claude/
+.codex/
+.opencode/
+.gsd/
+.cursor/
