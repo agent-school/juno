@@ -4,12 +4,30 @@ import { chromium, type BrowserContext, type Page } from 'playwright';
 import { z } from 'zod';
 import pino from 'pino';
 import { InvalidUrlError, ProfileInUseError } from './errors.js';
-import { resolveProfileDir } from './profile.js';
+import { assertDedicatedProfileDir, resolveProfileDir } from './profile.js';
 
 const logger = pino({
   name: 'juno.browser',
   level: process.env.JUNO_LOG_LEVEL ?? 'info',
 });
+
+/**
+ * Redact a URL for logging: strip userinfo, query, and fragment. Authenticated
+ * targets can carry credentials, OAuth codes, or session-bearing query
+ * parameters — none of those may reach logs (CR-02).
+ */
+function redactUrlForLog(raw: string): string {
+  try {
+    const url = new URL(raw);
+    url.username = '';
+    url.password = '';
+    url.search = '';
+    url.hash = '';
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return '<unparseable-url>';
+  }
+}
 
 /**
  * URL validation at the session boundary (threat T-1-01).
@@ -110,6 +128,9 @@ export class BrowserSession {
       throw new Error('BrowserSession is already launched; call close() first.');
     }
     const profileDir = this.profileDirOverride ?? resolveProfileDir();
+    // CR-03: the "dedicated Juno profile only" rule is enforced, not just
+    // documented — reject daily-driver Chrome profile paths before launch.
+    assertDedicatedProfileDir(profileDir);
     try {
       this.context = await chromium.launchPersistentContext(profileDir, {
         ...(this.channel === 'chrome' ? { channel: 'chrome' } : {}),
@@ -148,7 +169,10 @@ export class BrowserSession {
     const page = this.requirePage();
     const url = validateUrl(rawUrl);
     await page.goto(url.toString(), { waitUntil: 'load' });
-    logger.info({ event: 'session.goto', url: url.toString() }, 'navigated');
+    logger.info(
+      { event: 'session.goto', url: redactUrlForLog(url.toString()) },
+      'navigated',
+    );
     return page;
   }
 
@@ -158,9 +182,12 @@ export class BrowserSession {
       return;
     }
     const context = this.context;
+    // WR-01: only report closed after the context actually closed — if
+    // close() throws, Chromium may still hold the profile lock and a retry
+    // must remain possible.
+    await context.close();
     this.context = null;
     this._page = null;
-    await context.close();
     logger.info({ event: 'session.close' }, 'browser session closed');
   }
 

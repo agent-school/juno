@@ -122,3 +122,14 @@ this._page = null;
 _Reviewed: 2026-08-25T23:28:49Z_
 _Reviewer: the agent (gsd-code-reviewer)_
 _Depth: standard_
+
+## Resolution (2026-08-25, orchestrator)
+
+All four findings fixed and verified (35/35 unit incl. 4 new security tests, 15/15 e2e, typecheck clean):
+
+- **CR-01** ✓ `profile.ts`: `mkdirSync(..., { mode: 0o700 })` + `chmodSync(dir, 0o700)` — owner-only profile directory
+- **CR-02** ✓ `session.ts` + `reader.ts`: `redactUrlForLog()` strips userinfo/query/hash before any log emission
+- **CR-03** ✓ `profile.ts`: `assertDedicatedProfileDir()` rejects paths inside Chrome's "User Data" tree, enforced at both `resolveProfileDir()` and `BrowserSession.launch()` (explicit `profileDir` included); escape hatch `JUNO_ALLOW_UNMANAGED_PROFILE=1`. Scoped to daily-driver markers rather than managed-root-only because the test suite (and the API contract) legitimately uses temp/profile dirs outside ~/.juno.
+- **WR-01** ✓ `session.ts close()`: state cleared only after `context.close()` succeeds
+
+Fix commit: see `fix(review): enforce profile security...` on main.

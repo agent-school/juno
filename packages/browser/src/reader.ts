@@ -10,6 +10,23 @@ const logger = pino({
 });
 
 /**
+ * Redact a URL for logging: strip userinfo, query, and fragment —
+ * session-bearing query parameters must never reach logs (CR-02).
+ */
+function redactUrlForLog(raw: string): string {
+  try {
+    const url = new URL(raw);
+    url.username = '';
+    url.password = '';
+    url.search = '';
+    url.hash = '';
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return '<unparseable-url>';
+  }
+}
+
+/**
  * SemanticPageReader — the perception pipeline.
  *
  * The ONLY way Juno sees a page: capture the accessibility tree
@@ -34,7 +51,11 @@ export class SemanticPageReader {
     }
 
     logger.info(
-      { event: 'reader.read', url: page.url(), nodes: countNodes(result.data) },
+      {
+        event: 'reader.read',
+        url: redactUrlForLog(page.url()),
+        nodes: countNodes(result.data),
+      },
       'page read into validated semantic tree',
     );
     return result.data;
