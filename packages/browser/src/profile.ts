@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { UnsafeProfileDirError } from './errors.js';
 
 /**
  * Resolve Juno's dedicated persistent browser profile directory.
@@ -20,26 +21,21 @@ import path from 'node:path';
  * that look like Chrome's own "User Data" tree are rejected (CR-03).
  */
 
-/** Profile-root directory names used by Chrome/Chromium daily-driver installs. */
-const DAILY_DRIVER_MARKERS = new Set(['user data', 'google/chrome', 'google\\chrome']);
-
 /**
- * Reject paths that point into a daily-driver Chrome profile tree (anywhere a
- * segment is literally "User Data", Chrome's profile root name on every
- * platform). Automating that profile can corrupt it and conflicts with the
- * user's running Chrome. Explicit escape hatch: JUNO_ALLOW_UNMANAGED_PROFILE=1.
+ * Reject paths that point into a known daily-driver Chrome/Chromium profile
+ * tree. Automating that profile can corrupt it and conflicts with the user's
+ * running browser. Explicit escape hatch: JUNO_ALLOW_UNMANAGED_PROFILE=1.
  */
 export function assertDedicatedProfileDir(dir: string): void {
   if (process.env.JUNO_ALLOW_UNMANAGED_PROFILE === '1') {
     return;
   }
-  const resolved = path.resolve(dir).toLowerCase();
-  const segments = resolved.split(path.sep);
-  const inChromeUserDataTree = segments.some((segment) =>
-    DAILY_DRIVER_MARKERS.has(segment),
+  const resolved = path.resolve(dir);
+  const insideDailyDriverRoot = dailyDriverProfileRoots().some(
+    (root) => resolved === root || resolved.startsWith(`${root}${path.sep}`),
   );
-  if (inChromeUserDataTree) {
-    throw new Error(
+  if (insideDailyDriverRoot) {
+    throw new UnsafeProfileDirError(
       `Refusing to automate a daily-driver Chrome profile directory (${dir}). ` +
         'Juno must use a dedicated profile (default ~/.juno/profile, or JUNO_PROFILE_DIR). ' +
         'Set JUNO_ALLOW_UNMANAGED_PROFILE=1 to override explicitly.',
@@ -56,6 +52,31 @@ export function resolveProfileDir(): string {
   assertDedicatedProfileDir(dir);
   // Owner-only: the profile holds authenticated browser state (CR-01).
   fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
-  fs.chmodSync(dir, 0o700);
+  if (process.platform !== 'win32') {
+    fs.chmodSync(dir, 0o700);
+  }
   return dir;
+}
+
+function dailyDriverProfileRoots(): string[] {
+  const home = os.homedir();
+
+  switch (process.platform) {
+    case 'darwin':
+      return [
+        path.join(home, 'Library', 'Application Support', 'Google', 'Chrome'),
+        path.join(home, 'Library', 'Application Support', 'Chromium'),
+      ];
+    case 'win32':
+      return [
+        path.join(home, 'AppData', 'Local', 'Google', 'Chrome', 'User Data'),
+        path.join(home, 'AppData', 'Local', 'Chromium', 'User Data'),
+      ];
+    default:
+      return [
+        path.join(home, '.config', 'google-chrome'),
+        path.join(home, '.config', 'google-chrome-beta'),
+        path.join(home, '.config', 'chromium'),
+      ];
+  }
 }

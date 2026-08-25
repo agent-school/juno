@@ -4,8 +4,9 @@ export {
   InvalidUrlError,
   ProfileInUseError,
   SnapshotParseError,
+  UnsafeProfileDirError,
 } from './errors.js';
-export { resolveProfileDir } from './profile.js';
+export { assertDedicatedProfileDir, resolveProfileDir } from './profile.js';
 export { parseAriaYaml } from './parse-yaml.js';
 export { SemanticPageReader } from './reader.js';
 export { SemanticActor } from './actor.js';

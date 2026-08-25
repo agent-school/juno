@@ -59,6 +59,15 @@ export class ProfileInUseError extends Error {
   }
 }
 
+export class UnsafeProfileDirError extends Error {
+  readonly code = 'UNSAFE_PROFILE_DIR' as const;
+
+  constructor(message: string) {
+    super(message);
+    this.name = 'UnsafeProfileDirError';
+  }
+}
+
 export class InvalidUrlError extends Error {
   readonly code = 'INVALID_URL' as const;
 
