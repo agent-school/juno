@@ -11,7 +11,9 @@
     "build": "pnpm -r typecheck",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "test:e2e": "pnpm -r test:e2e"
+    "test:e2e": "pnpm -r test:e2e",
+    "demo": "tsx demo.ts",
+    "demo:serve": "pnpm --filter @juno/browser exec tsx tests/fixtures/server.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.1",
