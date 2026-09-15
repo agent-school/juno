@@ -57,14 +57,16 @@ Plans:
 
 ### Phase 01.1: Containerized host-browser runtime and Windows compatibility: run Juno in Docker while attaching to an explicitly launched dedicated Windows Chrome over CDP, with reliable readiness checks, networking, profile safety, fixture lifecycle, and tested PowerShell setup (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Juno runs in Docker and attaches to an explicitly launched, dedicated Windows Chrome over CDP with reliable readiness, safe networking, profile/process ownership, fixture lifecycle, and tested PowerShell setup
+**Requirements**: RUNTIME-01, RUNTIME-02, RUNTIME-03, RUNTIME-04, RUNTIME-05, RUNTIME-06
 **Depends on:** Phase 1
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 01.1 to break down)
+- [ ] 01.1-01-PLAN.md — CDP readiness, websocket normalization, attach-only session, and semantic tracer
+- [ ] 01.1-02-PLAN.md — Docker bridge harness, container-owned fixture, and no-reuse CDP test configuration
+- [ ] 01.1-03-PLAN.md — Windows Chrome launcher, ownership-safe cleanup, compatibility matrix, and smoke-test documentation
 
 ### Phase 2: Safe-Execution Guard
 

@@ -14,6 +14,15 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **BRWS-03**: Juno can locate and interact with elements (click, type, scroll, select) using semantic refs that fail safe when the page changes
 - [x] **BRWS-04**: Juno drives the browser through a persistent real-user profile (no stealth evasion)
 
+### Inserted Phase 01.1: Containerized Host-Browser Runtime
+
+- [ ] **RUNTIME-01**: Juno runs its Node/Playwright client in Docker and attaches only to a separately launched, dedicated Windows Chrome over CDP without requiring Node.js or pnpm on the Windows host
+- [ ] **RUNTIME-02**: The Windows launcher discovers a valid Chrome executable, uses a dedicated persistent non-default profile compatible with Chrome 136+, preserves special-character paths, and tracks only its owned browser process
+- [ ] **RUNTIME-03**: The CDP path uses Docker bridge networking with a configured fixed port, bounded preflight/retry and `/json/version` readiness validation, safe websocket host normalization, and a narrowly scoped firewall boundary
+- [ ] **RUNTIME-04**: The CDP integration harness owns a configurable fixture port without stale-server reuse and releases its fixture/container resources on every exit path
+- [ ] **RUNTIME-05**: Existing local `BrowserSession` launch behavior and `SemanticPageReader`/`SemanticActor` semantics remain unchanged while attach mode reuses the same page, perception, and fail-safe action surface
+- [ ] **RUNTIME-06**: Explicit PowerShell scripts and documentation provide actual Windows smoke gates for discovery, networking, semantic attach, profile/process ownership, and normal/error/interrupted/container-stop cleanup
+
 ### Safety
 
 - [ ] **SAFE-01**: Juno classifies every action as read, write-benign, or write-destructive before executing it
@@ -131,6 +140,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRWS-02 | Phase 1 | Complete |
 | BRWS-03 | Phase 1 | Complete |
 | BRWS-04 | Phase 1 | Complete |
+| RUNTIME-01 | Phase 01.1 | Pending |
+| RUNTIME-02 | Phase 01.1 | Pending |
+| RUNTIME-03 | Phase 01.1 | Pending |
+| RUNTIME-04 | Phase 01.1 | Pending |
+| RUNTIME-05 | Phase 01.1 | Pending |
+| RUNTIME-06 | Phase 01.1 | Pending |
 | SAFE-01 | Phase 2 | Pending |
 | SAFE-02 | Phase 2 | Pending |
 | SAFE-03 | Phase 2 | Pending |
