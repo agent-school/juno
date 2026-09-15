@@ -2,8 +2,8 @@
   "name": "juno",
   "version": "0.1.0",
   "private": true,
-  "description": "Juno \u2014 a semantic website compiler: durable per-site understanding learned through safe exploration and teach-by-showing",
-  "packageManager": "pnpm@10.33.0",
+  "description": "Juno — a semantic website compiler: durable per-site understanding learned through safe exploration and teach-by-showing",
+  "packageManager": "pnpm@11.24.0",
   "engines": {
     "node": ">=22"
   },
