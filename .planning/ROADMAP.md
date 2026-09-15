@@ -55,6 +55,17 @@ Plans:
 
 - [x] 01-03-PLAN.md — Acting surface: two-layer refs + SemanticActor with fail-safe grounding under page mutation (BRWS-03)
 
+### Phase 01.1: Containerized host-browser runtime and Windows compatibility: run Juno in Docker while attaching to an explicitly launched dedicated Windows Chrome over CDP, with reliable readiness checks, networking, profile safety, fixture lifecycle, and tested PowerShell setup (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 1
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 01.1 to break down)
+
 ### Phase 2: Safe-Execution Guard
 
 **Goal**: Every action Juno takes passes through code-enforced safety — destructive actions can never execute silently
