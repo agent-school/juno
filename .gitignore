@@ -21,3 +21,6 @@ blob-report/
 .opencode/
 .gsd/
 .cursor/
+
+# Generated GSD research cache
+.planning/research/.cache/
