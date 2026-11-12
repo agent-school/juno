@@ -2,6 +2,8 @@
 
 Date: 2026-11-12. Runtime: Node 24.22.2, pnpm 11.24.0. This verifies the code/container slice; requested Coolify deployment remains blocked.
 
+Subsequent hosting evidence is recorded in [261112-p1y](../261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md): the replacement credential works, temporary public HTTPS and Coolify redeploy persistence passed, and the requested hostname still awaits DNS. Statements below describe this earlier verification run.
+
 ## Automated checks
 
 - `pnpm build`: passed both workspace type checks.

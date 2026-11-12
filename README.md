@@ -6,6 +6,8 @@ Juno now has a web workbench with a real read-only task: research public open-so
 
 The separate **Browser lab** operates a synthetic relationship app with the real `@juno/browser` reader and actor: save semantic bindings, replay `capture_interaction(...)`, change the page, and inspect verified effects. It is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
 
+Try the [hosted Coolify workbench](https://juno.54.157.57.51.sslip.io). Public HTTPS, live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks. The requested `juno.agentschool.io` hostname still needs its Porkbun DNS record; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md).
+
 ```bash
 # Node 24 is required by the pinned pnpm 11 toolchain.
 pnpm install --frozen-lockfile
