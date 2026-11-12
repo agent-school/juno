@@ -15,9 +15,15 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 | LAB-03 | Reorder DOM; fail on renamed/ambiguous controls; recover by explicit recompile | Passed browser integration |
 | LAB-04 | Reject no-effect writes; suppress duplicate requests; preserve uncertain writes | Passed integration + restart unit checks |
 | LAB-05 | Export durable receipts/feedback; session isolation and restart persistence | Passed integration + live container restart |
+| TASK-01 | Real public-project research with actual source URLs, schema/identity/filter checks and honest source failures | Passed live API/container smoke + unit checks |
+| TASK-02 | Background task receipts, replay idempotency, stop, interruption and bounded source execution | Passed unit/API checks; replay survived container replacement |
+| MEM-01 | Versioned defaults, editable notes, explicit source/recipe saves, inspect/export/forget with provenance | Passed unit/API/container checks |
+| MEM-02 | Refresh remembered projects; report field changes without silently overwriting baseline | Passed live unchanged refresh + controlled changed-source unit case |
+| MEM-03 | Isolated workspace memory and passphrase recovery after container replacement | Passed separate HTTP cookie-context restore; physical-device/UI trial pending |
 | HOST-01 | Reproducible container + persistent volume + health check | Passed Docker build and Chromium smoke/restart |
-| HOST-02 | Public HTTPS deployment + persistence after redeploy | Blocked on refreshed Coolify access |
+| HOST-02 | Public HTTPS deployment + persistence after redeploy | Blocked on refreshed Coolify access and Porkbun DNS pointing at server |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
+| UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Awaiting user trial and approved UI testing |
 | RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |
 | SAFE-01..05 | Full code-enforced guard, confirmations, audit, injection boundaries, kill switch | Not implemented |
 | ROLO-01 | Real `capture_interaction(person,note,occurred_at,next_action)` with real application-state verifier and one UI mutation | Not implemented |

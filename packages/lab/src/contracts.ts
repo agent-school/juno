@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { PageTree, SemanticRef } from '@juno/browser';
+import { emptyWorkspace, type Workspace } from './workspace.js';
 
 export const InputSchema = z.object({
   person: z.enum(['Alice Smith', 'Bob Chen']),
@@ -44,6 +45,7 @@ export interface Receipt {
   metrics: { modelCalls: 0; modelCostUsd: 0; browserActions: number };
 }
 export interface LabState {
+  workspace: Workspace;
   variant: Variant;
   model: Model | null;
   interactions: Interaction[];
@@ -51,7 +53,7 @@ export interface LabState {
   feedback: { id: string; runId: string | null; text: string; createdAt: string }[];
 }
 export function emptyState(): LabState {
-  return { variant: 'original', model: null, interactions: [], receipts: [], feedback: [] };
+  return { workspace: emptyWorkspace(), variant: 'original', model: null, interactions: [], receipts: [], feedback: [] };
 }
 
 /** Persist semantic identity only; eN handles and coordinates expire with the page. */

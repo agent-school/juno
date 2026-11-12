@@ -25,7 +25,7 @@ function setBusy(value) {
 function showTab(tab) {
   for (const page of document.querySelectorAll('.page')) page.classList.toggle('hidden', page.id !== tab);
   for (const nav of document.querySelectorAll('.nav')) nav.classList.toggle('active', nav.dataset.tab === tab);
-  $('#breadcrumb').textContent = tab === 'evidence' ? 'RUN HISTORY' : tab === 'progress' ? 'PROGRESS & DIRECTION' : 'EXPERIMENT';
+  $('#breadcrumb').textContent = ({ tasks: 'TASKS', memory: 'MEMORY', evidence: 'LAB RECEIPTS', progress: 'PROGRESS & DIRECTION', experiment: 'BROWSER LAB' })[tab] || 'TASKS';
 }
 for (const nav of document.querySelectorAll('.nav')) nav.addEventListener('click', () => showTab(nav.dataset.tab));
 async function refresh() { state = await api('state'); render(); }

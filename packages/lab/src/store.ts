@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { emptyState, type LabState } from './contracts.js';
+import { emptyWorkspace } from './workspace.js';
 
 /** Single-process lab store. Atomic replacement; bounded state; never user-supplied paths. */
 export class Store {
@@ -20,6 +21,12 @@ export class Store {
         receipt.message = 'Server restarted during execution. Inspect fixture state before a new request.';
         changed = true;
       }
+      for (const task of state.workspace.tasks) {
+        if (task.status !== 'running') continue;
+        task.status = 'interrupted';
+        task.errors.push('Server restarted during research. Saved evidence may be incomplete; start a new request to refresh.');
+        changed = true;
+      }
       if (changed) this.write(owner, state);
     }
   }
@@ -31,7 +38,11 @@ export class Store {
   read(owner: string): LabState {
     const file = this.file(owner);
     if (!fs.existsSync(file)) return emptyState();
-    return JSON.parse(fs.readFileSync(file, 'utf8')) as LabState;
+    const state = JSON.parse(fs.readFileSync(file, 'utf8')) as LabState;
+    // Additive migration preserves existing browser-lab evidence.
+    state.workspace ??= emptyWorkspace();
+    state.workspace.retiredTaskIds ??= [];
+    return state;
   }
   write(owner: string, state: LabState): void {
     const file = this.file(owner);

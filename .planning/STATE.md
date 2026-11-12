@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 current_phase: 1.1
 current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
 status: ready_to_execute
-stopped_at: Hosted fixture lab quick task complete; user trial and permanent hosting pending
-last_updated: "2026-11-12T17:00:00Z"
+stopped_at: Real research and durable memory verified; Coolify deployment blocked on access and DNS
+last_updated: "2026-11-12T17:22:00Z"
 last_activity: 2026-11-12
-last_activity_desc: Verified hosted lab; reconciled inserted Phase 01.1
+last_activity_desc: Added live project research, source-backed memory and workspace recovery; preserved roadmap phase boundaries
 state_head: c930d48d3d6cce0b49d1eb5e436148c5c5d41ee5
 progress:
   total_phases: 8
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Hosted controlled lab (quick task); Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
+**Current focus:** Testable tasks/memory and controlled lab (quick tasks); requested Coolify deployment remains blocked. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
 
 ## Current Position
 
 Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
 Plan: Three plans exist, none executed
-Status: Hosted fixture lab verified; does not complete a roadmap phase
-Last activity: 2026-11-12 — Lab checks passed; container preview available; user trial and permanent hosting pending
+Status: Fixture lab plus real API task/memory slice verified; neither completes a roadmap phase
+Last activity: 2026-11-12 — Live research and memory recovery passed container replacement; user trial, UI testing and Coolify/DNS access pending
 
 Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
 
@@ -81,17 +81,26 @@ Recent decisions affecting current work:
 
 - Jack's lab trial: complete the in-app checklist, export evidence and leave feedback.
 - Refresh Coolify access for permanent HTTPS hosting; saved token and login were rejected.
+- Point only the `juno` DNS record at `54.157.57.51`; current records resolve to Porkbun parking.
+- Jack's task/memory trial: search → explicitly remember → refresh/diff → correct/forget; select the next recurring real task.
 - Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
 
 ### Blockers/Concerns
 
 - Saved Coolify token/login rejected. Public HTTPS deployment and redeploy persistence remain unverified; session preview works.
+- The public task is a pair of deterministic read-only GitHub API operations. It is not a general Muse-style chat planner or evidence of learned browser semantics on external sites.
 
 ## Quick Tasks Completed
 
 | # | Description | Date | Implementation commit | Directory |
 |---|-------------|------|-----------------------|-----------|
 | 261112-n4s | Hosted semantic operation lab with durable receipts and evidence gates | 2026-11-12 | 11a8acc | [Quick task](quick/261112-n4s-hosted-semantic-operation-workbench-with/) |
+
+## Quick Task Deliverables Verified; External Deployment Pending
+
+| # | Delivered slice | Remaining gate | Directory |
+|---|---|---|---|
+| 261112-nq5 | Live project research, refresh/diff, user-controlled durable memory, protected-workspace recovery | Coolify access/DNS, hosted redeploy proof and user/UI trial | [Plan, summary and verification](quick/261112-nq5-real-open-source-research-tasks-with-sou/) |
 
 - Phase 5 (Teach-by-Showing): single-demonstration → parameterized-skill generalization is MEDIUM confidence in research — needs a spike during planning
 - Phase 6 (Portal Recognition): portal fingerprinting approach needs empirical validation against real job portals (Greenhouse, Lever, Workday)

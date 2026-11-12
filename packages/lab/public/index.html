@@ -1,10 +1,48 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151b18"><title>Juno — Experiment lab</title><link rel="stylesheet" href="/app.css"><script defer src="/app.js"></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151b18"><title>Juno — Tasks & memory</title><link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script></head>
 <body>
-<aside class="sidebar"><a class="brand" href="/" aria-label="Juno home"><span class="brand-mark">j</span> juno<span class="alpha">LAB</span></a><div class="nav-label">WORKSPACE</div><nav><button class="nav active" data-tab="experiment">01 <span>Experiment</span></button><button class="nav" data-tab="evidence">02 <span>Run history</span><span id="history-count" class="count">0</span></button><button class="nav" data-tab="progress">03 <span>Progress & direction</span></button></nav><div class="sidebar-bottom"><span class="live-dot"></span> Browser core · Phase 1<br><small>A small test of a bigger thesis.</small><a href="https://github.com/agent-school/juno" target="_blank" rel="noreferrer">View repository ↗</a></div></aside>
+<aside class="sidebar"><a class="brand" href="/" aria-label="Juno home"><span class="brand-mark">j</span> juno<span class="alpha">EARLY</span></a><div class="nav-label">WORKSPACE</div><nav><button class="nav active" data-tab="tasks">01 <span>Tasks</span></button><button class="nav" data-tab="memory">02 <span>Memory</span></button><button class="nav" data-tab="experiment">03 <span>Browser lab</span></button><button class="nav" data-tab="evidence">04 <span>Lab receipts</span><span id="history-count" class="count">0</span></button><button class="nav" data-tab="progress">05 <span>Progress & direction</span></button></nav><div class="sidebar-bottom"><span class="live-dot"></span> Read, verify, remember<br><small>Real tasks. Visible boundaries.</small><a href="https://github.com/agent-school/juno" target="_blank" rel="noreferrer">View repository ↗</a></div></aside>
 <main>
-<header class="topbar"><span>JUNO / <b id="breadcrumb">EXPERIMENT</b></span><a href="/api/export" class="export">Export evidence ↗</a></header>
-<section class="page" id="experiment">
+<header class="topbar"><span>JUNO / <b id="breadcrumb">TASKS</b></span><a href="/api/export" class="export">Export workspace ↗</a></header>
+<section class="page" id="tasks">
+  <div class="eyebrow"><span class="live-dot"></span> REAL SOURCES · CONTEXT THAT STAYS</div>
+  <div class="page-title"><div><h1>Do the research.<br><em>Keep what matters.</em></h1><p class="lede">Find open-source tools, remember a shortlist, and come back to see what changed.</p></div><span class="version">FIRST REAL TASK<br>PUBLIC PROJECT RESEARCH</span></div>
+  <div class="workspace task-setup">
+    <section class="panel"><div class="panel-head">Research open-source tools <span class="tag">READ ONLY</span></div><form id="research-form" class="panel-body">
+      <label>What are you looking for?<input name="query" required maxlength="160" value="browser automation" placeholder="e.g. browser automation, local memory, speech recognition"></label>
+      <div class="input-grid"><label>Language<select name="language"><option value="remembered">Use remembered preference</option><option>Any</option><option>TypeScript</option><option>JavaScript</option><option>Python</option><option>Go</option><option>Rust</option></select></label><label>Minimum stars<input name="minStars" type="number" min="0" max="1000000" placeholder="Use remembered preference"></label></div>
+      <p class="hint" id="active-preferences">Loading remembered preferences…</p>
+      <div class="button-row"><button class="primary" id="research-submit" type="submit">Research live projects <span>↗</span></button><button class="stop" id="research-stop" type="button" disabled>Stop research</button></div>
+      <p class="hint mini">Checks up to five projects against GitHub’s public API. No account changes or model calls. This first task uses structured search, not a general chat planner.</p>
+    </form></section>
+    <section class="panel"><div class="panel-head">Your workspace <span id="workspace-kind" class="tag">THIS BROWSER</span></div><div class="panel-body">
+      <p id="workspace-summary" class="hint">Tasks and memory are saved on this server for this browser.</p>
+      <details id="account-controls"><summary>Protect this workspace or open an existing one</summary><form id="account-form" class="account-form">
+        <label>Workspace name<input name="handle" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]{3,32}" autocomplete="username" placeholder="letters, numbers, underscore or hyphen"></label>
+        <label>Passphrase<input name="passphrase" type="password" required minlength="12" maxlength="128" autocomplete="current-password" placeholder="At least 12 characters"></label>
+        <div class="button-row"><button class="secondary" name="action" value="register" type="submit">Protect this workspace</button><button class="secondary" name="action" value="login" type="submit">Open existing</button></div>
+        <p class="hint mini">Use the name and passphrase on another device to continue. Keep the passphrase yourself; password recovery is not available yet. Opening another workspace keeps this browser’s previous data separate.</p>
+      </form></details>
+      <button id="account-logout" class="text-button hidden">Sign out and start a fresh workspace →</button>
+      <div class="memory-summary" id="memory-summary"></div>
+      <button id="refresh-projects" class="secondary full" disabled>Refresh remembered projects</button>
+    </div></section>
+  </div>
+  <div id="task-notice" role="status" aria-live="polite"></div>
+  <section class="panel latest"><div class="panel-head">Task activity <span id="task-count" class="tag">0 tasks</span></div><div class="task-layout"><div id="task-list"></div><div id="task-detail" class="panel-body"><p class="hint">Start a live search. Every source check and failure will appear here, even if you leave this page.</p></div></div></section>
+</section>
+<section class="page hidden" id="memory">
+  <div class="eyebrow">YOU DECIDE WHAT STAYS</div><h1>A memory you<br><em>can inspect.</em></h1><p class="lede">Preferences guide the next search. Notes keep context. Source snapshots let you compare a later result.</p>
+  <div class="workspace">
+    <section class="panel"><div class="panel-head">Research preferences <span class="tag">USER PROVIDED</span></div><form id="preferences-form" class="panel-body"><label>Preferred language<select name="language"><option>Any</option><option>TypeScript</option><option>JavaScript</option><option>Python</option><option>Go</option><option>Rust</option></select></label><label>Default minimum stars<input name="minStars" type="number" min="0" max="1000000" required></label><button class="secondary" type="submit">Save preferences</button><p class="hint mini" id="preferences-version"></p></form></section>
+    <section class="panel"><div class="panel-head">Remember something <span class="tag">EXPLICIT SAVE</span></div><form id="memory-note-form" class="panel-body"><input name="id" type="hidden"><label>Context you want to keep<textarea name="text" required maxlength="2000" placeholder="e.g. For browser automation, I care about accessible semantics and deterministic replay."></textarea></label><div class="button-row"><button class="secondary" type="submit" id="save-note">Remember note</button><button type="button" class="text-button hidden" id="cancel-note-edit">Cancel edit</button></div><p class="hint mini">Matching notes appear as task context. Only the structured preferences above change filters. Page descriptions never become instructions or notes automatically.</p></form></section>
+  </div>
+  <div id="memory-notice" role="status" aria-live="polite"></div>
+  <div class="memory-heading"><h2>Saved context</h2><label class="memory-filter">Find in memory<input id="memory-filter" type="search" maxlength="160" placeholder="Project, note or search recipe…"></label></div>
+  <div id="memory-items" class="memory-grid"></div>
+  <p class="hint mini">Forgetting a note also removes its text from recalled task context. Public source results and task inputs remain in task history until you forget those receipts. Export includes memory and task evidence, never account credentials.</p>
+</section>
+<section class="page hidden" id="experiment">
 <div class="eyebrow"><span class="live-dot"></span> OWNED FIXTURE · NO API KEY NEEDED</div><div class="page-title"><div><h1>Learn the page.<br><em>Keep the understanding.</em></h1><p class="lede">Observe once. Replay a typed operation. Check what actually changed.</p></div><span class="version">EXPERIMENT 001<br>SEMANTIC REPLAY</span></div>
 <div class="scope-note">This lab operates the sandbox below with real Chromium and Juno’s semantic reader/actor. It does not connect to your accounts. The general compiler and real Rolo benchmark are still ahead.</div>
 <div class="workspace">
