@@ -10,12 +10,12 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 
 | Gate | Acceptance evidence | Status |
 |---|---|---|
-| LAB-01 | Compile live fixture semantics; persist role/name bindings without eN refs | Implemented; verification pending |
-| LAB-02 | Reuse model with new inputs and a new browser; independently verify all effects | Implemented; verification pending |
-| LAB-03 | Reorder DOM; fail on renamed/ambiguous controls; recover by explicit recompile | Implemented; verification pending |
-| LAB-04 | Reject no-effect writes; suppress duplicate requests; preserve uncertain writes | Implemented; verification pending |
-| LAB-05 | Export durable receipts/feedback; session isolation and restart persistence | Implemented; verification pending |
-| HOST-01 | Reproducible container + persistent volume + health check | Implemented; verification pending |
+| LAB-01 | Compile live fixture semantics; persist role/name bindings without eN refs | Passed browser integration + unit checks |
+| LAB-02 | Reuse model with new inputs and a new browser; independently verify all effects | Passed browser integration |
+| LAB-03 | Reorder DOM; fail on renamed/ambiguous controls; recover by explicit recompile | Passed browser integration |
+| LAB-04 | Reject no-effect writes; suppress duplicate requests; preserve uncertain writes | Passed integration + restart unit checks |
+| LAB-05 | Export durable receipts/feedback; session isolation and restart persistence | Passed integration + live container restart |
+| HOST-01 | Reproducible container + persistent volume + health check | Passed Docker build and Chromium smoke/restart |
 | HOST-02 | Public HTTPS deployment + persistence after redeploy | Blocked on refreshed Coolify access |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
 | RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |

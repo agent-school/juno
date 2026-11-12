@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 current_phase: 1.1
 current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
-status: executing_quick_task
-stopped_at: Hosted fixture lab implementation; validation pending
+status: ready_to_execute
+stopped_at: Hosted fixture lab quick task complete; user trial and permanent hosting pending
 last_updated: "2026-11-12T17:00:00Z"
 last_activity: 2026-11-12
-last_activity_desc: Hosted lab quick task; reconcile inserted Phase 01.1
+last_activity_desc: Verified hosted lab; reconciled inserted Phase 01.1
 state_head: c930d48d3d6cce0b49d1eb5e436148c5c5d41ee5
 progress:
   total_phases: 8
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 
 Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
 Plan: Three plans exist, none executed
-Status: Hosted fixture lab quick task in progress; does not complete a roadmap phase
-Last activity: 2026-11-12 — Implemented controlled lab, validation pending
+Status: Hosted fixture lab verified; does not complete a roadmap phase
+Last activity: 2026-11-12 — Lab checks passed; container preview available; user trial and permanent hosting pending
 
 Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
 
@@ -79,11 +79,19 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Finish quick task 261112-n4s verification, user preview and deployment package.
+- Jack's lab trial: complete the in-app checklist, export evidence and leave feedback.
 - Refresh Coolify access for permanent HTTPS hosting; saved token and login were rejected.
 - Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
 
 ### Blockers/Concerns
+
+- Saved Coolify token/login rejected. Public HTTPS deployment and redeploy persistence remain unverified; session preview works.
+
+## Quick Tasks Completed
+
+| # | Description | Date | Implementation commit | Directory |
+|---|-------------|------|-----------------------|-----------|
+| 261112-n4s | Hosted semantic operation lab with durable receipts and evidence gates | 2026-11-12 | 11a8acc | [Quick task](quick/261112-n4s-hosted-semantic-operation-workbench-with/) |
 
 - Phase 5 (Teach-by-Showing): single-demonstration → parameterized-skill generalization is MEDIUM confidence in research — needs a spike during planning
 - Phase 6 (Portal Recognition): portal fingerprinting approach needs empirical validation against real job portals (Greenhouse, Lever, Workday)

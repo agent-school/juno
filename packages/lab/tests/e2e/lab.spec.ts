@@ -49,7 +49,7 @@ test('compiles a real page, replays new inputs across browser restarts, detects 
 
 test('isolates sessions, rejects cross-site writes and never accepts external URLs', async ({ playwright, request }) => {
   await request.get('/api/state');
-  const other = await playwright.request.newContext({ baseURL: 'http://127.0.0.1:5124' });
+  const other = await playwright.request.newContext({ baseURL: 'http://127.0.0.1:5124', extraHTTPHeaders: {} });
   try {
     const isolated = await (await other.get('/api/state')).json();
     expect(isolated.receipts).toEqual([]);

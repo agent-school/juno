@@ -110,11 +110,15 @@ export class Runner {
         if (receipt.status !== 'verified') {
           receipt.category = 'verification';
           receipt.message = 'Clicks completed, but fixture state did not prove the requested effect.';
+          receipt.recovery.push('Inspect saved fixture records. Restore the original page variation before starting a new intended interaction.');
         }
       });
     } catch (error) {
       receipt.status = submitted ? 'uncertain' : 'failed';
       receipt.category = categoryFor(error);
+      receipt.recovery.push(submitted ? 'Inspect fixture state before creating another request. This request ID will never be re-executed.' :
+        receipt.category === 'precondition' ? 'Remove ambiguous controls or explicitly recompile the changed page, then start a new request.' :
+        'Check browser availability and the saved observations before starting a new request.');
       // Raw Playwright errors may contain page content/transport details. Keep the public receipt bounded.
       receipt.message = receipt.category === 'precondition' && error instanceof Error ? error.message :
         this.cancelled ? 'Execution stopped. Inspect fixture state before a new request.' :
