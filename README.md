@@ -1,5 +1,21 @@
 # Juno
 
+## Try the experiment lab
+
+Juno now has a browser-based lab: a controlled, synthetic relationship app operated by the real `@juno/browser` reader and actor. Observe and save a semantic binding, replay `capture_interaction(...)`, change the page, and inspect verified receipts and failures. The lab is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
+
+```bash
+# Node 24 is required by the pinned pnpm 11 toolchain.
+pnpm install --frozen-lockfile
+pnpm --filter @juno/browser exec playwright install chrome
+pnpm lab
+# Open http://localhost:5123
+```
+
+No API key is needed. Follow the lab's **Progress & direction** checklist. Run history, saved bindings and feedback persist in `.juno-lab/`, isolated by this browser's HttpOnly cookie. Use **Export evidence** to keep or share your results. Use synthetic inputs only.
+
+For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). Only Browser Core is a completed roadmap phase; the lab does not mark the larger compiler, safety or teach-by-showing phases complete.
+
 Juno is a semantic website compiler: it learns how any website works through safe exploration and teach-by-showing, saves that understanding permanently per site, and replays it to automate actions that are hard to automate any other way (messaging someone on Instagram, signing a contract, applying to a job).
 
 **Status:** Phase 1 of 7 complete — the Browser Core. Juno can already load any site in a real persistent Chrome profile, read the page's semantic structure from the accessibility tree, and act on elements by semantic reference with fail-safe behavior. Later phases add the safety guard, site compiler, planner/replay, teach-by-showing, and voice.
@@ -25,7 +41,7 @@ The [`@juno/browser`](packages/browser) package — the foundation every later p
 
 ## Prerequisites
 
-- **Node.js 22 LTS**
+- **Node.js 24 LTS** (browser library supports Node 22; the pinned pnpm 11 development toolchain needs Node 24)
 - **pnpm** (`npm install -g pnpm`)
 - **Google Chrome** installed at the system location (default launch uses your real Chrome via `channel: 'chrome'`)
 

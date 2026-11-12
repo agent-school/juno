@@ -1,19 +1,19 @@
 ---
 gsd_state_version: 1.0
-current_phase: 2
-current_phase_name: Safe-Execution Guard
-status: planning
-stopped_at: Phase 01 complete, ready to plan Phase 2
-last_updated: "2026-08-24T00:14:54.481Z"
-last_activity: 2026-08-24
-last_activity_desc: Phase 01 complete, transitioned to Phase 2
+current_phase: 1.1
+current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
+status: executing_quick_task
+stopped_at: Hosted fixture lab implementation; validation pending
+last_updated: "2026-11-12T17:00:00Z"
+last_activity: 2026-11-12
+last_activity_desc: Hosted lab quick task; reconcile inserted Phase 01.1
 state_head: c930d48d3d6cce0b49d1eb5e436148c5c5d41ee5
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 1
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
-  percent: 14
+  percent: 12
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Phase 2 — Safe-Execution Guard
+**Current focus:** Hosted controlled lab (quick task); Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
 
 ## Current Position
 
-Phase: 2 — Safe-Execution Guard
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-24 — Phase 01 complete, transitioned to Phase 2
+Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
+Plan: Three plans exist, none executed
+Status: Hosted fixture lab quick task in progress; does not complete a roadmap phase
+Last activity: 2026-11-12 — Implemented controlled lab, validation pending
 
-Progress: [██░░░░░░░░] 14%
+Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
 
 ## Performance Metrics
 
@@ -79,7 +79,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- Finish quick task 261112-n4s verification, user preview and deployment package.
+- Refresh Coolify access for permanent HTTPS hosting; saved token and login were rejected.
+- Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
 
 ### Blockers/Concerns
 
