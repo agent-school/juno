@@ -16,12 +16,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Inserted Phase 01.1: Containerized Host-Browser Runtime
 
-- [ ] **RUNTIME-01**: Juno runs its Node/Playwright client in Docker and attaches only to a separately launched, dedicated Windows Chrome over CDP without requiring Node.js or pnpm on the Windows host
-- [ ] **RUNTIME-02**: The Windows launcher discovers a valid Chrome executable, uses a dedicated persistent non-default profile compatible with Chrome 136+, preserves special-character paths, and tracks only its owned browser process
+- [x] **RUNTIME-01**: Juno runs its Node/Playwright client in Docker and attaches only to a separately launched, dedicated Windows Chrome over CDP without requiring Node.js or pnpm on the Windows host
+- [x] **RUNTIME-02**: The Windows launcher discovers a valid Chrome executable, uses a dedicated persistent non-default profile compatible with Chrome 136+, preserves special-character paths, and tracks only its owned browser process
 - [ ] **RUNTIME-03**: The CDP path uses Docker bridge networking with a configured fixed port, bounded preflight/retry and `/json/version` readiness validation, safe websocket host normalization, and a narrowly scoped firewall boundary
-- [ ] **RUNTIME-04**: The CDP integration harness owns a configurable fixture port without stale-server reuse and releases its fixture/container resources on every exit path
+- [x] **RUNTIME-04**: The CDP integration harness owns a configurable fixture port without stale-server reuse and releases its fixture/container resources on every exit path
 - [x] **RUNTIME-05**: Existing local `BrowserSession` launch behavior and `SemanticPageReader`/`SemanticActor` semantics remain unchanged while attach mode reuses the same page, perception, and fail-safe action surface
-- [ ] **RUNTIME-06**: Explicit PowerShell scripts and documentation provide actual Windows smoke gates for discovery, networking, semantic attach, profile/process ownership, and normal/error/interrupted/container-stop cleanup
+- [x] **RUNTIME-06**: Explicit PowerShell scripts and documentation provide actual Windows smoke gates for discovery, networking, semantic attach, profile/process ownership, and normal/error/interrupted/container-stop cleanup
 
 ### Safety
 
@@ -140,12 +140,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRWS-02 | Phase 1 | Complete |
 | BRWS-03 | Phase 1 | Complete |
 | BRWS-04 | Phase 1 | Complete |
-| RUNTIME-01 | Phase 01.1 | Pending |
-| RUNTIME-02 | Phase 01.1 | Pending |
-| RUNTIME-03 | Phase 01.1 | Pending |
-| RUNTIME-04 | Phase 01.1 | Pending |
+| RUNTIME-01 | Phase 01.1 | Verified — Windows Server 2022 / Docker Desktop WSL2; no host Node/pnpm |
+| RUNTIME-02 | Phase 01.1 | Verified — real discovery, profile/alias rejection, quoting, retention and identity tests |
+| RUNTIME-03 | Phase 01.1 | Partial — bridge/readiness passed; enabled-firewall enforcement/backend boundary open |
+| RUNTIME-04 | Phase 01.1 | Verified — actual Windows normal/error/startup/build/test Ctrl-C/container-stop resource teardown; forced-host-kill limitation documented |
 | RUNTIME-05 | Phase 01.1 | Complete — native/container attach semantics |
-| RUNTIME-06 | Phase 01.1 | Pending |
+| RUNTIME-06 | Phase 01.1 | Verified — actual Windows smoke matrix and two startup-race corrections; firewall enforcement separately open under RUNTIME-03 |
 | SAFE-01 | Phase 2 | Complete — guarded execution |
 | SAFE-02 | Phase 2 | Complete — explicit confirmation |
 | SAFE-03 | Phase 2 | Complete — read-only guard |

@@ -18,7 +18,7 @@ The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website �
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile (completed 2026-08-24)
-- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Runtime and launcher implemented; Linux/CDP/container evidence passes. Actual Windows Desktop smoke matrix remains open.
+- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Real Windows Chrome/Docker Desktop matrix passed, including corrected startup Ctrl-C cleanup. Firewall enforcement/backend boundary remains open under RUNTIME-03.
 - [x] **Phase 2: Safe-Execution Guard** - Guarded production execution verified: classification, confirmation, audit, read-only mode, injection boundary and abort. See Phase 2 verification.
 - [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
 - [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
@@ -65,8 +65,8 @@ Plans:
 
 Plans:
 
-- [ ] 01.1-01-PLAN.md — CDP readiness, websocket normalization, attach-only session, and semantic tracer
-- [ ] 01.1-02-PLAN.md — Docker bridge harness, container-owned fixture, and no-reuse CDP test configuration
+- [x] 01.1-01-PLAN.md — CDP readiness, websocket normalization, attach-only session, and semantic tracer
+- [x] 01.1-02-PLAN.md — Docker bridge harness, container-owned fixture, and no-reuse CDP test configuration
 - [ ] 01.1-03-PLAN.md — Windows Chrome launcher, ownership-safe cleanup, compatibility matrix, and smoke-test documentation
 
 ### Phase 2: Safe-Execution Guard
@@ -173,7 +173,7 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
-| 1.1. Host-Browser Runtime & Windows | 0/3 accepted | Implemented; Windows Desktop matrix open | - |
+| 1.1. Host-Browser Runtime & Windows | 2/3 accepted | Windows lifecycle verified; RUNTIME-03 firewall acceptance open | - |
 | 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
 | 3. Site Compiler & Per-Site Memory | 1 substrate plan | In progress; broader site validation open | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
