@@ -7,7 +7,7 @@ stopped_at: Hosted guard and typed knowledge UI passed; Windows Desktop and broa
 last_updated: "2026-11-13T03:12:31Z"
 last_activity: 2026-11-13
 last_activity_desc: Deployed guarded execution and typed site knowledge; hosted model/replay/forget and research/memory regression passed
-state_head: e2aa22df49800d50a10f0bd4ba279b142401037d
+state_head: 095481119b579979c5c19f4d68c70380b32d43da
 progress:
   total_phases: 8
   completed_phases: 2
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Phase 2 guarded execution is verified; Phase 3 typed site knowledge substrate is integrated into the controlled Browser lab. Phase 01.1 runtime/launcher code and Linux container smoke pass, with real Windows Desktop gates open. Deployment/UI/CI follow-up is pending. PR #2 merge remains blocked by GitHub integration HTTP 403 despite explicit user authorization; PR #3 carries the new work.
+**Current focus:** Phase 2 guarded execution and the Phase 3 typed site-knowledge substrate are deployed and verified in Browser lab. Hosted UI, asset/persistence checks and CI pass; broader site compilation remains in progress. Phase 01.1 runtime/launcher code and Linux container smoke pass, with real Windows Desktop gates open. PR #2 merge remains blocked by GitHub integration HTTP 403 despite explicit user authorization; PR #3 carries the new work.
 
 ## Current Position
 
 Phase: 3 — Site Compiler & Per-Site Memory
 Plan: 03-01 substrate complete; broader site compiler validation remains
 Status: Phase 2 complete for guarded production execution; Phase 01.1 Windows gates remain open
-Last activity: 2026-11-13 — Hosted typed model/replay/audit/drift/forget/recompile UI and focused research/memory/recovery regression passed on e2aa22d. Typechecks, 91 unit tests, 20 standard browser/API tests and native/container CDP tracers passed before follow-up contract constraints and roadmap copy. Windows PowerShell helper CI passes; actual Windows Desktop remains open.
+Last activity: 2026-11-13 — Hosted typed model/replay/audit/drift/forget/recompile UI and focused research/memory/recovery regression passed on e2aa22d. Follow-up 0954811 tightens malformed-contract constraints and updates roadmap copy; typechecks, 92 unit tests, 20 standard browser/API tests, native/container CDP tracers and CI pass. Final deployment/asset checks pass with unchanged /data storage. Windows PowerShell helper CI passes; actual Windows Desktop remains open.
 
 Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
@@ -40,17 +40,19 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 
 - Total plans completed: 5
 - Average duration: -
-- Total execution time: 0 hours
+- Total execution time: Not instrumented; see plan summaries and verification evidence
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 3 | - | - |
+| 02 | 1 | - | - |
+| 03 substrate | 1 | - | - |
 
 **Recent Trend:**
 
-- Last 5 plans: none yet
+- Last 5 plans: Phase 01 P01/P02/P03, Phase 02 P01, Phase 03 P01 substrate
 - Trend: -
 
 *Updated after each plan completion*
