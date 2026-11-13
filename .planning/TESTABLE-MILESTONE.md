@@ -19,13 +19,14 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 | TASK-02 | Background task receipts, replay idempotency, stop, interruption and bounded source execution | Passed unit/API checks; replay survived container replacement |
 | MEM-01 | Versioned defaults, editable notes, explicit source/recipe saves, inspect/export/forget with provenance | Passed unit/API/container checks |
 | MEM-02 | Refresh remembered projects; report field changes without silently overwriting baseline | Passed live unchanged refresh + controlled changed-source unit case |
-| MEM-03 | Isolated workspace memory and passphrase recovery after container replacement | Passed separate HTTP cookie-context restore; physical-device/UI trial pending |
+| MEM-03 | Isolated workspace memory and passphrase recovery after container replacement | Passed separate HTTP cookie-context restore and recorded fresh-context UI recovery/isolation; physical-device trial pending |
 | HOST-01 | Reproducible container + persistent volume + health check | Passed Docker build and Chromium smoke/restart |
 | HOST-02 | Public HTTPS deployment + persistence after redeploy | Passed on temporary and requested hostnames, including upgrade to redesigned interface; see deployment verification and monitoring caveat |
 | HOST-03 | Requested `juno.agentschool.io` hostname resolves to Coolify and serves valid HTTPS | Passed 2026-11-13: A `54.157.57.51`, certificate-verified HTTPS `/healthz` 200 |
-| DESIGN-01 | Research desk, searchable memory and consistent responsive lab/evidence views | Deployed; syntax/typecheck, 52 unit and 19 integration tests passed; static desktop/390px/320px review and deployed asset hashes passed; UI-driven flow testing pending |
+| DESIGN-01 | Research desk, searchable memory and consistent responsive lab/evidence views | Deployed; syntax/typecheck, 54 unit and 19 integration tests passed; static desktop/390px/320px review and deployed asset hashes passed; recorded UI flow and final corrections passed with limits in 261113-2ca verification |
+| UI-01 | Recorded agent UI trial of research → explicit memory → refresh, recovery, navigation and regression fixes | Passed full flow on 64ad951 and targeted final regression on 18bcdf9; nonzero diffs, naturally long polling, partial/interrupted outcomes, physical mobile and feedback confirmation excluded |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
-| UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Awaiting user trial and approved UI testing |
+| UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Recorded agent trial passed; awaiting Jack's own trial |
 | RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |
 | SAFE-01..05 | Full code-enforced guard, confirmations, audit, injection boundaries, kill switch | Not implemented |
 | ROLO-01 | Real `capture_interaction(person,note,occurred_at,next_action)` with real application-state verifier and one UI mutation | Not implemented |

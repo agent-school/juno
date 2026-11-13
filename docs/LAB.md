@@ -1,6 +1,6 @@
 # Juno experiment lab
 
-The application now opens on **Tasks**, a real public-project research and memory workbench. See [Tasks and memory](TASKS-AND-MEMORY.md) for its walkthrough and boundaries. Select **Browser lab** to run the controlled semantic browser experiment below; **Lab receipts** contains its evidence.
+The application now opens on **Research**, a real public-project research and memory workbench. See [Tasks and memory](TASKS-AND-MEMORY.md) for its walkthrough and boundaries. Select **Browser lab** to run the controlled semantic browser experiment below; **Lab receipts** contains its evidence.
 
 The lab runs a real headless Chromium instance for each compile/replay. It reads with `SemanticPageReader`, binds exact observed roles/names, executes with `SemanticActor`, re-observes the page and verifies the resulting fixture records independently. A fresh browser is launched for each operation; saved semantic bindings survive outside it.
 
@@ -47,9 +47,11 @@ The workbench is deployed on Coolify at **https://juno.agentschool.io**, with a 
 
 On 2026-11-13, **`juno.agentschool.io`** resolved directly to `54.157.57.51` and its certificate-verified HTTPS health check returned 200. The temporary **https://juno.54.157.57.51.sslip.io** hostname remains an alternative. Protect a workspace with a passphrase before moving between hostnames: cookies do not transfer, but both Coolify hostnames use the same stored accounts. The earlier Devin preview uses separate storage.
 
-The research desk redesign is pinned to `0667ab34344ebce66465f46f33275f1c9d601317`. Upgrade checks preserved existing task/memory, account recovery, semantic bindings, browser receipts and fixture effects; all eight deployed UI/font assets matched the checked implementation. [Redesign and upgrade verification](../.planning/quick/261113-0u5-rethink-juno-interface-using-impeccable-/261113-0u5-VERIFICATION.md).
+The research desk was initially deployed at `0667ab34344ebce66465f46f33275f1c9d601317`. Upgrade checks preserved existing task/memory, account recovery, semantic bindings, browser receipts and fixture effects; all eight deployed UI/font assets matched the checked implementation. [Redesign and upgrade verification](../.planning/quick/261113-0u5-rethink-juno-interface-using-impeccable-/261113-0u5-VERIFICATION.md).
 
-Monitoring caveat: Coolify's API still reports `exited:unhealthy` despite successful deployments, application logs and public HTTPS/API checks. Its detected Dockerfile health check and named volume are confirmed, but actual host-level Docker health has not been independently inspected. Do not treat that cached field as proof of either health or outage; reconcile it separately. UI usability and Jack's trial remain pending.
+The current implementation is pinned to `18bcdf9c229a331c5043766433c146b10816d0e4`, correcting empty-workspace initialization and a stale Memory notice after receipt deletion. Recorded UI testing passed the live research/memory/recovery flow and a verified Browser lab replay; a final targeted regression confirmed clean empty Research and retained memory/defaults/lab evidence. [Revision-specific UI evidence and limits](../.planning/quick/261113-2ca-fix-empty-research-workspace-initializat/261113-2ca-VERIFICATION.md).
+
+Monitoring caveat: Coolify's API still reports `exited:unhealthy` despite successful deployments, application logs and public HTTPS/API checks. Its detected Dockerfile health check and named volume are confirmed, but actual host-level Docker health has not been independently inspected. Do not treat that cached field as proof of either health or outage; reconcile it separately. Jack's own trial and the documented additional UI coverage remain pending.
 
 ## Boundaries
 
@@ -66,4 +68,4 @@ Monitoring caveat: Coolify's API still reports `exited:unhealthy` despite succes
 
 `pnpm build`, `pnpm test`, `pnpm test:e2e`. Browser-backed lab tests drive the HTTP API, which launches real Chromium and the production reader/actor. They cover parameterization, model reuse, UI reordering, fail-closed label drift/ambiguity, explicit recompile, silent no-effect writes, duplicate suppression, evidence export, owner isolation and request boundaries. Unit tests additionally cover invalid dates, duplicate/wrong effects, persisted feedback/models and interrupted-write restart semantics.
 
-UI usability, real-account flows, Windows/CDP and baseline comparisons require their own recorded evidence. They are not implied by these automated checks.
+The recorded hosted UI evidence is separate from these automated checks. Real-account flows, Windows/CDP, baseline comparisons and the additional UI coverage limits still require their own evidence.

@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 current_phase: 1.1
 current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
 status: ready_to_execute
-stopped_at: Research desk deployed with requested-domain HTTPS and upgrade persistence verified; user trial pending
-last_updated: "2026-11-13T00:58:31Z"
+stopped_at: Recorded research and memory UI trial passed; initialization and stale-notice fixes deployed; Jack's own trial pending
+last_updated: "2026-11-13T02:05:24Z"
 last_activity: 2026-11-13
-last_activity_desc: Deployed Impeccable-informed research desk and verified public assets and durable task memory across upgrade
-state_head: 0667ab34344ebce66465f46f33275f1c9d601317
+last_activity_desc: Completed hosted UI trial and deployed two client corrections with regression coverage
+state_head: 18bcdf9c229a331c5043766433c146b10816d0e4
 progress:
   total_phases: 8
   completed_phases: 1
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Redesigned research desk, durable memory and controlled lab deployed on Coolify with requested-domain HTTPS and upgrade persistence verified. User/UI trial remains. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
+**Current focus:** Redesigned research desk, durable memory and controlled lab deployed on Coolify with requested-domain HTTPS and upgrade persistence verified. Recorded UI trial passed after two client corrections; Jack's own trial remains. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
 
 ## Current Position
 
 Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
 Plan: Three plans exist, none executed
 Status: Fixture lab plus real API task/memory slice verified; neither completes a roadmap phase
-Last activity: 2026-11-13 — Research desk deployed on the requested domain; syntax/typecheck, 52 unit and 19 integration checks, static responsive review and 25 hosted assertions passed. User trial and UI-driven flow testing remain.
+Last activity: 2026-11-13 — Hosted research/memory/recovery UI trial and Browser lab replay passed; empty-state and stale-notice corrections deployed. Syntax/typecheck, 54 unit and 19 integration tests passed. Full-flow UI run on `64ad951`, final targeted regression on `18bcdf9`; Jack's own trial remains.
 
 Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
 
@@ -80,7 +80,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Jack's lab trial: complete the in-app checklist, export evidence and leave feedback.
-- Complete the redesigned research/memory UI trial; interactive form, keyboard and polling usability remain separate from static review and API checks.
+- Review recorded research/memory UI evidence with Jack; remaining UI gaps include nonzero diffs, naturally long-running polling, partial/interrupted outcomes and physical mobile devices. Instrumented equal-snapshot preservation passed separately.
 - Reconcile Coolify's cached `exited:unhealthy` field with successful live checks; host Docker health has not been independently inspected.
 - Jack's task/memory trial: search → explicitly remember → refresh/diff → correct/forget; select the next recurring real task.
 - Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
@@ -103,7 +103,8 @@ Recent decisions affecting current work:
 |---|---|---|---|
 | 261112-nq5 | Live project research, refresh/diff, user-controlled durable memory, protected-workspace recovery | User/UI trial; hosting evidence followed in 261112-p1y | [Plan, summary and verification](quick/261112-nq5-real-open-source-research-tasks-with-sou/) |
 | 261112-p1y | Coolify deployment, valid public HTTPS on temporary and requested hostnames, live research/browser checks and hosted memory/account persistence across redeploy | Monitoring discrepancy and user/UI trial | [Plan, summary and verification](quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/) |
-| 261113-0u5 | Impeccable-informed research desk and memory interface deployed on requested domain; 25 hosted assertions including asset hashes, recovery and upgrade persistence passed | User/UI trial and monitoring discrepancy | [Plan, summary and verification](quick/261113-0u5-rethink-juno-interface-using-impeccable-/) |
+| 261113-0u5 | Impeccable-informed research desk and memory interface deployed on requested domain; 25 hosted assertions including asset hashes, recovery and upgrade persistence passed | Jack's own trial and monitoring discrepancy; recorded UI verification followed in 261113-2ca | [Plan, summary and verification](quick/261113-0u5-rethink-juno-interface-using-impeccable-/) |
+| 261113-2ca | Recorded hosted research/memory/recovery and lab UI trial; empty-state and stale-notice corrections with shipped-client regressions, deployed to requested domain | Jack's own trial, listed UI coverage limits and monitoring discrepancy | [Plan, summary and verification](quick/261113-2ca-fix-empty-research-workspace-initializat/) |
 
 - Phase 5 (Teach-by-Showing): single-demonstration → parameterized-skill generalization is MEDIUM confidence in research — needs a spike during planning
 - Phase 6 (Portal Recognition): portal fingerprinting approach needs empirical validation against real job portals (Greenhouse, Lever, Workday)
@@ -117,6 +118,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-11-13T00:58:31Z
-Stopped at: Redesigned research desk deployed and verified; user/UI trial pending; Phase 01.1 remains unimplemented
+Last session: 2026-11-13T02:05:24Z
+Stopped at: Recorded hosted UI trial passed after deployed corrections; Jack's own trial pending; Phase 01.1 remains unimplemented
 Resume file: None
