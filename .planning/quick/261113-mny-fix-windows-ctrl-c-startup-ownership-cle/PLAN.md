@@ -6,7 +6,7 @@ Close the real Windows Ctrl-C window between Chrome launch and CIM ownership cap
 
 ## Tasks
 
-1. Retain the launched process and selected port in cleanup scope. If interrupted before ownership capture, reconstruct the candidate record and pass it through the existing fresh PID/creation/profile/port/token check before stopping anything.
+1. Allocate the process object and record the selected port in cleanup scope before invoking its .NET Start method. If interrupted before ownership capture, reconstruct the candidate record and pass it through the existing fresh PID/creation/profile/port/token check before stopping anything. An allocated object that never started must be harmless to clean up.
 2. Rerun helper contracts and the actual Windows readiness-interruption reproducer and full Docker Desktop semantic run on the pushed implementation.
 3. Update runtime docs, requirements, roadmap and state with actual Windows observations and remaining firewall/backend gates. Settle PR checks.
 

@@ -157,9 +157,13 @@ function Invoke-JunoRuntime {
       New-NetFirewallRule -Name $ruleName -DisplayName 'Juno owned CDP run' -Direction Inbound -Action Allow -Protocol TCP -LocalPort $candidate -Program $chrome -RemoteAddress $DockerRemoteScope.Split(',') -Profile Any | Out-Null
       $firewall = $ruleName
       $arguments = (Get-JunoArguments $profile $candidate $token | ForEach-Object { ConvertTo-JunoArgument $_ }) -join ' '
-      # Retain the returned process handle in the cleanup scope, including before CIM capture.
+      # Allocate before starting: Ctrl-C can discard a Start-Process cmdlet's return value.
       $launchedPort = $candidate
-      $process = Start-Process -FilePath $chrome -ArgumentList $arguments -PassThru
+      $process = New-Object System.Diagnostics.Process
+      $process.StartInfo.FileName = $chrome
+      $process.StartInfo.Arguments = $arguments
+      $process.StartInfo.UseShellExecute = $false
+      if (-not $process.Start()) { throw 'Owned Chrome could not be started.' }
       $observed = Get-JunoProcess $process.Id
       $captureUntil = [DateTime]::UtcNow.AddSeconds(2)
       while (-not $observed -and [DateTime]::UtcNow -lt $captureUntil -and -not $process.HasExited) {
@@ -180,7 +184,8 @@ function Invoke-JunoRuntime {
         } catch { Start-Sleep -Milliseconds 100 }
       }
       if ($ready) { break }
-      Stop-JunoOwnedChrome $owner; $owner = $null; $process = $null
+      Stop-JunoOwnedChrome $owner; $owner = $null
+      $process.Dispose(); $process = $null
       Remove-NetFirewallRule -Name $firewall; $firewall = $null
     }
     if (-not $owner -or -not $ready) { throw 'No owned CDP browser became ready on the bounded candidate ports.' }
@@ -194,15 +199,21 @@ function Invoke-JunoRuntime {
     finally {
       try {
         if (-not $owner -and $process) {
-          $observed = Get-JunoProcess $process.Id
-          if ($observed) {
-            $owner = [pscustomobject]@{ Pid=$process.Id; CreationDate=$observed.CreationDate; Profile=$profile; Port=$launchedPort; Token=$token }
+          # An interrupt or launch failure may leave an allocated object that never started.
+          $launchedId = $null
+          try { $launchedId = $process.Id } catch { }
+          if ($null -ne $launchedId) {
+            $observed = Get-JunoProcess $launchedId
+            if ($observed) {
+              $owner = [pscustomobject]@{ Pid=$launchedId; CreationDate=$observed.CreationDate; Profile=$profile; Port=$launchedPort; Token=$token }
+            }
           }
         }
         # Re-read and verify the exact process identity even for late ownership capture.
         Stop-JunoOwnedChrome $owner
       }
       finally {
+        if ($process) { $process.Dispose() }
         if ($firewall) { Remove-NetFirewallRule -Name $firewall -ErrorAction Continue }
         $lock.Dispose()
         $env:JUNO_CDP_PORT = $oldCdp; $env:JUNO_FIXTURE_PORT = $oldFixture
