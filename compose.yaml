@@ -1,0 +1,14 @@
+services:
+  juno:
+    build: .
+    ports:
+      - "127.0.0.1:5123:5123"
+    volumes:
+      - juno-data:/data
+    shm_size: 256mb
+    mem_limit: 2g
+    cpus: 1.5
+    restart: unless-stopped
+    init: true
+volumes:
+  juno-data:

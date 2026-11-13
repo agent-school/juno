@@ -1,0 +1,8 @@
+.git
+**/node_modules
+**/test-results
+**/playwright-report
+.juno-lab
+.planning
+.devin
+*.log

@@ -13,6 +13,7 @@
     "test": "pnpm -r test",
     "test:e2e": "pnpm -r test:e2e",
     "demo": "tsx demo.ts",
+    "lab": "pnpm --filter @juno/lab start",
     "demo:serve": "pnpm --filter @juno/browser exec tsx tests/fixtures/server.ts"
   },
   "devDependencies": {

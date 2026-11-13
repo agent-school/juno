@@ -1,19 +1,19 @@
 ---
 gsd_state_version: 1.0
-current_phase: 2
-current_phase_name: Safe-Execution Guard
-status: planning
-stopped_at: Phase 01 complete, ready to plan Phase 2
-last_updated: "2026-08-24T00:14:54.481Z"
-last_activity: 2026-08-24
-last_activity_desc: Phase 01 complete, transitioned to Phase 2
-state_head: c930d48d3d6cce0b49d1eb5e436148c5c5d41ee5
+current_phase: 1.1
+current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
+status: ready_to_execute
+stopped_at: Recorded research and memory UI trial passed; initialization and stale-notice fixes deployed; Jack's own trial pending
+last_updated: "2026-11-13T02:05:24Z"
+last_activity: 2026-11-13
+last_activity_desc: Completed hosted UI trial and deployed two client corrections with regression coverage
+state_head: 18bcdf9c229a331c5043766433c146b10816d0e4
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 1
-  total_plans: 3
+  total_plans: 6
   completed_plans: 3
-  percent: 14
+  percent: 12
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Phase 2 — Safe-Execution Guard
+**Current focus:** Redesigned research desk, durable memory and controlled lab deployed on Coolify with requested-domain HTTPS and upgrade persistence verified. Recorded UI trial passed after two client corrections; Jack's own trial remains. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
 
 ## Current Position
 
-Phase: 2 — Safe-Execution Guard
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-24 — Phase 01 complete, transitioned to Phase 2
+Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
+Plan: Three plans exist, none executed
+Status: Fixture lab plus real API task/memory slice verified; neither completes a roadmap phase
+Last activity: 2026-11-13 — Hosted research/memory/recovery UI trial and Browser lab replay passed; empty-state and stale-notice corrections deployed. Syntax/typecheck, 54 unit and 19 integration tests passed. Full-flow UI run on `64ad951`, final targeted regression on `18bcdf9`; Jack's own trial remains.
 
-Progress: [██░░░░░░░░] 14%
+Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
 
 ## Performance Metrics
 
@@ -79,9 +79,32 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- Jack's lab trial: complete the in-app checklist, export evidence and leave feedback.
+- Review recorded research/memory UI evidence with Jack; remaining UI gaps include nonzero diffs, naturally long-running polling, partial/interrupted outcomes and physical mobile devices. Instrumented equal-snapshot preservation passed separately.
+- Reconcile Coolify's cached `exited:unhealthy` field with successful live checks; host Docker health has not been independently inspected.
+- Jack's task/memory trial: search → explicitly remember → refresh/diff → correct/forget; select the next recurring real task.
+- Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
 
 ### Blockers/Concerns
+
+- Replacement Coolify token works and is saved. Public HTTPS and redeploy persistence passed on the temporary hostname; requested hostname DNS and valid HTTPS passed on 2026-11-13.
+- Coolify API status disagrees with observed application availability. Keep that monitoring gap explicit.
+- The public task is a pair of deterministic read-only GitHub API operations. It is not a general Muse-style chat planner or evidence of learned browser semantics on external sites.
+
+## Quick Tasks Completed
+
+| # | Description | Date | Implementation commit | Directory |
+|---|-------------|------|-----------------------|-----------|
+| 261112-n4s | Hosted semantic operation lab with durable receipts and evidence gates | 2026-11-12 | 11a8acc | [Quick task](quick/261112-n4s-hosted-semantic-operation-workbench-with/) |
+
+## Quick Task Deliverables and Remaining Gates
+
+| # | Delivered slice | Remaining gate | Directory |
+|---|---|---|---|
+| 261112-nq5 | Live project research, refresh/diff, user-controlled durable memory, protected-workspace recovery | User/UI trial; hosting evidence followed in 261112-p1y | [Plan, summary and verification](quick/261112-nq5-real-open-source-research-tasks-with-sou/) |
+| 261112-p1y | Coolify deployment, valid public HTTPS on temporary and requested hostnames, live research/browser checks and hosted memory/account persistence across redeploy | Monitoring discrepancy and user/UI trial | [Plan, summary and verification](quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/) |
+| 261113-0u5 | Impeccable-informed research desk and memory interface deployed on requested domain; 25 hosted assertions including asset hashes, recovery and upgrade persistence passed | Jack's own trial and monitoring discrepancy; recorded UI verification followed in 261113-2ca | [Plan, summary and verification](quick/261113-0u5-rethink-juno-interface-using-impeccable-/) |
+| 261113-2ca | Recorded hosted research/memory/recovery and lab UI trial; empty-state and stale-notice corrections with shipped-client regressions, deployed to requested domain | Jack's own trial, listed UI coverage limits and monitoring discrepancy | [Plan, summary and verification](quick/261113-2ca-fix-empty-research-workspace-initializat/) |
 
 - Phase 5 (Teach-by-Showing): single-demonstration → parameterized-skill generalization is MEDIUM confidence in research — needs a spike during planning
 - Phase 6 (Portal Recognition): portal fingerprinting approach needs empirical validation against real job portals (Greenhouse, Lever, Workday)
@@ -95,6 +118,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-24T00:18:23.559Z
-Stopped at: Phase 1 complete, ready to plan Phase 2
+Last session: 2026-11-13T02:05:24Z
+Stopped at: Recorded hosted UI trial passed after deployed corrections; Jack's own trial pending; Phase 01.1 remains unimplemented
 Resume file: None

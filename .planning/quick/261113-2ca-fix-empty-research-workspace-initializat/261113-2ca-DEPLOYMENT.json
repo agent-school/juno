@@ -1,0 +1,19 @@
+{
+  "host": "https://juno.agentschool.io",
+  "application_uuid": "8jfncbyniz9knwex2dgx0yjo",
+  "deployment_uuid": "jfdtc6bmvami8yqfavmgerzy",
+  "status": "finished",
+  "previous_commit": "64ad9519a5d56a28ad94067d9d2ee558516e3a8b",
+  "implementation_commit": "18bcdf9c229a331c5043766433c146b10816d0e4",
+  "workspace_js_sha256": "b9d64f323355cfbd91b23738593b4a5ecc0c5d896ec18179a43ef1c113d1b3e3",
+  "persistent_volume_unchanged": true,
+  "https_health_200": true,
+  "coolify_cached_status": "exited:unhealthy",
+  "ui_verification": {
+    "full_flow_commit": "64ad9519a5d56a28ad94067d9d2ee558516e3a8b",
+    "full_flow_result": "passed after empty-state correction; minor stale notice found",
+    "final_targeted_commit": "18bcdf9c229a331c5043766433c146b10816d0e4",
+    "final_targeted_result": "passed; stale notice cleared; saved memory and lab receipt retained",
+    "scope": "isolated synthetic hosted workspaces"
+  }
+}

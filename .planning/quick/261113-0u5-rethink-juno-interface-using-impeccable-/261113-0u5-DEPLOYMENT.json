@@ -1,0 +1,55 @@
+{
+  "verifiedAt": "2026-11-13T00:58:31.246518+00:00",
+  "host": "https://juno.agentschool.io",
+  "applicationUuid": "8jfncbyniz9knwex2dgx0yjo",
+  "deploymentUuid": "udmfhqrwlnjtwlsnb5yhbu1q",
+  "previousCommit": "ffb652068a7af50690ae66ceda3e778b99c73f63",
+  "implementationCommit": "0667ab34344ebce66465f46f33275f1c9d601317",
+  "sourceProjects": [
+    "apify/crawlee",
+    "nanobrowser/nanobrowser",
+    "hangwin/mcp-chrome",
+    "Tencent/BrowserSkill",
+    "webdriverio/webdriverio"
+  ],
+  "searchId": "9e1080b6-38a6-4929-bac5-e745e1194cb3",
+  "refreshId": "e34f3ca9-63a6-434c-aad1-b33bcddf457c",
+  "browserReceiptId": "f0cf4165-7ada-43e4-b1dc-4c76925d7cd4",
+  "checks": [
+    "Requested-domain certificate-verified HTTPS before upgrade",
+    "Live GitHub research before upgrade",
+    "Saved defaults and source provenance before upgrade",
+    "Chromium compile and independently verified fixture before upgrade",
+    "Export excludes credentials",
+    "Coolify redesign deployment finished",
+    "Preferences notes project baseline and recipe survived upgrade",
+    "Task receipts semantic model browser receipt and effects survived upgrade",
+    "Fresh cookie context is isolated",
+    "Protected workspace recovery after upgrade",
+    "Research request replay remains idempotent",
+    "Browser replay does not repeat a saved effect",
+    "Live shortlist refresh after upgrade",
+    "Deployed asset matches implementation: /",
+    "Deployed asset matches implementation: /app.js",
+    "Deployed asset matches implementation: /app.css",
+    "Deployed asset matches implementation: /workspace.js",
+    "Deployed asset matches implementation: /workspace.css",
+    "Deployed asset matches implementation: /fixture.css",
+    "Deployed asset matches implementation: /fonts/public-sans-latin.woff2",
+    "Font MIME and WOFF2: /fonts/public-sans-latin.woff2",
+    "Deployed asset matches implementation: /fonts/sora-latin.woff2",
+    "Font MIME and WOFF2: /fonts/sora-latin.woff2",
+    "Pinned implementation and persistent named volume retained",
+    "Requested-domain HTTPS health after upgrade"
+  ],
+  "coolifyCachedStatus": "exited:unhealthy",
+  "status": "functional-checks-passed-with-monitoring-caveat",
+  "recoveredDeploymentFailure": {
+    "deploymentUuid": "xs4o1rw1ye22dcduqixjiu6u",
+    "reason": "Mistyped commit SHA; failed before container replacement. Retry resolves HEAD directly from git."
+  },
+  "limits": [
+    "HTTP/API verification and static rendering review; interactive UI flows and user trial remain pending",
+    "Coolify cached health status disagrees with public checks; actual host Docker health not independently inspected"
+  ]
+}

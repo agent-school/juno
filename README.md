@@ -1,12 +1,33 @@
 # Juno
 
+## Try Juno's task and memory workbench
+
+Juno now has a web workbench with a real read-only task: research public open-source projects, inspect live source evidence, explicitly remember a shortlist, and refresh it later to see what changed. Preferences, editable notes, reusable searches and task receipts persist. Protect a workspace with a passphrase to reopen it on another device. This first task uses GitHub's API and structured filters; it is not an open-ended chat planner.
+
+The separate **Browser lab** operates a synthetic relationship app with the real `@juno/browser` reader and actor: save semantic bindings, replay `capture_interaction(...)`, change the page, and inspect verified effects. It is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
+
+Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). The interface is a research desk with recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
+
+```bash
+# Node 24 is required by the pinned pnpm 11 toolchain.
+pnpm install --frozen-lockfile
+pnpm --filter @juno/browser exec playwright install chrome
+pnpm lab
+# Open http://localhost:5123
+```
+
+No API key is needed. In **Research**, try `browser automation`, remember a project, then use **Check for changes** in Working memory. **Memory** lets you find, correct and forget context. Use **Export workspace** to keep a copy (it can contain your private notes). Data persists in `.juno-lab/`, isolated by a random HttpOnly cookie with optional passphrase recovery. For the browser sandbox use synthetic inputs only. [Task and memory walkthrough](docs/TASKS-AND-MEMORY.md).
+
+For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). Only Browser Core is a completed roadmap phase; the lab does not mark the larger compiler, safety or teach-by-showing phases complete.
+
 Juno is a semantic website compiler: it learns how any website works through safe exploration and teach-by-showing, saves that understanding permanently per site, and replays it to automate actions that are hard to automate any other way (messaging someone on Instagram, signing a contract, applying to a job).
 
-**Status:** Phase 1 of 7 complete — the Browser Core. Juno can already load any site in a real persistent Chrome profile, read the page's semantic structure from the accessibility tree, and act on elements by semantic reference with fail-safe behavior. Later phases add the safety guard, site compiler, planner/replay, teach-by-showing, and voice.
+**Status:** Browser Core is complete; Phase 01.1 (host-browser runtime and Windows compatibility) is planned. Task/memory and the fixture lab are bounded GSD quick tasks, not completed compiler/guard phases. The browser core loads sites in a dedicated persistent Chrome profile, reads their accessibility structure, and acts by semantic reference. Later phases add the full safety guard, site compiler, planner/replay, teach-by-showing, and voice.
 
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | Browser Core | ✓ Complete |
+| 01.1 | Host-Browser Runtime & Windows Compatibility | planned |
 | 2 | Safe-Execution Guard | planned |
 | 3 | Site Compiler & Per-Site Memory | planned |
 | 4 | Planner, Execution & Authenticated Sites | planned |
@@ -25,7 +46,7 @@ The [`@juno/browser`](packages/browser) package — the foundation every later p
 
 ## Prerequisites
 
-- **Node.js 22 LTS**
+- **Node.js 24 LTS** (browser library supports Node 22; the pinned pnpm 11 development toolchain needs Node 24)
 - **pnpm** (`npm install -g pnpm`)
 - **Google Chrome** installed at the system location (default launch uses your real Chrome via `channel: 'chrome'`)
 
@@ -43,13 +64,13 @@ No build step needed — packages export TypeScript source directly.
 All commands run from the repo root.
 
 ```bash
-# Unit tests (fast, no browser) — 31 tests
+# Unit tests (fast, no browser)
 pnpm test
 
 # Type check (also the "build" gate)
 pnpm run build
 
-# E2E tests (real Chrome + auto-started local fixture server) — 15 tests
+# Browser and HTTP integration tests (auto-started local servers)
 pnpm test:e2e
 ```
 

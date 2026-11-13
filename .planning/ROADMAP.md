@@ -18,6 +18,7 @@ The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website �
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile (completed 2026-08-24)
+- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Three plans exist under `phases/01.1-containerized-host-browser-runtime-and-windows-compatibility/`; implementation and Windows smoke-test evidence are pending.
 - [ ] **Phase 2: Safe-Execution Guard** - Code-enforced action classification, destructive-action gates, audit log, kill switch, injection defense
 - [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
 - [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
@@ -167,11 +168,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. The hosted fixture lab is a bounded quick task; see [the evidence ledger](TESTABLE-MILESTONE.md).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
+| 1.1. Host-Browser Runtime & Windows | 0/3 | Planned; not implemented | - |
 | 2. Safe-Execution Guard | 0/TBD | Not started | - |
 | 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
