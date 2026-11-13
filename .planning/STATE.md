@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: Guard and typed knowledge substrate implemented; deployment and UI follow-up pending; Windows runtime gates open
-last_updated: "2026-11-13T02:05:24Z"
+stopped_at: Hosted guard and typed knowledge UI passed; Windows Desktop and broader compiler gates remain open
+last_updated: "2026-11-13T03:12:31Z"
 last_activity: 2026-11-13
-last_activity_desc: Completed hosted UI trial and deployed two client corrections with regression coverage
-state_head: 18bcdf9c229a331c5043766433c146b10816d0e4
+last_activity_desc: Deployed guarded execution and typed site knowledge; hosted model/replay/forget and research/memory regression passed
+state_head: e2aa22df49800d50a10f0bd4ba279b142401037d
 progress:
   total_phases: 8
   completed_phases: 2
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 Phase: 3 — Site Compiler & Per-Site Memory
 Plan: 03-01 substrate complete; broader site compiler validation remains
 Status: Phase 2 complete for guarded production execution; Phase 01.1 Windows gates remain open
-Last activity: 2026-11-13 — Hosted research/memory/recovery UI trial and Browser lab replay passed; empty-state and stale-notice corrections deployed. Syntax/typecheck, 54 unit and 19 integration tests passed. Full-flow UI run on `64ad951`, final targeted regression on `18bcdf9`; Jack's own trial remains.
+Last activity: 2026-11-13 — Hosted typed model/replay/audit/drift/forget/recompile UI and focused research/memory/recovery regression passed on e2aa22d. Typechecks, 91 unit tests, 20 standard browser/API tests and native/container CDP tracers passed before follow-up contract constraints and roadmap copy. Windows PowerShell helper CI passes; actual Windows Desktop remains open.
 
 Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
@@ -38,7 +38,7 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 5
 - Average duration: -
 - Total execution time: 0 hours
 

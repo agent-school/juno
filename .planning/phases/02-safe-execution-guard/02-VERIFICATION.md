@@ -12,4 +12,4 @@ SAFE-05: page content is semantic data. Risk labels are not accepted on action r
 
 SAFE-06: abort invalidates all grants/pending requests, closes the controlled page, and prevents subsequent work. Abort during awaited audit persistence prevents the mutation. Already committed effects remain subject to receipt inspection before retry.
 
-Automated evidence: browser/lab typechecks; guard unit contracts; tests/e2e/guard.spec.ts; packages/lab/tests/e2e/lab.spec.ts. Full suite: 91 unit tests, 20 standard browser/API tests, plus two explicit CDP tracer tests. Hosted UI follow-up remains pending until deployment.
+Automated evidence: browser/lab typechecks; guard unit contracts; tests/e2e/guard.spec.ts; packages/lab/tests/e2e/lab.spec.ts. Full suite: 91 unit tests, 20 standard browser/API tests, plus two explicit CDP tracer tests. Hosted e2aa22d UI follow-up passed value-free audit, verified replay, pre-action drift rejection, forgetting/recompile and 390px replay. Explicit destructive confirmation remains verified by unit contracts rather than a hosted UI flow; external accounts remain outside this increment.

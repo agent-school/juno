@@ -5,10 +5,11 @@ const digest = z.string().regex(/^[a-f0-9]{64}$/);
 const scope = z.object({ role: z.string().min(1).max(100), name: z.string().min(1).max(300), exact: z.literal(true) }).strict();
 export const SemanticIdentitySchema = scope.extend({ scopeChain: z.array(scope).max(10).optional() }).strict();
 const field = z.object({
-  kind: z.enum(['text', 'calendar-date', 'enum']), required: z.literal(true),
+  kind: z.enum(['text', 'calendar-date', 'enum', 'boolean']), required: z.literal(true),
   maxLength: z.number().int().min(1).max(50_000),
   choices: z.array(z.string().max(300)).min(1).max(100).optional(),
-}).strict().refine(value => value.kind !== 'enum' || !!value.choices, 'enum inputs require choices');
+}).strict().refine(value => value.kind !== 'enum' || !!value.choices, 'enum inputs require choices')
+  .refine(value => !value.choices || (new Set(value.choices).size === value.choices.length && value.choices.every(choice => choice.length <= value.maxLength)), 'enum choices must be unique and fit the input bound');
 
 export const OperationContractSchema = z.object({
   id, risk: z.enum(['read', 'write-benign', 'write-destructive']),
@@ -26,9 +27,13 @@ export const OperationContractSchema = z.object({
   verification: z.object({ kind: z.literal('independent-state'), source: id, required: z.literal(true) }).strict(),
 }).strict().superRefine((contract, context) => {
   for (const [index, step] of contract.steps.entries()) {
-    if ((['fill', 'selectOption'].includes(step.method) && !step.parameter) ||
+    if ((step.method === 'click' ? step.parameter !== undefined : !step.parameter) ||
         (step.parameter && !Object.hasOwn(contract.inputs, step.parameter))) {
       context.addIssue({ code: 'custom', path: ['steps', index], message: 'Step parameter must reference a declared input' });
+    }
+    if (step.parameter && Object.hasOwn(contract.inputs, step.parameter) &&
+        ((step.method === 'check') !== (contract.inputs[step.parameter]!.kind === 'boolean'))) {
+      context.addIssue({ code: 'custom', path: ['steps', index], message: 'Step parameter type must match its action method' });
     }
   }
   if (contract.effects.some(effect => effect.source !== contract.verification.source || effect.fields.some(name => !Object.hasOwn(contract.inputs, name)))) {

@@ -173,9 +173,9 @@ Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
-| 1.1. Host-Browser Runtime & Windows | 0/3 | Planned; not implemented | - |
-| 2. Safe-Execution Guard | 0/TBD | Not started | - |
-| 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
+| 1.1. Host-Browser Runtime & Windows | 0/3 accepted | Implemented; Windows Desktop matrix open | - |
+| 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
+| 3. Site Compiler & Per-Site Memory | 1 substrate plan | In progress; broader site validation open | - |
 | 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
 | 5. Teach-by-Showing | 0/TBD | Not started | - |
 | 6. Portal Recognition | 0/TBD | Not started | - |

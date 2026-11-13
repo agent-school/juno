@@ -50,6 +50,17 @@ describe('typed semantic knowledge', () => {
     expect(observed.operations).toEqual([]);
     expect(observed.pages[0]?.unresolved).toBe(2);
   });
+  it('rejects incomplete enum domains and missing or incompatible typed parameters', () => {
+    const create = (operation: OperationContract) => compileSite({ origin, pages: [{ route: '/', tree }], operations: [operation] });
+    expect(() => create({ ...contract, inputs: { note: { kind: 'enum', required: true, maxLength: 100 } } })).toThrow(/enum/i);
+    expect(() => create({ ...contract, steps: [{ method: 'fill', target: button }] })).toThrow('parameter');
+    expect(() => create({ ...contract, steps: [{ method: 'check', target: button, parameter: 'note' }] })).toThrow('type');
+    const checkbox = { role: 'checkbox', name: 'Follow', exact: true as const };
+    expect(compileSite({ origin, pages: [{ route: '/', tree: { children: [{ ...checkbox, children: [] }] } }], operations: [{
+      ...contract, inputs: { note: { kind: 'boolean', required: true, maxLength: 5 } },
+      preconditions: [{ kind: 'unique-enabled', target: checkbox }], steps: [{ method: 'check', target: checkbox, parameter: 'note' }],
+    }] }).operations).toHaveLength(1);
+  });
   it('learns navigation only between explicitly observed same-origin public routes', () => {
     const model = compileSite({ origin, pages: [{ route: '/', tree: { children: [
       { role: 'link', name: 'Inbox', url: '/inbox', children: [] },

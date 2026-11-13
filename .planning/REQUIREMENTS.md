@@ -144,7 +144,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RUNTIME-02 | Phase 01.1 | Pending |
 | RUNTIME-03 | Phase 01.1 | Pending |
 | RUNTIME-04 | Phase 01.1 | Pending |
-| RUNTIME-05 | Phase 01.1 | Pending |
+| RUNTIME-05 | Phase 01.1 | Complete — native/container attach semantics |
 | RUNTIME-06 | Phase 01.1 | Pending |
 | SAFE-01 | Phase 2 | Complete — guarded execution |
 | SAFE-02 | Phase 2 | Complete — explicit confirmation |

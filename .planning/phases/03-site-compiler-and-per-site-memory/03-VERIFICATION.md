@@ -1,6 +1,6 @@
 # Phase 3 substrate evidence and remaining gates
 
-Implemented: strict versioned SiteModel, OperationSpec inputs/preconditions/steps/effects/independent verification; safe role/name/scope inventories; observed-route navigation; structure/operation fingerprints; owner-isolated ten-revision persistent history; explicit forgetting; no profile/account reads; guarded fixture integration. Seven knowledge unit tests plus existing lab integration tests verify persistence, drift, schema/integrity rejection, isolation, export and forgetting.
+Implemented: strict versioned SiteModel, OperationSpec inputs/preconditions/steps/effects/independent verification; safe role/name/scope inventories; observed-route navigation; structure/operation fingerprints; owner-isolated ten-revision persistent history; explicit forgetting; no profile/account reads; guarded fixture integration. Eight knowledge unit tests plus existing lab integration tests verify persistence, drift, schema/integrity rejection, isolation, export and forgetting. Follow-up constraints reject mismatched action parameter types and duplicate/oversized enum choices.
 
 API coverage: GET /api/site-knowledge is owner-isolated; POST /api/site-knowledge/forget requires the same-origin custom header and empty strict payload, clears versions/current model, and preserves receipts. Existing compile/run/export tests verify typed knowledge and mutation audits.
 
