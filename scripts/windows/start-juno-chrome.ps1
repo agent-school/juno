@@ -133,7 +133,7 @@ function Invoke-JunoRuntime {
   if (-not (Get-Command docker.exe -ErrorAction SilentlyContinue)) { throw 'Install/start Docker Desktop with Linux containers.' }
   New-Item -ItemType Directory -Path $profile -Force | Out-Null
   $token = [guid]::NewGuid().ToString('N')
-  $owner = $null; $firewall = $null
+  $owner = $null; $firewall = $null; $process = $null; $launchedPort = $null
   $project = "juno-cdp-$token"
   $compose = Join-Path $RepoRoot 'docker-compose.cdp.yml'
   $oldCdp = $env:JUNO_CDP_PORT; $oldFixture = $env:JUNO_FIXTURE_PORT
@@ -157,6 +157,8 @@ function Invoke-JunoRuntime {
       New-NetFirewallRule -Name $ruleName -DisplayName 'Juno owned CDP run' -Direction Inbound -Action Allow -Protocol TCP -LocalPort $candidate -Program $chrome -RemoteAddress $DockerRemoteScope.Split(',') -Profile Any | Out-Null
       $firewall = $ruleName
       $arguments = (Get-JunoArguments $profile $candidate $token | ForEach-Object { ConvertTo-JunoArgument $_ }) -join ' '
+      # Retain the returned process handle in the cleanup scope, including before CIM capture.
+      $launchedPort = $candidate
       $process = Start-Process -FilePath $chrome -ArgumentList $arguments -PassThru
       $observed = Get-JunoProcess $process.Id
       $captureUntil = [DateTime]::UtcNow.AddSeconds(2)
@@ -178,7 +180,7 @@ function Invoke-JunoRuntime {
         } catch { Start-Sleep -Milliseconds 100 }
       }
       if ($ready) { break }
-      Stop-JunoOwnedChrome $owner; $owner = $null
+      Stop-JunoOwnedChrome $owner; $owner = $null; $process = $null
       Remove-NetFirewallRule -Name $firewall; $firewall = $null
     }
     if (-not $owner -or -not $ready) { throw 'No owned CDP browser became ready on the bounded candidate ports.' }
@@ -190,7 +192,16 @@ function Invoke-JunoRuntime {
     # PowerShell unwinds finally on errors and Ctrl-C. Forced host termination remains a manual gate.
     try { & docker.exe compose -p $project -f $compose down --remove-orphans | Out-Null }
     finally {
-      try { Stop-JunoOwnedChrome $owner }
+      try {
+        if (-not $owner -and $process) {
+          $observed = Get-JunoProcess $process.Id
+          if ($observed) {
+            $owner = [pscustomobject]@{ Pid=$process.Id; CreationDate=$observed.CreationDate; Profile=$profile; Port=$launchedPort; Token=$token }
+          }
+        }
+        # Re-read and verify the exact process identity even for late ownership capture.
+        Stop-JunoOwnedChrome $owner
+      }
       finally {
         if ($firewall) { Remove-NetFirewallRule -Name $firewall -ErrorAction Continue }
         $lock.Dispose()
