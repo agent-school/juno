@@ -57,9 +57,11 @@ it('returns to initialized empty research after forgetting its last receipt', as
     results: [], errors: [], recalled: { notes: [] }, sourceRequests: 1, durationMs: 10, steps: [],
   }]);
   expect(find('#task-detail').innerHTML).toContain('browser automation');
+  find('#memory-notice').textContent = 'Memory forgotten. Its public results remain in task history until you forget those receipts.';
   const button = { dataset: { action: 'forget-task' }, disabled: false };
   await listeners.get('click')!({ target: { closest: (selector: string) => selector === '[data-action]' ? button : null } });
   expect(find('#task-notice').textContent).toBe('Receipt forgotten. Explicitly saved memories remain.');
+  expect(find('#memory-notice').textContent).toBe('');
   expect(find('#task-count').textContent).toBe(0);
   expect(find('#task-detail').innerHTML).toBe('Empty research');
   expect(find('#memory-items').innerHTML).toContain('Keep what is useful.');

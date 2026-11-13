@@ -184,7 +184,7 @@
         await request('memory/forget', { kind: button.dataset.kind, id: button.dataset.id });
         if (find('#memory-note-form').elements.id.value === button.dataset.id) resetNote();
         notice('#memory-notice', 'Memory forgotten. Its public results remain in task history until you forget those receipts.');
-      } else if (action === 'forget-task') { await request('tasks/forget', { id: selectedId }); notice('#task-notice', 'Receipt forgotten. Explicitly saved memories remain.'); }
+      } else if (action === 'forget-task') { await request('tasks/forget', { id: selectedId }); notice('#memory-notice', ''); notice('#task-notice', 'Receipt forgotten. Explicitly saved memories remain.'); }
       await refresh(true);
     } catch (error) { notice(memoryAction ? '#memory-notice' : '#task-notice', error.message, true); }
     finally { button.disabled = false; }
