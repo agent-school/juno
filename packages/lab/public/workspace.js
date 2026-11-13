@@ -69,7 +69,7 @@
       if (focusedId) find(`#task-list [data-id="${focusedId}"]`)?.focus({ preventScroll: true });
     }
     const task = workspace.tasks.find(task => task.id === selectedId);
-    if (task?.id === announcedTaskId && task.status !== 'running') {
+    if (task && task.id === announcedTaskId && task.status !== 'running') {
       notice('#task-notice', `Research ${statusLabel(task.status).toLowerCase()}. ${task.results.length} checked ${task.results.length === 1 ? 'project' : 'projects'} in the receipt.`, ['failed', 'interrupted'].includes(task.status));
       if (task.status === 'partial') find('#task-notice').classList.add('warning');
       announcedTaskId = undefined;
