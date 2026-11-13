@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { compileSite, compareSiteModels, SiteKnowledgeStore, SiteModelSchema, type OperationContract } from '../../src/index.js';
+import { compileSite, compareSiteModels, SiteKnowledgeStore, SiteModelSchema, OperationContractSchema, type OperationContract } from '../../src/index.js';
 
 const origin = 'https://owned.example';
 const button = { role: 'button', name: 'Save note', exact: true as const };
@@ -14,6 +14,35 @@ const contract: OperationContract = {
   verification: { kind: 'independent-state', source: 'owned-store', required: true },
 };
 const compile = () => compileSite({ origin, pages: [{ route: '/', tree }], operations: [contract] });
+
+it('compiles dotted and encoded routes across pages, navigation and operation contracts', () => {
+  const routes = ['/docs/index.html', '/people/@jack', '/docs/hello%20world', '/%E5%AD%A6%E4%B9%A0', '/release/v1.2;view=full+notes~'];
+  const model = compileSite({ origin, pages: routes.map((route, index) => ({ route, tree: {
+    children: [...tree.children, { role: 'link', name: 'Next page', url: routes[(index + 1) % routes.length]!, children: [] }],
+  } })), operations: [{ ...contract, pageRoute: routes[0]! }] });
+  expect(model.pages.map(page => page.route)).toEqual(routes);
+  expect(model.pages.map(page => page.navigation[0]?.targetRoute)).toEqual([...routes.slice(1), routes[0]]);
+  expect(model.operations[0]?.contract.pageRoute).toBe('/docs/index.html');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'juno-pathnames-'));
+  const owner = 'a'.repeat(64);
+  try {
+    new SiteKnowledgeStore(directory).save(owner, model);
+    expect(new SiteKnowledgeStore(directory).latest(owner, origin)).toEqual(model);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+});
+
+it.each([
+  '', 'docs/index.html', 'https://elsewhere.example/docs', '//elsewhere.example/docs', '///elsewhere.example/docs',
+  '/docs/index.html?token=private', '/docs/index.html?', '/docs/index.html#private', '/docs/index.html#',
+  '/docs/../index.html', '/docs/%2e%2e/index.html', '/docs/./index.html', '/docs\\index.html',
+  '/docs/hello world', '/docs/\nindex.html', '/docs/%', '/docs/%GG', '/docs/%1', `/${'a'.repeat(500)}`,
+])('rejects unsafe or noncanonical route %j', route => {
+  expect(() => compileSite({ origin, pages: [{ route, tree }] })).toThrow();
+  expect(OperationContractSchema.safeParse({ ...contract, pageRoute: route }).success).toBe(false);
+  const observed = compile();
+  observed.pages[0]!.navigation = [{ identity: { role: 'link', name: 'Destination', exact: true }, targetRoute: route }];
+  expect(SiteModelSchema.safeParse(observed).success).toBe(false);
+});
 
 describe('typed semantic knowledge', () => {
   it('stores semantic identities and independently verifiable contracts, without ephemeral handles or coordinates', () => {

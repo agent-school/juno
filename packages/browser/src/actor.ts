@@ -64,8 +64,9 @@ export class SemanticActor {
     );
   }
 
-  async check(ref: AnyRef): Promise<void> {
-    await this.act('check', ref, (locator) => locator.check(this.actionOptions()));
+  /** Set the desired checkbox state; omitted input preserves check-to-true behavior. */
+  async check(ref: AnyRef, checked = true): Promise<void> {
+    await this.act('check', ref, (locator) => locator.setChecked(checked, this.actionOptions()));
   }
 
   async scrollIntoView(ref: AnyRef): Promise<void> {

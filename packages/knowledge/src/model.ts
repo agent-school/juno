@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 const id = z.string().regex(/^[a-zA-Z0-9_.-]{1,100}$/);
 const digest = z.string().regex(/^[a-f0-9]{64}$/);
+// Root-relative URL round trips preserve the supplied site origin and observed spelling.
+// Reject aliases the browser would normalize (dot segments, backslashes, whitespace).
+const pathname = z.string().min(1).max(500).refine(value => {
+  if (value.length > 500 || !value.startsWith('/') || value.startsWith('//') || /%(?![a-fA-F0-9]{2})/.test(value)) return false;
+  try {
+    const address = new URL(value, 'https://pathname.invalid');
+    return address.origin === 'https://pathname.invalid' && address.pathname === value && !address.search && !address.hash;
+  } catch { return false; }
+}, 'Expected a canonical root-relative pathname without query or fragment');
 const scope = z.object({ role: z.string().min(1).max(100), name: z.string().min(1).max(300), exact: z.literal(true) }).strict();
 export const SemanticIdentitySchema = scope.extend({ scopeChain: z.array(scope).max(10).optional() }).strict();
 const field = z.object({
@@ -13,7 +22,7 @@ const field = z.object({
 
 export const OperationContractSchema = z.object({
   id, risk: z.enum(['read', 'write-benign', 'write-destructive']),
-  pageRoute: z.string().max(500).regex(/^\/[a-zA-Z0-9/_-]*$/),
+  pageRoute: pathname,
   inputs: z.record(z.string().regex(/^[a-z][a-z0-9_]{0,63}$/), field),
   preconditions: z.array(z.object({ kind: z.literal('unique-enabled'), target: SemanticIdentitySchema }).strict()).min(1).max(100),
   steps: z.array(z.object({
@@ -55,9 +64,9 @@ export const SiteModelSchema = z.object({
   }, 'Expected canonical HTTP(S) origin'),
   observedAt: z.iso.datetime(), source: z.literal('accessibility-observation'),
   pages: z.array(z.object({
-    route: z.string().max(500).regex(/^\/[a-zA-Z0-9/_-]*$/), fingerprint: digest,
+    route: pathname, fingerprint: digest,
     elements: z.array(z.object({ identity: SemanticIdentitySchema, enabled: z.boolean() }).strict()).max(500),
-    navigation: z.array(z.object({ identity: SemanticIdentitySchema, targetRoute: z.string().max(500).regex(/^\/[a-zA-Z0-9/_-]*$/) }).strict()).max(100),
+    navigation: z.array(z.object({ identity: SemanticIdentitySchema, targetRoute: pathname }).strict()).max(100),
     unresolved: z.number().int().min(0).max(10_000),
   }).strict()).min(1).max(20),
   operations: z.array(OperationSpecSchema).max(50),

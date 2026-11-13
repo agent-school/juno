@@ -4,6 +4,29 @@ import os from 'node:os';
 import path from 'node:path';
 import { BrowserSession, createGuardedActor, type AuditEntry } from '../../src/index.js';
 
+test('guarded checkbox inputs set and clear real state and remain idempotent', async () => {
+  const profile = await mkdtemp(path.join(os.tmpdir(), 'juno-guard-checkbox-'));
+  const session = new BrowserSession({ profileDir: profile, headless: true, channel: 'chrome' });
+  try {
+    const page = await session.launch(); await session.goto('http://127.0.0.1:8931/');
+    const ref = { role: 'checkbox', name: 'Done' };
+    const checkbox = page.getByRole('checkbox', { name: 'Done' });
+    const audit: AuditEntry[] = [];
+    const { actor } = createGuardedActor(page, { audit: async entry => { audit.push(entry); }, benignPolicies: [
+      { id: 'fixture.checkbox', origin: 'http://127.0.0.1:8931', pathname: '/', method: 'check', ref },
+    ] });
+    await actor.check(ref);
+    await expect(checkbox).toBeChecked();
+    await actor.check(ref, false);
+    await expect(checkbox).not.toBeChecked();
+    await actor.check(ref, false);
+    await expect(checkbox).not.toBeChecked();
+    await actor.check(ref, true);
+    await expect(checkbox).toBeChecked();
+    expect(audit.filter(entry => entry.status === 'completed' && entry.risk === 'write-benign')).toHaveLength(4);
+  } finally { await session.close(); await rm(profile, { recursive: true, force: true }); }
+});
+
 test('read-only exploration ignores injected instructions; trusted benign actions are audited and verifiable', async () => {
   const profile = await mkdtemp(path.join(os.tmpdir(), 'juno-guard-'));
   const session = new BrowserSession({ profileDir: profile, headless: true, channel: 'chrome' });

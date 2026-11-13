@@ -70,6 +70,24 @@ test.describe('acting: SemanticActor by semantic ref', () => {
     await expect(page.getByRole('checkbox', { name: 'Done' })).toBeChecked();
   });
 
+  test('applies true and false checkbox inputs without toggling on replay', async () => {
+    const s = newSession();
+    const page = await s.launch();
+    await s.goto(FIXTURE_URL);
+    const actor = new SemanticActor(page);
+    const ref = { role: 'checkbox', name: 'Done' };
+    const checkbox = page.getByRole('checkbox', { name: 'Done' });
+
+    await actor.check(ref, true);
+    await expect(checkbox).toBeChecked();
+    await actor.check(ref, false);
+    await expect(checkbox).not.toBeChecked();
+    await actor.check(ref, false);
+    await expect(checkbox).not.toBeChecked();
+    await actor.check(ref, true);
+    await expect(checkbox).toBeChecked();
+  });
+
   test('scrolls a below-fold button into view by semantic ref', async () => {
     const s = newSession();
     const page = await s.launch();

@@ -3,11 +3,11 @@ import { createGuardedActor, SafetyBlocked, type AuditEntry } from '../../src/gu
 
 const ref = { role: 'button', name: 'Delete account' };
 function harness(mode: 'execute' | 'read-only' = 'execute') {
-  const click = vi.fn().mockResolvedValue(undefined), fill = vi.fn().mockResolvedValue(undefined);
-  const page = { url: () => 'https://example.test/account', getByRole: () => ({ click, fill }), close: vi.fn().mockResolvedValue(undefined) };
+  const click = vi.fn().mockResolvedValue(undefined), fill = vi.fn().mockResolvedValue(undefined), setChecked = vi.fn().mockResolvedValue(undefined);
+  const page = { url: () => 'https://example.test/account', getByRole: () => ({ click, fill, setChecked }), close: vi.fn().mockResolvedValue(undefined) };
   const audit: AuditEntry[] = [];
   const boundary = createGuardedActor(page as any, { mode, audit: async entry => { audit.push(entry); } });
-  return { ...boundary, page, click, fill, audit };
+  return { ...boundary, page, click, fill, setChecked, audit };
 }
 async function pendingId(work: () => Promise<unknown>) {
   try { await work(); throw new Error('should be blocked'); }
@@ -33,6 +33,34 @@ it('binds approval to exact inputs, target and site; never stores input values',
   expect(h.fill).not.toHaveBeenCalled();
   expect(JSON.stringify(h.audit)).not.toContain('private input');
   expect(JSON.stringify(h.audit)).not.toContain('Secret field');
+});
+it('binds checkbox confirmation to the desired boolean state and consumes mismatched approval', async () => {
+  const h = harness(), checkbox = { role: 'checkbox', name: 'Subscribed' };
+  const token = h.control.confirm(await pendingId(() => h.actor.check(checkbox, false)));
+  await expect(h.actor.check(checkbox, true, token)).rejects.toThrow('confirmation');
+  await expect(h.actor.check(checkbox, false, token)).rejects.toThrow('confirmation');
+  expect(h.setChecked).not.toHaveBeenCalled();
+  const matching = h.control.confirm(await pendingId(() => h.actor.check(checkbox, false)));
+  await h.actor.check(checkbox, false, matching);
+  expect(h.setChecked).toHaveBeenCalledWith(false, { timeout: 2500 });
+  await expect(h.actor.check(checkbox, false, matching)).rejects.toThrow('confirmation');
+  expect(h.setChecked).toHaveBeenCalledTimes(1);
+  expect(JSON.stringify(h.audit)).not.toContain('Subscribed');
+  expect(h.audit.map(item => item.status)).toEqual(['blocked', 'blocked', 'blocked', 'blocked', 'started', 'completed', 'blocked']);
+});
+it('rejects non-boolean checkbox inputs even for a trusted benign target', async () => {
+  const h = harness(), checkbox = { role: 'checkbox', name: 'Subscribed' };
+  const { actor } = createGuardedActor(h.page as any, { benignPolicies: [
+    { id: 'checkbox', origin: 'https://example.test', pathname: '/account', method: 'check', ref: checkbox },
+  ], audit: async () => {} });
+  for (const input of ['false', 0, null]) await expect(actor.check(checkbox, input as any)).rejects.toThrow('boolean');
+  expect(h.setChecked).not.toHaveBeenCalled();
+});
+it('blocks both checkbox states during read-only exploration', async () => {
+  const h = harness('read-only'), checkbox = { role: 'checkbox', name: 'Subscribed' };
+  await expect(h.actor.check(checkbox, true)).rejects.toThrow('Read-only');
+  await expect(h.actor.check(checkbox, false)).rejects.toThrow('Read-only');
+  expect(h.setChecked).not.toHaveBeenCalled();
 });
 it('refuses all mutations in read-only mode even after attempted confirmation', async () => {
   const h = harness('read-only');

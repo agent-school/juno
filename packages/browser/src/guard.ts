@@ -9,7 +9,7 @@ export type ActionRisk = 'read' | 'write-benign' | 'write-destructive';
 export type GuardMethod = 'read' | 'click' | 'fill' | 'selectOption' | 'check' | 'scrollIntoView' | 'scrollViewport';
 const scopeSchema = z.object({ role: z.string().min(1).max(100), name: z.string().max(500).optional(), exact: z.literal(true).optional() }).strict();
 const refSchema = scopeSchema.extend({ scopeChain: z.array(scopeSchema).max(10).optional() }).strict();
-type Action = { method: GuardMethod; ref?: SemanticRef; value?: string; direction?: 'up' | 'down'; amount?: number };
+type Action = { method: GuardMethod; ref?: SemanticRef; value?: string; checked?: boolean; direction?: 'up' | 'down'; amount?: number };
 
 export interface BenignPolicy {
   id: string;
@@ -72,6 +72,7 @@ export function createGuardedActor(page: Page, options: GuardOptions) {
     const action = structuredClone(request);
     if (action.ref) canonicalRef(action.ref);
     if (action.value !== undefined && (typeof action.value !== 'string' || action.value.length > 50_000)) throw new SafetyBlocked('Input exceeds the action contract.');
+    if (action.method === 'check' && typeof action.checked !== 'boolean') throw new SafetyBlocked('Checkbox input must be a boolean.');
     busy = true;
     try {
       const url = page.url(), address = new URL(url);
@@ -108,7 +109,7 @@ export function createGuardedActor(page: Page, options: GuardOptions) {
     click: (ref: SemanticRef, approval?: string) => execute({ method: 'click', ref }, approval, item => base.click(item.ref!)),
     fill: (ref: SemanticRef, value: string, approval?: string) => execute({ method: 'fill', ref, value }, approval, item => base.fill(item.ref!, item.value!)),
     selectOption: (ref: SemanticRef, value: string, approval?: string) => execute({ method: 'selectOption', ref, value }, approval, item => base.selectOption(item.ref!, item.value!)),
-    check: (ref: SemanticRef, approval?: string) => execute({ method: 'check', ref }, approval, item => base.check(item.ref!)),
+    check: (ref: SemanticRef, checked = true, approval?: string) => execute({ method: 'check', ref, checked }, approval, item => base.check(item.ref!, item.checked!)),
     scrollIntoView: (ref: SemanticRef) => execute({ method: 'scrollIntoView', ref }, undefined, item => base.scrollIntoView(item.ref!)),
     scrollViewport: (direction: 'up' | 'down', amount: number) => {
       if (!['up', 'down'].includes(direction) || !Number.isFinite(amount) || amount < 0 || amount > 10_000) throw new SafetyBlocked('Invalid scroll budget');
