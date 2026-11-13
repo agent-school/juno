@@ -1,19 +1,19 @@
 ---
 gsd_state_version: 1.0
-current_phase: 1.1
-current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
-status: ready_to_execute
-stopped_at: Recorded research and memory UI trial passed; initialization and stale-notice fixes deployed; Jack's own trial pending
+current_phase: 3
+current_phase_name: Site Compiler and Per-Site Memory
+status: in_progress
+stopped_at: Guard and typed knowledge substrate implemented; deployment and UI follow-up pending; Windows runtime gates open
 last_updated: "2026-11-13T02:05:24Z"
 last_activity: 2026-11-13
 last_activity_desc: Completed hosted UI trial and deployed two client corrections with regression coverage
 state_head: 18bcdf9c229a331c5043766433c146b10816d0e4
 progress:
   total_phases: 8
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 3
-  percent: 12
+  completed_phases: 2
+  total_plans: 8
+  completed_plans: 5
+  percent: 25
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Redesigned research desk, durable memory and controlled lab deployed on Coolify with requested-domain HTTPS and upgrade persistence verified. Recorded UI trial passed after two client corrections; Jack's own trial remains. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
+**Current focus:** Phase 2 guarded execution is verified; Phase 3 typed site knowledge substrate is integrated into the controlled Browser lab. Phase 01.1 runtime/launcher code and Linux container smoke pass, with real Windows Desktop gates open. Deployment/UI/CI follow-up is pending. PR #2 merge remains blocked by GitHub integration HTTP 403 despite explicit user authorization; PR #3 carries the new work.
 
 ## Current Position
 
-Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
-Plan: Three plans exist, none executed
-Status: Fixture lab plus real API task/memory slice verified; neither completes a roadmap phase
+Phase: 3 — Site Compiler & Per-Site Memory
+Plan: 03-01 substrate complete; broader site compiler validation remains
+Status: Phase 2 complete for guarded production execution; Phase 01.1 Windows gates remain open
 Last activity: 2026-11-13 — Hosted research/memory/recovery UI trial and Browser lab replay passed; empty-state and stale-notice corrections deployed. Syntax/typecheck, 54 unit and 19 integration tests passed. Full-flow UI run on `64ad951`, final targeted regression on `18bcdf9`; Jack's own trial remains.
 
-Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
+Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
 ## Performance Metrics
 

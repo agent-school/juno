@@ -58,7 +58,7 @@ function Resolve-JunoProfile([string]$Path) {
   $cursor = $full
   while ($cursor) {
     if (Test-Path -LiteralPath $cursor) {
-      if (((Get-Item -LiteralPath $cursor).Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'Profile paths cannot pass through reparse points.' }
+      if (((Get-Item -LiteralPath $cursor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'Profile paths cannot pass through reparse points.' }
     }
     $parent = Split-Path $cursor -Parent
     if ($parent -eq $cursor) { break }
