@@ -1,0 +1,105 @@
+import { expect, it, vi } from 'vitest';
+import { createGuardedActor, SafetyBlocked, type AuditEntry } from '../../src/guard.js';
+
+const ref = { role: 'button', name: 'Delete account' };
+function harness(mode: 'execute' | 'read-only' = 'execute') {
+  const click = vi.fn().mockResolvedValue(undefined), fill = vi.fn().mockResolvedValue(undefined);
+  const page = { url: () => 'https://example.test/account', getByRole: () => ({ click, fill }), close: vi.fn().mockResolvedValue(undefined) };
+  const audit: AuditEntry[] = [];
+  const boundary = createGuardedActor(page as any, { mode, audit: async entry => { audit.push(entry); } });
+  return { ...boundary, page, click, fill, audit };
+}
+async function pendingId(work: () => Promise<unknown>) {
+  try { await work(); throw new Error('should be blocked'); }
+  catch (error) { expect(error).toBeInstanceOf(SafetyBlocked); return (error as SafetyBlocked).pendingId!; }
+}
+it('defaults to destructive, requires explicit one-shot request-bound confirmation', async () => {
+  const h = harness();
+  const pending = await pendingId(() => h.actor.click(ref));
+  expect(h.click).not.toHaveBeenCalled();
+  const token = h.control.confirm(pending);
+  await h.actor.click(ref, token);
+  expect(h.click).toHaveBeenCalledTimes(1);
+  await expect(h.actor.click(ref, token)).rejects.toThrow('confirmation');
+  expect(h.click).toHaveBeenCalledTimes(1);
+  expect(h.audit.map(item => item.status)).toEqual(['blocked', 'started', 'completed', 'blocked']);
+});
+it('binds approval to exact inputs, target and site; never stores input values', async () => {
+  const h = harness();
+  const field = { role: 'textbox', name: 'Secret field' };
+  const pending = await pendingId(() => h.actor.fill(field, 'private input'));
+  const token = h.control.confirm(pending);
+  await expect(h.actor.fill(field, 'different input', token)).rejects.toThrow('confirmation');
+  expect(h.fill).not.toHaveBeenCalled();
+  expect(JSON.stringify(h.audit)).not.toContain('private input');
+  expect(JSON.stringify(h.audit)).not.toContain('Secret field');
+});
+it('refuses all mutations in read-only mode even after attempted confirmation', async () => {
+  const h = harness('read-only');
+  await expect(h.actor.click(ref)).rejects.toThrow('Read-only');
+  expect(h.click).not.toHaveBeenCalled();
+});
+it('does not accept page-supplied benign risk labels or broad/ephemeral refs', async () => {
+  const h = harness();
+  await expect(h.actor.click({ ...ref, risk: 'write-benign' } as any)).rejects.toThrow();
+  await expect(h.actor.click({ ...ref, exact: false })).rejects.toThrow();
+  await expect(h.actor.click({ ...ref, ref: 'e16' } as any)).rejects.toThrow();
+  expect(h.click).not.toHaveBeenCalled();
+});
+it('fails closed when audit persistence fails', async () => {
+  const h = harness();
+  const guarded = createGuardedActor(h.page as any, { benignPolicies: [{ id: 'owned-test', origin: 'https://example.test', pathname: '/account', method: 'click', ref }], audit: async () => { throw new Error('disk full'); } });
+  await expect(guarded.actor.click(ref)).rejects.toThrow('disk full');
+  expect(h.click).not.toHaveBeenCalled();
+});
+it('stops future actions and closes the controlled page on abort', async () => {
+  const h = harness();
+  await h.control.abort();
+  await expect(h.actor.click(ref)).rejects.toThrow('aborted');
+  expect(h.page.close).toHaveBeenCalled(); expect(h.click).not.toHaveBeenCalled();
+});
+
+it('refuses a changed target/site and consumes the mismatched grant', async () => {
+  const h = harness();
+  const pending = await pendingId(() => h.actor.click(ref));
+  const token = h.control.confirm(pending);
+  h.page.url = () => 'https://example.test/other';
+  await expect(h.actor.click(ref, token)).rejects.toThrow('confirmation');
+  h.page.url = () => 'https://example.test/account';
+  await expect(h.actor.click(ref, token)).rejects.toThrow('confirmation');
+  expect(h.click).not.toHaveBeenCalled();
+});
+
+it('expires approvals and does not allow re-confirming the pending request', async () => {
+  vi.useFakeTimers();
+  try {
+    const h = harness(), pending = await pendingId(() => h.actor.click(ref));
+    const token = h.control.confirm(pending);
+    expect(() => h.control.confirm(pending)).toThrow('consumed');
+    vi.advanceTimersByTime(60_001);
+    await expect(h.actor.click(ref, token)).rejects.toThrow('confirmation');
+    expect(h.click).not.toHaveBeenCalled();
+  } finally { vi.useRealTimers(); }
+});
+
+it('stops before an action when aborted while its durable audit intent is being written', async () => {
+  const h = harness();
+  let release!: () => void;
+  const barrier = new Promise<void>(resolve => { release = resolve; });
+  const guarded = createGuardedActor(h.page as any, { benignPolicies: [{ id: 'owned', origin: 'https://example.test', pathname: '/account', method: 'click', ref }], audit: async entry => {
+    h.audit.push(entry); if (entry.status === 'started') await barrier;
+  } });
+  const action = guarded.actor.click(ref);
+  await expect(guarded.actor.click(ref)).rejects.toThrow('Concurrent');
+  await guarded.control.abort(); release();
+  await expect(action).rejects.toThrow('aborted');
+  expect(h.click).not.toHaveBeenCalled();
+  expect(h.audit.at(-1)?.status).toBe('aborted');
+});
+
+it('still blocks a trusted benign target during read-only exploration', async () => {
+  const h = harness();
+  const guarded = createGuardedActor(h.page as any, { mode: 'read-only', benignPolicies: [{ id: 'owned', origin: 'https://example.test', pathname: '/account', method: 'click', ref }], audit: async () => {} });
+  await expect(guarded.actor.click(ref)).rejects.toThrow('Read-only');
+  expect(h.click).not.toHaveBeenCalled();
+});

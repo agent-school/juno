@@ -7,6 +7,7 @@ RUN npm install -g pnpm@11.24.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY packages/browser/package.json packages/browser/package.json
 COPY packages/lab/package.json packages/lab/package.json
+COPY packages/knowledge/package.json packages/knowledge/package.json
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @juno/browser exec playwright install --with-deps chromium
 COPY packages/ packages/

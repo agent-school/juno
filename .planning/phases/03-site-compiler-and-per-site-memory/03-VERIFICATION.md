@@ -1,0 +1,7 @@
+# Phase 3 substrate evidence and remaining gates
+
+Implemented: strict versioned SiteModel, OperationSpec inputs/preconditions/steps/effects/independent verification; safe role/name/scope inventories; observed-route navigation; structure/operation fingerprints; owner-isolated ten-revision persistent history; explicit forgetting; no profile/account reads; guarded fixture integration. Seven knowledge unit tests plus existing lab integration tests verify persistence, drift, schema/integrity rejection, isolation, export and forgetting.
+
+API coverage: GET /api/site-knowledge is owner-isolated; POST /api/site-knowledge/forget requires the same-origin custom header and empty strict payload, clears versions/current model, and preserves receipts. Existing compile/run/export tests verify typed knowledge and mutation audits.
+
+Still open: COMP-01/general behavior discovery and safe multi-page exploration need broader controlled-site evidence; OPS-01/VERS-01/MEM-01/02/03 have substrate evidence but remain unchecked until the phase acceptance gate is met. The JSON store is intentionally a bounded single-writer increment; SQLite migration is deferred. Unknown secrets embedded in ordinary labels require host redaction before sharing unfamiliar-site observations. Knowledge hashes detect inconsistency rather than authenticated filesystem tampering.

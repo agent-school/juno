@@ -20,6 +20,7 @@ function setBusy(value) {
   busy = value;
   for (const control of document.querySelectorAll('#operation input, #operation select, #operation textarea, #compile, #run, #variant')) control.disabled = value;
   $('#stop').disabled = !value;
+  $('#forget-site').disabled = value || !state?.model;
   $('#run').innerHTML = value ? 'Browser working…' : 'Run saved operation <span aria-hidden="true">→</span>';
 }
 const tabNames = { tasks: 'Research', memory: 'Memory', evidence: 'Lab receipts', progress: 'Roadmap', experiment: 'Browser lab' };
@@ -66,6 +67,7 @@ function render() {
   $('#model-badge').textContent = state.model ? 'Saved · ' + state.model.version.slice(0, 8) : 'Not observed';
   $('#model-badge').className = state.model ? 'tag success' : 'tag';
   $('#model').textContent = state.model ? JSON.stringify(state.model, null, 2) : 'No model saved yet.';
+  $('#forget-site').disabled = busy || !state.model;
   const last = state.receipts.at(-1);
   if (last) {
     $('#result-status').textContent = last.status.toUpperCase();
@@ -129,6 +131,16 @@ $('#variant').addEventListener('change', async event => {
 $('#stop').addEventListener('click', async () => {
   try { await api('stop', {}); notify('Stop requested. Inspect the receipt and fixture state before retrying.'); }
   catch (error) { notify(error.message, true); }
+});
+$('#forget-site').addEventListener('click', async () => {
+  if (busy) return;
+  setBusy(true);
+  try {
+    await api('site-knowledge/forget', {});
+    await refresh();
+    notify('Site model forgotten. Previous run receipts remain; compile again before a new run.');
+  } catch (error) { notify(error.message, true); }
+  finally { setBusy(false); }
 });
 $('#feedback').addEventListener('submit', async event => {
   event.preventDefault();

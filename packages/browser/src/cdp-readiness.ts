@@ -1,4 +1,6 @@
 import { setTimeout as delay } from 'node:timers/promises';
+import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
 import { z } from 'zod';
 
 export type CdpStage = 'configuration' | 'readiness' | 'metadata' | 'attach' | 'context';
@@ -16,6 +18,28 @@ export interface CdpReadinessOptions {
   timeoutMs?: number;
   intervalMs?: number;
   fetch?: typeof fetch;
+}
+
+function requestVersion(url: URL, signal: AbortSignal): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    // Node's fetch ignores Host overrides. Use the native client for Chrome's DNS-rebinding boundary.
+    const request = (url.protocol === 'https:' ? httpsRequest : httpRequest)(url, {
+      headers: { Host: 'localhost' }, signal,
+    }, response => {
+      const chunks: Buffer[] = []; let size = 0;
+      response.on('data', (chunk: Buffer) => {
+        size += chunk.length;
+        if (size > 65_536) { reject(new CdpError('metadata', 'browser response exceeds 64 KB')); response.destroy(); request.destroy(); }
+        else chunks.push(chunk);
+      });
+      response.once('error', reject);
+      response.once('end', () => {
+        const status = response.statusCode ?? 500;
+        resolve(new Response([204, 205, 304].includes(status) ? null : Buffer.concat(chunks), { status }));
+      });
+    });
+    request.once('error', reject); request.end();
+  });
 }
 
 const metadataSchema = z.object({
@@ -65,9 +89,11 @@ export async function waitForCdp(options: CdpReadinessOptions) {
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const probe = async () => {
-        const response = await (options.fetch ?? fetch)(new URL('/json/version/', endpoint), {
-          redirect: 'error', signal: controller.signal,
-        });
+        const url = new URL('/json/version/', endpoint);
+        const response = options.fetch ? await options.fetch(url, {
+          // Chrome rejects DNS aliases in the Host header. The connection still uses only the trusted endpoint.
+          headers: { Host: 'localhost' }, redirect: 'error', signal: controller.signal,
+        }) : await requestVersion(url, controller.signal);
         if (!response.ok) throw new Error('CDP is not ready');
         const reader = response.body?.getReader();
         if (!reader) throw new CdpError('metadata', 'empty browser response');

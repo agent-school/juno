@@ -20,17 +20,17 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **RUNTIME-02**: The Windows launcher discovers a valid Chrome executable, uses a dedicated persistent non-default profile compatible with Chrome 136+, preserves special-character paths, and tracks only its owned browser process
 - [ ] **RUNTIME-03**: The CDP path uses Docker bridge networking with a configured fixed port, bounded preflight/retry and `/json/version` readiness validation, safe websocket host normalization, and a narrowly scoped firewall boundary
 - [ ] **RUNTIME-04**: The CDP integration harness owns a configurable fixture port without stale-server reuse and releases its fixture/container resources on every exit path
-- [ ] **RUNTIME-05**: Existing local `BrowserSession` launch behavior and `SemanticPageReader`/`SemanticActor` semantics remain unchanged while attach mode reuses the same page, perception, and fail-safe action surface
+- [x] **RUNTIME-05**: Existing local `BrowserSession` launch behavior and `SemanticPageReader`/`SemanticActor` semantics remain unchanged while attach mode reuses the same page, perception, and fail-safe action surface
 - [ ] **RUNTIME-06**: Explicit PowerShell scripts and documentation provide actual Windows smoke gates for discovery, networking, semantic attach, profile/process ownership, and normal/error/interrupted/container-stop cleanup
 
 ### Safety
 
-- [ ] **SAFE-01**: Juno classifies every action as read, write-benign, or write-destructive before executing it
-- [ ] **SAFE-02**: Juno blocks destructive actions unless they were explicitly demonstrated or confirmed by the user
-- [ ] **SAFE-03**: Juno can explore a site read-only without performing irreversible actions
-- [ ] **SAFE-04**: Juno records an audit log of every state-mutating action
-- [ ] **SAFE-05**: Juno treats all web page content as untrusted data, never as instructions (prompt-injection defense)
-- [ ] **SAFE-06**: User can abort a run at any time (kill switch)
+- [x] **SAFE-01**: Juno classifies every action as read, write-benign, or write-destructive before executing it
+- [x] **SAFE-02**: Juno blocks destructive actions unless they were explicitly demonstrated or confirmed by the user
+- [x] **SAFE-03**: Juno can explore a site read-only without performing irreversible actions
+- [x] **SAFE-04**: Juno records an audit log of every state-mutating action
+- [x] **SAFE-05**: Juno treats all web page content as untrusted data, never as instructions (prompt-injection defense)
+- [x] **SAFE-06**: User can abort a run at any time (kill switch)
 
 ### Semantic Compiler
 
@@ -146,12 +146,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RUNTIME-04 | Phase 01.1 | Pending |
 | RUNTIME-05 | Phase 01.1 | Pending |
 | RUNTIME-06 | Phase 01.1 | Pending |
-| SAFE-01 | Phase 2 | Pending |
-| SAFE-02 | Phase 2 | Pending |
-| SAFE-03 | Phase 2 | Pending |
-| SAFE-04 | Phase 2 | Pending |
-| SAFE-05 | Phase 2 | Pending |
-| SAFE-06 | Phase 2 | Pending |
+| SAFE-01 | Phase 2 | Complete — guarded execution |
+| SAFE-02 | Phase 2 | Complete — explicit confirmation |
+| SAFE-03 | Phase 2 | Complete — read-only guard |
+| SAFE-04 | Phase 2 | Complete — durable action audit |
+| SAFE-05 | Phase 2 | Complete — host/page authority separation |
+| SAFE-06 | Phase 2 | Complete — abort boundary |
 | COMP-01 | Phase 3 | Pending |
 | OPS-01 | Phase 3 | Pending |
 | VERS-01 | Phase 3 | Pending |

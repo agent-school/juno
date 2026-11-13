@@ -17,7 +17,7 @@ export class HostChromeSession {
       const metadata = await waitForCdp(this.options);
       try {
         this.browser = await chromium.connectOverCDP(metadata.websocket, {
-          isLocal: false, timeout: this.options.timeoutMs ?? 10_000,
+          isLocal: false, headers: { Host: 'localhost' }, timeout: this.options.timeoutMs ?? 10_000,
         });
       } catch { throw new CdpError('attach', 'connection failed after validated readiness'); }
       const context = this.browser.contexts()[0];
@@ -34,7 +34,8 @@ export class HostChromeSession {
   /** Playwright Browser.close on a CDP connection disconnects this client; Chrome stays host-owned. */
   async close(): Promise<void> {
     if (!this.browser) return;
-    await this.browser.close();
+    try { await this.browser.close(); }
+    catch { throw new CdpError('attach', 'client disconnect failed; host Chrome remains externally owned'); }
     this.browser = null;
     this.currentPage = null;
   }

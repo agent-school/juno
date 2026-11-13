@@ -18,8 +18,8 @@ The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website �
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile (completed 2026-08-24)
-- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Three plans exist under `phases/01.1-containerized-host-browser-runtime-and-windows-compatibility/`; implementation and Windows smoke-test evidence are pending.
-- [ ] **Phase 2: Safe-Execution Guard** - Code-enforced action classification, destructive-action gates, audit log, kill switch, injection defense
+- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Runtime and launcher implemented; Linux/CDP/container evidence passes. Actual Windows Desktop smoke matrix remains open.
+- [x] **Phase 2: Safe-Execution Guard** - Guarded production execution verified: classification, confirmation, audit, read-only mode, injection boundary and abort. See Phase 2 verification.
 - [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
 - [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
 - [ ] **Phase 5: Teach-by-Showing** - Demonstrate an action once; Juno learns a parameterized, secret-free skill composed of typed operations
@@ -83,7 +83,7 @@ Plans:
   4. Every state-mutating action appears in an audit log the user can inspect
   5. User can abort a run at any time via a kill switch, and page content containing injected instructions never alters Juno's behavior
 
-**Plans**: TBD
+**Plans**: 1/1 complete — 02-01-PLAN.md; verification in phases/02-safe-execution-guard/02-VERIFICATION.md.
 
 ### Phase 3: Site Compiler & Per-Site Memory
 

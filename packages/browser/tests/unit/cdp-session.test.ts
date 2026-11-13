@@ -15,7 +15,7 @@ it('attaches to the default page and disconnects its client without owning Chrom
     const session = new HostChromeSession(options);
     expect(await session.attach()).toBe(page);
     expect(session.isRunning).toBe(true);
-    expect(connect).toHaveBeenCalledWith(expect.stringContaining('/devtools/browser/owned'), { isLocal: false, timeout: 10_000 });
+    expect(connect).toHaveBeenCalledWith(expect.stringContaining('/devtools/browser/owned'), { isLocal: false, headers: { Host: 'localhost' }, timeout: 10_000 });
     await session.close(); await session.close();
     expect(close).toHaveBeenCalledTimes(1);
     expect(session.page).toBeNull(); expect(session.isRunning).toBe(false);

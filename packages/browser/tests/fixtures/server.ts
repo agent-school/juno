@@ -12,8 +12,11 @@ import http from 'node:http';
  * - POST /reset      — restores initial mutation state (specs run sequentially; reset keeps later specs clean)
  */
 
-const HOST = '127.0.0.1';
-const PORT = 8931;
+const HOST = process.env.JUNO_FIXTURE_HOST ?? '127.0.0.1';
+const PORT = Number(process.env.JUNO_FIXTURE_PORT ?? 8931);
+if (!['127.0.0.1', '0.0.0.0'].includes(HOST) || !Number.isInteger(PORT) || PORT < 1024 || PORT > 65535) {
+  throw new Error('Fixture host must be loopback or container wildcard; port must be 1024–65535');
+}
 
 let buttonRemoved = false;
 let duplicateAdded = false;
@@ -152,4 +155,9 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   process.stdout.write(`juno fixture server listening on http://${HOST}:${PORT}/\n`);
+});
+
+for (const signal of ['SIGTERM', 'SIGINT'] as const) process.once(signal, () => {
+  server.close(() => process.exit(0));
+  server.closeAllConnections();
 });

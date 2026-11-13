@@ -1,0 +1,14 @@
+services:
+  cdp:
+    build:
+      context: .
+      dockerfile: Dockerfile.cdp
+    init: true
+    environment:
+      JUNO_CDP_ENDPOINT: http://host.docker.internal:${JUNO_CDP_PORT:-9222}
+      JUNO_FIXTURE_URL: http://127.0.0.1:${JUNO_FIXTURE_PORT:-8931}/
+      JUNO_FIXTURE_PORT: ${JUNO_FIXTURE_PORT:-8931}
+      JUNO_FIXTURE_HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:${JUNO_FIXTURE_PORT:-8931}:${JUNO_FIXTURE_PORT:-8931}"
+    stop_grace_period: 5s
