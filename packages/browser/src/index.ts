@@ -1,3 +1,6 @@
+export { HostChromeSession } from './cdp-session.js';
+export { CdpError, cdpOrigin, normalizeCdpMetadata, waitForCdp } from './cdp-readiness.js';
+export type { CdpReadinessOptions, CdpStage } from './cdp-readiness.js';
 export { BrowserSession, validateUrl } from './session.js';
 export type { BrowserSessionOptions } from './session.js';
 export {
