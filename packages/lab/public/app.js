@@ -20,21 +20,45 @@ function setBusy(value) {
   busy = value;
   for (const control of document.querySelectorAll('#operation input, #operation select, #operation textarea, #compile, #run, #variant')) control.disabled = value;
   $('#stop').disabled = !value;
-  $('#run').innerHTML = value ? 'Browser working…' : 'Run saved operation <span>↗</span>';
+  $('#run').innerHTML = value ? 'Browser working…' : 'Run saved operation <span aria-hidden="true">→</span>';
 }
-function showTab(tab) {
+const tabNames = { tasks: 'Research', memory: 'Memory', evidence: 'Lab receipts', progress: 'Roadmap', experiment: 'Browser lab' };
+function showTab(tab, { focus = false, history = true } = {}) {
+  if (!Object.hasOwn(tabNames, tab)) tab = 'tasks';
   for (const page of document.querySelectorAll('.page')) page.classList.toggle('hidden', page.id !== tab);
-  for (const nav of document.querySelectorAll('.nav')) nav.classList.toggle('active', nav.dataset.tab === tab);
-  $('#breadcrumb').textContent = ({ tasks: 'TASKS', memory: 'MEMORY', evidence: 'LAB RECEIPTS', progress: 'PROGRESS & DIRECTION', experiment: 'BROWSER LAB' })[tab] || 'TASKS';
+  for (const nav of document.querySelectorAll('.nav')) {
+    const active = nav.dataset.tab === tab;
+    nav.classList.toggle('active', active);
+    if (active) nav.setAttribute('aria-current', 'page'); else nav.removeAttribute('aria-current');
+  }
+  $('#breadcrumb').textContent = tabNames[tab];
+  document.title = `${tabNames[tab]} — Juno`;
+  if (history && location.hash !== `#${tab}`) window.history.pushState(null, '', `#${tab}`);
+  if (focus) $(`#${tab} h1`).focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
-for (const nav of document.querySelectorAll('.nav')) nav.addEventListener('click', () => showTab(nav.dataset.tab));
+document.addEventListener('click', event => {
+  const button = event.target.closest('[data-tab]');
+  if (!button) return;
+  showTab(button.dataset.tab, { focus: !button.hasAttribute('data-new-research') });
+  if (button.hasAttribute('data-new-research')) { $('#research-query').focus(); $('#research-query').select(); }
+});
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1), { history: false }));
+const compactNavigation = matchMedia('(max-width: 960px)');
+const adaptHistory = () => { $('#research-history').open = !compactNavigation.matches; };
+compactNavigation.addEventListener('change', adaptHistory); adaptHistory();
+showTab(location.hash.slice(1), { history: false });
 async function refresh() { state = await api('state'); render(); }
 function statusClass(status) { return status === 'verified' ? 'success' : ['failed', 'uncertain'].includes(status) ? 'danger' : ''; }
 function selectReceipt(id) {
   selected = state.receipts.find(receipt => receipt.id === id);
   $('#receipt-view').textContent = selected ? JSON.stringify(selected, null, 2) : 'Select a run to inspect its evidence.';
   $('#download-receipt').disabled = !selected;
-  for (const row of document.querySelectorAll('.run-row')) row.classList.toggle('selected', row.dataset.id === id);
+  for (const row of document.querySelectorAll('.run-row')) {
+    const active = row.dataset.id === selected?.id;
+    row.classList.toggle('selected', active);
+    if (active) row.setAttribute('aria-current', 'true'); else row.removeAttribute('aria-current');
+  }
 }
 function render() {
   $('#variant').value = state.variant;

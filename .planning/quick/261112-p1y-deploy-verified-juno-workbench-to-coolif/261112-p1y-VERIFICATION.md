@@ -2,6 +2,8 @@
 
 Verified 2026-11-12T18:10:17Z using HTTPS HTTP/API clients, with certificate verification enabled. These are hosted functional checks, not a UI usability recording.
 
+Follow-up on 2026-11-13: Jack completed DNS. `juno.agentschool.io` now resolves to `54.157.57.51` and certificate-verified `https://juno.agentschool.io/healthz` returns 200. HOST-03 has passed. The configuration and DNS limitation below describe the original deployment run; current redesign evidence is in [261113-0u5](../261113-0u5-rethink-juno-interface-using-impeccable-/261113-0u5-VERIFICATION.md).
+
 ## Deployment configuration
 
 | Setting | Observed configuration |

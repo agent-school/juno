@@ -43,7 +43,7 @@ Only `https://api.github.com` receives source requests. Redirects are rejected, 
 ## Try it
 
 1. In **Memory**, save TypeScript and 100 stars as preferences. Save a note about browser automation and accessible semantics.
-2. In **Tasks**, research `browser automation` using remembered defaults. Inspect the resolved filters, surfaced note, source links and receipt. A source failure should be visible rather than shown as success.
+2. In **Research**, research `browser automation` using saved defaults. Inspect the resolved filters, recalled note, source links and receipt. Recent research stays in the navigation; Working memory shows your shortlist and **Check for changes**. A source failure should be visible rather than shown as success.
 3. Remember a project and the search recipe. Reload and inspect **Memory**; both survive.
 4. Protect the workspace and open it in a second browser. Check that memory and preferences return. A separate anonymous browser starts empty.
 5. Refresh remembered projects. Inspect the old baseline, new observation time and field changes. Update a baseline explicitly if desired.

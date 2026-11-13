@@ -24,6 +24,8 @@ const assets: Record<string, [string, string]> = {
   '/app.css': ['app.css', 'text/css'], '/fixture.js': ['fixture.js', 'text/javascript'],
   '/fixture.css': ['fixture.css', 'text/css'],
   '/workspace.js': ['workspace.js', 'text/javascript'], '/workspace.css': ['workspace.css', 'text/css'],
+  '/fonts/public-sans-latin.woff2': ['fonts/public-sans-latin.woff2', 'font/woff2'],
+  '/fonts/sora-latin.woff2': ['fonts/sora-latin.woff2', 'font/woff2'],
 };
 class HttpError extends Error { constructor(readonly status: number, message: string) { super(message); } }
 function send(res: ServerResponse, status: number, data: unknown): void {
@@ -68,7 +70,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && assets[url.pathname]) {
       const [file, type] = assets[url.pathname]!;
       if (url.pathname === '/') session(req, res);
-      res.writeHead(200, { 'content-type': `${type}; charset=utf-8` });
+      res.writeHead(200, { 'content-type': type.startsWith('text/') ? `${type}; charset=utf-8` : type });
       res.end(fs.readFileSync(path.join(publicDir, file)));
       return;
     }

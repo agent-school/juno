@@ -22,7 +22,8 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 | MEM-03 | Isolated workspace memory and passphrase recovery after container replacement | Passed separate HTTP cookie-context restore; physical-device/UI trial pending |
 | HOST-01 | Reproducible container + persistent volume + health check | Passed Docker build and Chromium smoke/restart |
 | HOST-02 | Public HTTPS deployment + persistence after redeploy | Passed live Coolify HTTP checks on temporary sslip.io hostname; see deployment verification and monitoring caveat |
-| HOST-03 | Requested `juno.agentschool.io` hostname resolves to Coolify and serves valid HTTPS | Pending Porkbun DNS A record; Coolify domain already configured |
+| HOST-03 | Requested `juno.agentschool.io` hostname resolves to Coolify and serves valid HTTPS | Passed 2026-11-13: A `54.157.57.51`, certificate-verified HTTPS `/healthz` 200 |
+| DESIGN-01 | Research desk, searchable memory and consistent responsive lab/evidence views | Implemented; syntax/typecheck, 52 unit and 19 integration tests passed; static desktop/390px/320px review passed; UI-driven flow testing pending |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
 | UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Awaiting user trial and approved UI testing |
 | RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |

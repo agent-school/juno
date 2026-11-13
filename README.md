@@ -6,7 +6,7 @@ Juno now has a web workbench with a real read-only task: research public open-so
 
 The separate **Browser lab** operates a synthetic relationship app with the real `@juno/browser` reader and actor: save semantic bindings, replay `capture_interaction(...)`, change the page, and inspect verified effects. It is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
 
-Try the [hosted Coolify workbench](https://juno.54.157.57.51.sslip.io). Public HTTPS, live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks. The requested `juno.agentschool.io` hostname still needs its Porkbun DNS record; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md).
+Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). The interface is a research desk with recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
 
 ```bash
 # Node 24 is required by the pinned pnpm 11 toolchain.
@@ -16,7 +16,7 @@ pnpm lab
 # Open http://localhost:5123
 ```
 
-No API key is needed. In **Tasks**, try `browser automation`, then remember a project and refresh it. **Memory** lets you correct and forget context. Use **Export workspace** to keep a copy (it can contain your private notes). Data persists in `.juno-lab/`, isolated by a random HttpOnly cookie with optional passphrase recovery. For the browser sandbox use synthetic inputs only. [Task and memory walkthrough](docs/TASKS-AND-MEMORY.md).
+No API key is needed. In **Research**, try `browser automation`, remember a project, then use **Check for changes** in Working memory. **Memory** lets you find, correct and forget context. Use **Export workspace** to keep a copy (it can contain your private notes). Data persists in `.juno-lab/`, isolated by a random HttpOnly cookie with optional passphrase recovery. For the browser sandbox use synthetic inputs only. [Task and memory walkthrough](docs/TASKS-AND-MEMORY.md).
 
 For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). Only Browser Core is a completed roadmap phase; the lab does not mark the larger compiler, safety or teach-by-showing phases complete.
 
