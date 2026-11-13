@@ -21,9 +21,9 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 | MEM-02 | Refresh remembered projects; report field changes without silently overwriting baseline | Passed live unchanged refresh + controlled changed-source unit case |
 | MEM-03 | Isolated workspace memory and passphrase recovery after container replacement | Passed separate HTTP cookie-context restore; physical-device/UI trial pending |
 | HOST-01 | Reproducible container + persistent volume + health check | Passed Docker build and Chromium smoke/restart |
-| HOST-02 | Public HTTPS deployment + persistence after redeploy | Passed live Coolify HTTP checks on temporary sslip.io hostname; see deployment verification and monitoring caveat |
+| HOST-02 | Public HTTPS deployment + persistence after redeploy | Passed on temporary and requested hostnames, including upgrade to redesigned interface; see deployment verification and monitoring caveat |
 | HOST-03 | Requested `juno.agentschool.io` hostname resolves to Coolify and serves valid HTTPS | Passed 2026-11-13: A `54.157.57.51`, certificate-verified HTTPS `/healthz` 200 |
-| DESIGN-01 | Research desk, searchable memory and consistent responsive lab/evidence views | Implemented; syntax/typecheck, 52 unit and 19 integration tests passed; static desktop/390px/320px review passed; UI-driven flow testing pending |
+| DESIGN-01 | Research desk, searchable memory and consistent responsive lab/evidence views | Deployed; syntax/typecheck, 52 unit and 19 integration tests passed; static desktop/390px/320px review and deployed asset hashes passed; UI-driven flow testing pending |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
 | UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Awaiting user trial and approved UI testing |
 | RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |
@@ -34,7 +34,7 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 
 ## Recommended next increments
 
-1. Finish this lab's user trial and permanent hosting. Convert the exported feedback into small GSD tasks with run IDs, expected/actual state and exact acceptance evidence.
+1. Complete the hosted research/memory and lab user trials. Convert exported feedback into small GSD tasks with run IDs, expected/actual state and exact acceptance evidence. Permanent hosting is verified; retain the monitoring caveat.
 2. Complete the existing 01.1 Windows runtime plan and Phase 2 guard before connecting a browser that can mutate real accounts. The lab's fixture confinement is not a substitute.
 3. Add the real Rolo adapter for the same typed contract and a trusted application-state verifier. Deliberately rename/move a control and preserve the old call. Keep Rolo-specific bindings out of the operation contract.
 4. Run a small predefined suite repeatedly against a named baseline under the same conditions. Include every failed/uncertain attempt; report compile cost separately from replay cost. Do not claim speed/reliability gains from one clean run.

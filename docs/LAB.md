@@ -47,6 +47,8 @@ The workbench is deployed on Coolify at **https://juno.agentschool.io**, with a 
 
 On 2026-11-13, **`juno.agentschool.io`** resolved directly to `54.157.57.51` and its certificate-verified HTTPS health check returned 200. The temporary **https://juno.54.157.57.51.sslip.io** hostname remains an alternative. Protect a workspace with a passphrase before moving between hostnames: cookies do not transfer, but both Coolify hostnames use the same stored accounts. The earlier Devin preview uses separate storage.
 
+The research desk redesign is pinned to `0667ab34344ebce66465f46f33275f1c9d601317`. Upgrade checks preserved existing task/memory, account recovery, semantic bindings, browser receipts and fixture effects; all eight deployed UI/font assets matched the checked implementation. [Redesign and upgrade verification](../.planning/quick/261113-0u5-rethink-juno-interface-using-impeccable-/261113-0u5-VERIFICATION.md).
+
 Monitoring caveat: Coolify's API still reports `exited:unhealthy` despite successful deployments, application logs and public HTTPS/API checks. Its detected Dockerfile health check and named volume are confirmed, but actual host-level Docker health has not been independently inspected. Do not treat that cached field as proof of either health or outage; reconcile it separately. UI usability and Jack's trial remain pending.
 
 ## Boundaries
