@@ -9,7 +9,8 @@ export class RunStore {
   constructor(readonly directory: string) {
     fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
     this.database = new DatabaseSync(path.join(directory, 'runs.sqlite'));
-    this.database.exec('PRAGMA synchronous=FULL; CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, receipt TEXT NOT NULL)');
+    try { this.database.exec('PRAGMA synchronous=FULL; CREATE TABLE IF NOT EXISTS runs (id TEXT PRIMARY KEY, receipt TEXT NOT NULL)'); }
+    catch (error) { this.database.close(); throw error; }
   }
   get(id: string): RunReceipt | null {
     const row = this.database.prepare('SELECT receipt FROM runs WHERE id = ?').get(id);

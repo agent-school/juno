@@ -23,8 +23,10 @@ const Manifest = z.object({ port: z.number().int().min(1).max(65535), task: Task
 }).strict();
 const existing = fs.existsSync(manifestFile) ? Manifest.parse(JSON.parse(fs.readFileSync(manifestFile, 'utf8'))) : null;
 const app = await startFixture(path.join(directory, 'application'), existing?.port);
-const host = hostFor(directory, app.origin, { headless: !values.headed });
+let closeRuns: (() => void) | undefined;
 try {
+  const host = hostFor(directory, app.origin, { headless: !values.headed });
+  closeRuns = () => host.runs.close();
   let task = existing?.task;
   let planning = existing?.planning;
   if (!task || values['new-task']) {
@@ -53,4 +55,4 @@ try {
   console.log(JSON.stringify({ requestId: task.id, status: receipt.status, reused: prior?.status === 'verified', writesThisInvocation: app.writes(), records: app.records().length, workspace: directory, planningModel: planning?.model, modelCallsThisInvocation: values.intent ? 1 : 0 }, null, 2));
   if (receipt.status !== 'verified') process.exitCode = 1;
   }
-} finally { host.runs.close(); await app.close(); }
+} finally { try { closeRuns?.(); } finally { await app.close(); } }

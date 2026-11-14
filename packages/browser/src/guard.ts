@@ -15,6 +15,9 @@ export interface BenignPolicy {
   id: string;
   origin: string;
   pathname: string;
+  /** Exact serialized query/fragment from trusted host code. Omitted means empty. */
+  search?: string;
+  hash?: string;
   method: 'click' | 'fill' | 'selectOption' | 'check';
   ref: SemanticRef;
 }
@@ -59,7 +62,9 @@ export function createGuardedActor(page: Page, options: GuardOptions) {
   const grants = new Map<string, { fingerprint: string; expires: number }>();
   let stopped = false, busy = false, count = 0;
   for (const policy of policies) {
-    if (!policy.id || new URL(policy.origin).origin !== policy.origin || !policy.pathname.startsWith('/')) throw new Error('Invalid trusted benign policy');
+    const search = policy.search ?? '', fragment = policy.hash ?? '';
+    const address = new URL(`${policy.pathname}${search}${fragment}`, policy.origin);
+    if (!policy.id || new URL(policy.origin).origin !== policy.origin || !policy.pathname.startsWith('/') || address.origin !== policy.origin || address.pathname !== policy.pathname || address.search !== search || address.hash !== fragment) throw new Error('Invalid trusted benign policy');
     canonicalRef(policy.ref);
   }
   const assertActive = () => { if (stopped) throw new SafetyBlocked('Run aborted; inspect effects before retrying.'); };
@@ -75,8 +80,8 @@ export function createGuardedActor(page: Page, options: GuardOptions) {
     if (action.method === 'check' && typeof action.checked !== 'boolean') throw new SafetyBlocked('Checkbox input must be a boolean.');
     busy = true;
     try {
-      const url = page.url(), address = new URL(url);
-      const policy = policies.find(item => item.origin === address.origin && item.pathname === address.pathname &&
+      const url = page.url();
+      const policy = policies.find(item => `${item.origin}${item.pathname}${item.search ?? ''}${item.hash ?? ''}` === url &&
         item.method === action.method && JSON.stringify(canonicalRef(item.ref)) === JSON.stringify(canonicalRef(action.ref)));
       const risk: ActionRisk = ['read', 'scrollIntoView', 'scrollViewport'].includes(action.method) ? 'read' : policy ? 'write-benign' : 'write-destructive';
       const record = async (status: AuditEntry['status']) => audit({ id: randomUUID(), runId, at: new Date().toISOString(), method: action.method, risk, status, policyId: policy?.id });

@@ -11,6 +11,8 @@ export interface TrustedOperation {
   contract: OperationContract;
   /** Host-reviewed text parameter carrying a durable application-level idempotency key. */
   requestKey: string;
+  /** Host-reviewed JSON request. Only this step can receive a one-shot network write grant. */
+  request?: { step: number; path: string; body(context: { key: string; inputs: Readonly<Record<string, string | boolean>> }): unknown };
   /** Must inspect authoritative application state, not a success toast or action completion. */
   verify(context: { key: string; inputs: Readonly<Record<string, string | boolean>>; signal: AbortSignal }): Promise<EffectObservation>;
 }
@@ -35,6 +37,7 @@ export class AgentRuntime {
       const contract = OperationContractSchema.parse(operation.contract);
       const field = contract.inputs[operation.requestKey];
       if (!field || field.kind !== 'text' || field.maxLength < 64 || contract.effects.some(effect => effect.key !== operation.requestKey)) throw new Error('Operations require a reviewed request-key field and matching effects');
+      if (operation.request && (!Number.isInteger(operation.request.step) || operation.request.step < 0 || operation.request.step >= contract.steps.length || !options.boundary.writePaths?.includes(operation.request.path))) throw new Error('Invalid trusted write request');
       return [contract.id, { ...operation, contract }];
     }));
     if (this.trusted.size !== options.operations.length) throw new Error('Duplicate trusted operation');
@@ -80,7 +83,8 @@ export class AgentRuntime {
     const start = performance.now(), previousDuration = result.durationMs;
     const controller = new AbortController();
     let timedOut = false, browser: Awaited<ReturnType<RuntimeOptions['openBrowser']>> | undefined;
-    const abort = () => { controller.abort(); void browser?.page.close({ runBeforeUnload: false }).catch(() => {}); };
+    let network: Awaited<ReturnType<typeof confinePage>> | undefined, revokeWrite: (() => void) | undefined;
+    const abort = () => { revokeWrite?.(); controller.abort(); void browser?.page.close({ runBeforeUnload: false }).catch(() => {}); };
     const timer = setTimeout(() => { timedOut = true; abort(); }, host.timeoutMs ?? 30_000);
     external?.addEventListener('abort', abort, { once: true });
     const active = () => { if (external?.aborted || controller.signal.aborted) throw new Divergence(timedOut ? 'deadline' : 'cancelled'); };
@@ -126,25 +130,31 @@ export class AgentRuntime {
         current.status = 'running'; save();
         if (!browser) {
           browser = await host.openBrowser(); active();
-          await confinePage(browser.page, boundary, 'execute');
+          network = await confinePage(browser.page, boundary, 'execute');
         }
         const page = browser.page;
         const expectedUrl = `${boundary.origin}${contract.pageRoute}`;
         if (!boundary.routes.includes(contract.pageRoute)) throw new Divergence('stale-model');
         await page.goto(expectedUrl, { waitUntil: 'load', timeout: 8000 }); active();
         if (page.url() !== expectedUrl) throw new Divergence('grounding');
+        let activeStep = -1;
         const { actor } = createGuardedActor(page, {
           runId: result.id, benignPolicies: host.benignPolicies,
           audit: async entry => {
             if (entry.status === 'started' && entry.risk !== 'read') current!.mutationAttempted = true;
             current!.audit.push(entry); save();
+            if (entry.status === 'started' && entry.risk !== 'read' && operation.request?.step === activeStep) {
+              revokeWrite = network!.permitWrite({ route: contract.pageRoute, path: operation.request.path, body: operation.request.body({ key: current!.effectKey, inputs }) });
+            }
+            if (['failed', 'blocked', 'aborted'].includes(entry.status)) revokeWrite?.();
           }, timeoutMs: 2500,
         });
         try {
           const observed = compileSite({ origin: boundary.origin, pages: [{ route: contract.pageRoute, tree: await actor.read() }], operations: [contract] }).pages[0]!;
           current.before = { route: observed.route, fingerprint: observed.fingerprint, targets: observed.elements.length }; save();
         } catch { active(); throw new Divergence('grounding'); }
-        for (const action of contract.steps) {
+        for (const [index, action] of contract.steps.entries()) {
+          activeStep = index;
           active();
           // Knowledge may be forgotten or replaced while a task is awaiting a browser action.
           if (host.knowledge.latest(host.owner, boundary.origin)?.version !== model.version) throw new Divergence('stale-model');
@@ -172,6 +182,7 @@ export class AgentRuntime {
         }
         current.verification = after;
         if (after.status !== 'matched') throw new Divergence(after.status === 'conflict' ? 'effect-conflict' : 'effect-unverified');
+        revokeWrite?.(); revokeWrite = undefined;
         current.status = 'verified'; save(); current = undefined;
       }
       active(); result.status = 'verified';
@@ -182,6 +193,7 @@ export class AgentRuntime {
       result.status = current?.mutationAttempted || current?.recovered ? 'uncertain' : 'blocked';
       if (current) current.status = result.status;
     } finally {
+      revokeWrite?.();
       clearTimeout(timer); external?.removeEventListener('abort', abort);
       try { await browser?.close(); }
       finally { result.durationMs = previousDuration + performance.now() - start; save(); }

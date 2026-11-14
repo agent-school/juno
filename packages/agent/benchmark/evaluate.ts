@@ -14,7 +14,10 @@ export async function runBenchmark(directory: string, options: { headless?: bool
   if (fs.existsSync(directory) && fs.readdirSync(directory).length) throw new Error('Benchmark output must be an empty directory; use the demo to resume an existing task');
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   let app = await startFixture(path.join(directory, 'application'));
+  let closeRuns: (() => void) | undefined;
+  try {
   const host = hostFor(directory, app.origin, options);
+  closeRuns = () => host.runs.close();
   const checks: { name: string; passed: boolean; durationMs: number; detail?: string }[] = [];
   const receipts: { name: string; file: string; status: string; browserActions: number }[] = [];
   const startedAt = new Date().toISOString(), start = performance.now();
@@ -30,7 +33,6 @@ export async function runBenchmark(directory: string, options: { headless?: bool
     receipts.push({ name, file, status: receipt.status, browserActions: actions(receipt) });
     return receipt;
   };
-  try {
     const model = await host.compile();
     const task = makePlan(model.version);
     await check('read-only multi-page compilation and owner-isolated reload', async () => {
@@ -155,17 +157,62 @@ export async function runBenchmark(directory: string, options: { headless?: bool
       assert.equal(retry.status, 'uncertain'); assert.equal(retry.failure, 'effect-unverified');
       assert.equal(app.writes(), writes + 1);
     });
-    await check('page instructions have no execution authority', async () => {
+    await check('page instructions and unsolicited scripts have no execution authority', async () => {
       app.setVariant('injection');
       assert.equal(record('injection', await host.runtime().run(makePlan(model.version))).status, 'verified');
+    });
+    await check('execute writes require an exact one-shot host capability', async () => {
+      const browser = await host.openBrowser(), writes = app.writes();
+      try {
+        const network = await confinePage(browser.page, host.boundary, 'execute');
+        await browser.page.goto(`${app.origin}/contacts/new.html`);
+        const body = { kind: 'contact', key: 'c'.repeat(64), fields: { contact_email: 'approved@example.test' } };
+        const send = (value: typeof body) => browser.page.evaluate(async payload => {
+          try { return (await fetch('/api/records', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })).ok; }
+          catch { return false; }
+        }, value);
+        assert.equal(await send(body), false); assert.equal(app.writes(), writes);
+        const revoke = network.permitWrite({ route: '/contacts/new.html', path: '/api/records', body });
+        assert.equal(await send({ ...body, fields: { contact_email: 'altered@example.test' } }), false);
+        assert.equal(await send(body), true);
+        assert.equal(await send(body), false); revoke();
+        const changed = { ...body, key: 'd'.repeat(64) };
+        network.permitWrite({ route: '/contacts/new.html', path: '/api/records', body: changed })();
+        assert.equal(await send(changed), false); assert.equal(app.writes(), writes + 1);
+      } finally { await browser.close(); }
+    });
+    await check('HTTP redirects cannot forward reads or authorized POST bodies', async () => {
+      let external = 0;
+      const sink = createServer((_, response) => { external++; response.end('Unexpected'); });
+      const source = createServer((request, response) => {
+        if (request.url === '/page') { response.setHeader('Content-Type', 'text/html'); response.end('<h1>Owned redirect canary</h1>'); }
+        else { const address = sink.address(); assert.ok(address && typeof address !== 'string'); response.writeHead(307, { Location: `http://127.0.0.1:${address.port}/sink` }).end(); }
+      });
+      let browser: Awaited<ReturnType<typeof host.openBrowser>> | undefined;
+      try {
+        for (const server of [sink, source]) await new Promise<void>((resolve, reject) => server.once('error', reject).listen(0, '127.0.0.1', resolve));
+        const address = source.address(); assert.ok(address && typeof address !== 'string');
+        const origin = `http://127.0.0.1:${address.port}`;
+        browser = await host.openBrowser();
+        const network = await confinePage(browser.page, { origin, routes: ['/page'], readPaths: ['/read'], writePaths: ['/write'] }, 'execute');
+        await browser.page.goto(`${origin}/page`);
+        assert.equal(await browser.page.evaluate(() => fetch('/read').then(() => true).catch(() => false)), false);
+        network.permitWrite({ route: '/page', path: '/write', body: { approved: true } });
+        assert.equal(await browser.page.evaluate(() => fetch('/write', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"approved":true}' }).then(() => true).catch(() => false)), false);
+        assert.equal(external, 0);
+      } finally {
+        try { await browser?.close(); }
+        finally { for (const server of [source, sink]) { server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); } }
+      }
     });
     await check('request confinement blocks external and read-only writes', async () => {
       let external = 0;
       const sink = createServer((_, response) => { external++; response.end('Unexpected'); });
       await new Promise<void>(resolve => sink.listen(0, '127.0.0.1', resolve));
       const address = sink.address(); assert.ok(address && typeof address !== 'string');
-      const browser = await host.openBrowser();
+      let browser: Awaited<ReturnType<typeof host.openBrowser>> | undefined;
       try {
+        browser = await host.openBrowser();
         await confinePage(browser.page, host.boundary, 'read-only');
         await browser.page.goto(`${app.origin}/contacts/new.html`);
         const writes = app.writes();
@@ -175,7 +222,7 @@ export async function runBenchmark(directory: string, options: { headless?: bool
           fetch('/api/records', { method: 'POST', body: JSON.stringify({ kind: 'contact', key: 'f'.repeat(64), fields: { contact_email: 'canary@example.test' } }) }).catch(() => {}),
         ]); }, `http://127.0.0.1:${address.port}/canary`);
         assert.equal(external, 0); assert.equal(app.writes(), writes);
-      } finally { await browser.close(); await new Promise<void>(resolve => sink.close(() => resolve())); }
+      } finally { try { await browser?.close(); } finally { await new Promise<void>(resolve => sink.close(() => resolve())); } }
     });
     const report = {
       schemaVersion: 1, startedAt, durationMs: performance.now() - start,
@@ -186,5 +233,5 @@ export async function runBenchmark(directory: string, options: { headless?: bool
     };
     fs.writeFileSync(path.join(directory, 'report.json'), JSON.stringify(report, null, 2), { mode: 0o600 });
     return report;
-  } finally { host.runs.close(); await app.close(); }
+  } finally { try { closeRuns?.(); } finally { await app.close(); } }
 }

@@ -2,6 +2,22 @@ import { expect, it, vi } from 'vitest';
 import { createGuardedActor, SafetyBlocked, type AuditEntry } from '../../src/guard.js';
 
 const ref = { role: 'button', name: 'Delete account' };
+it.each(['?mode=delete', '#different-record', '?', '#'])('does not inherit benign authority on URL suffix %s', async suffix => {
+  const click = vi.fn(), page = { url: () => `https://example.test/account${suffix}`, getByRole: () => ({ click }) };
+  const { actor } = createGuardedActor(page as any, { benignPolicies: [{ id: 'exact-page', origin: 'https://example.test', pathname: '/account', method: 'click', ref }], audit: async () => {} });
+  await expect(actor.click(ref)).rejects.toThrow('confirmation');
+  expect(click).not.toHaveBeenCalled();
+});
+it('allows only an explicitly reviewed exact query and fragment', async () => {
+  const click = vi.fn(async () => {});
+  let url = 'https://example.test/account?record=reviewed#tab';
+  const page = { url: () => url, getByRole: () => ({ click }) };
+  const { actor } = createGuardedActor(page as any, { benignPolicies: [{ id: 'reviewed-record', origin: 'https://example.test', pathname: '/account', search: '?record=reviewed', hash: '#tab', method: 'click', ref }], audit: async () => {} });
+  await actor.click(ref);
+  url = 'https://example.test/account?record=another#tab';
+  await expect(actor.click(ref)).rejects.toThrow('confirmation');
+  expect(click).toHaveBeenCalledOnce();
+});
 function harness(mode: 'execute' | 'read-only' = 'execute') {
   const click = vi.fn().mockResolvedValue(undefined), fill = vi.fn().mockResolvedValue(undefined), setChecked = vi.fn().mockResolvedValue(undefined);
   const page = { url: () => 'https://example.test/account', getByRole: () => ({ click, fill, setChecked }), close: vi.fn().mockResolvedValue(undefined) };

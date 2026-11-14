@@ -7,6 +7,8 @@ import { compile, compileFixtureKnowledge, checkBindings, categoryFor } from './
 import { durableTree, verifyInteraction, type Inputs, type Receipt } from './contracts.js';
 import type { Store } from './store.js';
 
+const fixtureSearch = (requestId: string | null) => requestId ? `?${new URLSearchParams({ requestId })}` : '';
+
 export class Runner {
   private active = false;
   private owner: string | null = null;
@@ -50,7 +52,7 @@ export class Runner {
       // Browser is confined to this process's fixture; no arbitrary navigation or external requests.
       await page.context().route('**/*', route => new URL(route.request().url()).origin === this.origin ? route.continue() : route.abort());
       await page.context().addCookies([{ name: 'juno_lab', value: owner, url: this.origin, httpOnly: true, sameSite: 'Strict' }]);
-      await session.goto(`${this.origin}/fixture${requestId ? `?requestId=${requestId}` : ''}`);
+      await session.goto(`${this.origin}/fixture${fixtureSearch(requestId)}`);
       return await work(session);
     } finally {
       if (timer) clearTimeout(timer);
@@ -102,12 +104,13 @@ export class Runner {
         const page = session.page!;
         // The host-owned fixture contract grants only these exact benign mutations.
         // A site's observed content or saved risk string never grants execution authority.
+        const fixtureScope = { origin: this.origin, pathname: '/fixture', search: fixtureSearch(requestId) };
         const benignPolicies: BenignPolicy[] = [
-          { id: 'fixture.person', origin: this.origin, pathname: '/fixture', method: 'selectOption', ref: model.bindings.person },
+          { id: 'fixture.person', ...fixtureScope, method: 'selectOption', ref: model.bindings.person },
           ...(['note', 'occurred_at', 'next_action'] as const).map(key => ({
-            id: `fixture.${key}`, origin: this.origin, pathname: '/fixture', method: 'fill' as const, ref: model.bindings[key],
+            id: `fixture.${key}`, ...fixtureScope, method: 'fill' as const, ref: model.bindings[key],
           })),
-          { id: 'fixture.submit', origin: this.origin, pathname: '/fixture', method: 'click', ref: model.bindings.submit },
+          { id: 'fixture.submit', ...fixtureScope, method: 'click', ref: model.bindings.submit },
         ];
         const { actor } = createGuardedActor(page, { runId: requestId, benignPolicies, audit: async entry => {
           receipt.audit!.push(entry);

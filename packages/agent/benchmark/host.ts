@@ -43,6 +43,9 @@ export function hostFor(directory: string, origin: string, options: { headless?:
   const boundary = { origin, routes: ['/contacts/index.html', '/contacts/new.html', '/follow-ups/new.html'], readPaths: ['/app.js', '/api/state'], writePaths: ['/api/records'] };
   const operations: TrustedOperation[] = contracts.map((contract, index) => ({
     contract, requestKey: 'request_id',
+    request: { step: contract.steps.length - 1, path: '/api/records', body: ({ key, inputs }) => ({
+      kind: index === 0 ? 'contact' : 'followup', key, fields: Object.fromEntries(Object.entries(inputs).filter(([name]) => name !== 'request_id')),
+    }) },
     verify: async ({ key, inputs, signal }) => {
       const response = await fetch(`${origin}/api/state`, { signal: AbortSignal.any([signal, AbortSignal.timeout(2500)]), redirect: 'error' });
       if (!response.ok) throw new Error('Independent state unavailable');
