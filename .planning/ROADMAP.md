@@ -18,8 +18,8 @@ The roadmap implements the [DOCTRINE.md](./DOCTRINE.md) architecture (`website �
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Browser Core** - Load any site, read its accessibility tree, act via semantic refs under a real-user profile (completed 2026-08-24)
-- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Three plans exist under `phases/01.1-containerized-host-browser-runtime-and-windows-compatibility/`; implementation and Windows smoke-test evidence are pending.
-- [ ] **Phase 2: Safe-Execution Guard** - Code-enforced action classification, destructive-action gates, audit log, kill switch, injection defense
+- [ ] **Phase 1.1: Containerized Host-Browser Runtime & Windows Compatibility (INSERTED)** - Real Windows Chrome/Docker Desktop matrix passed, including corrected startup Ctrl-C cleanup. Firewall enforcement/backend boundary remains open under RUNTIME-03.
+- [x] **Phase 2: Safe-Execution Guard** - Guarded production execution verified: classification, confirmation, audit, read-only mode, injection boundary and abort. See Phase 2 verification.
 - [ ] **Phase 3: Site Compiler & Per-Site Memory** - Compile explored sites into durable, versioned typed semantic models (entities + operation contracts) that persist across sessions
 - [ ] **Phase 4: Planner, Execution & Authenticated Sites** - Intent → end-to-end multi-step workflows on any site with consequence verification, execution receipts, idempotent retries, and local self-healing recovery
 - [ ] **Phase 5: Teach-by-Showing** - Demonstrate an action once; Juno learns a parameterized, secret-free skill composed of typed operations
@@ -65,8 +65,8 @@ Plans:
 
 Plans:
 
-- [ ] 01.1-01-PLAN.md — CDP readiness, websocket normalization, attach-only session, and semantic tracer
-- [ ] 01.1-02-PLAN.md — Docker bridge harness, container-owned fixture, and no-reuse CDP test configuration
+- [x] 01.1-01-PLAN.md — CDP readiness, websocket normalization, attach-only session, and semantic tracer
+- [x] 01.1-02-PLAN.md — Docker bridge harness, container-owned fixture, and no-reuse CDP test configuration
 - [ ] 01.1-03-PLAN.md — Windows Chrome launcher, ownership-safe cleanup, compatibility matrix, and smoke-test documentation
 
 ### Phase 2: Safe-Execution Guard
@@ -83,7 +83,7 @@ Plans:
   4. Every state-mutating action appears in an audit log the user can inspect
   5. User can abort a run at any time via a kill switch, and page content containing injected instructions never alters Juno's behavior
 
-**Plans**: TBD
+**Plans**: 1/1 complete — 02-01-PLAN.md; verification in phases/02-safe-execution-guard/02-VERIFICATION.md.
 
 ### Phase 3: Site Compiler & Per-Site Memory
 
@@ -100,7 +100,7 @@ Plans:
   5. Stored knowledge consists of semantic descriptions (role/label/text), not brittle locators or coordinates
   6. Secret session/credential state lives in a separate store from shareable semantic knowledge, and a semantic-knowledge export contains no secrets
 
-**Plans**: TBD
+**Plans**: 03-01 typed substrate and 03-02 bounded multi-page observer complete; broader site validation remains open.
 
 ### Phase 4: Planner, Execution & Authenticated Sites
 
@@ -119,7 +119,7 @@ Plans:
   7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
   8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 
-**Plans**: TBD
+**Plans**: 04-01 reproducible task-runtime/interpretation foundation complete; live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
 
 ### Phase 5: Teach-by-Showing
 
@@ -168,15 +168,15 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. The hosted fixture lab is a bounded quick task; see [the evidence ledger](TESTABLE-MILESTONE.md).
+Phases retain numeric acceptance order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. Bounded foundations may be co-developed without closing earlier gates. The hosted fixture lab is a bounded quick task; see [the evidence ledger](TESTABLE-MILESTONE.md).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
-| 1.1. Host-Browser Runtime & Windows | 0/3 | Planned; not implemented | - |
-| 2. Safe-Execution Guard | 0/TBD | Not started | - |
-| 3. Site Compiler & Per-Site Memory | 0/TBD | Not started | - |
-| 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
+| 1.1. Host-Browser Runtime & Windows | 2/3 accepted | Windows lifecycle verified; RUNTIME-03 firewall acceptance open | - |
+| 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
+| 3. Site Compiler & Per-Site Memory | 2 bounded plans | In progress; broader site validation open | - |
+| 4. Planner, Execution & Authenticated Sites | 1 foundation plan | In progress; live/auth/repair gates open | - |
 | 5. Teach-by-Showing | 0/TBD | Not started | - |
 | 6. Portal Recognition | 0/TBD | Not started | - |
 | 7. Voice Control | 0/TBD | Not started | - |

@@ -1,19 +1,19 @@
 ---
 gsd_state_version: 1.0
-current_phase: 1.1
-current_phase_name: Containerized Host-Browser Runtime and Windows Compatibility
-status: ready_to_execute
-stopped_at: Recorded research and memory UI trial passed; initialization and stale-notice fixes deployed; Jack's own trial pending
-last_updated: "2026-11-13T02:05:24Z"
-last_activity: 2026-11-13
-last_activity_desc: Completed hosted UI trial and deployed two client corrections with regression coverage
-state_head: 18bcdf9c229a331c5043766433c146b10816d0e4
+current_phase: 3
+current_phase_name: Site Compiler and Per-Site Memory
+status: in_progress
+stopped_at: Task foundation and three review fixes verified locally and in Docker; live provider auth and broader site gates remain open
+last_updated: "2026-11-14"
+last_activity: 2026-11-14
+last_activity_desc: Hardened audited one-shot request authority, exact URL policies and setup cleanup; 19-condition benchmark passes
+state_head: 816ffe8d25332b6fcd18e9d2ce04753555afc58b
 progress:
   total_phases: 8
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 3
-  percent: 12
+  completed_phases: 2
+  total_plans: 10
+  completed_plans: 9
+  percent: 25
 ---
 
 # Project State
@@ -23,34 +23,44 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Redesigned research desk, durable memory and controlled lab deployed on Coolify with requested-domain HTTPS and upgrade persistence verified. Recorded UI trial passed after two client corrections; Jack's own trial remains. Phase 01.1 remains the next unimplemented planned phase, followed by Phase 2.
+**Current focus:** Phase 2 guarded execution and the Phase 3 typed site-knowledge substrate are deployed and verified in Browser lab. Broader site compilation remains in progress. Approved actual Windows Server 2022 / Chrome Stable / Docker Desktop WSL2 validation covers discovery, profile/ownership safety, host-Node-free semantic execution and lifecycle cases. Two startup Ctrl-C races are corrected in 67b6098, which passed 12/12 actual Chrome interruption trials and full semantic execution; RUNTIME-03 firewall enforcement remains open. PR #2 merge was refused by GitHub integration HTTP 403 despite explicit user authorization; PR #3 carries the new work.
 
 ## Current Position
 
-Phase: 01.1 — Host-Browser Runtime & Windows Compatibility
-Plan: Three plans exist, none executed
-Status: Fixture lab plus real API task/memory slice verified; neither completes a roadmap phase
-Last activity: 2026-11-13 — Hosted research/memory/recovery UI trial and Browser lab replay passed; empty-state and stale-notice corrections deployed. Syntax/typecheck, 54 unit and 19 integration tests passed. Full-flow UI run on `64ad951`, final targeted regression on `18bcdf9`; Jack's own trial remains.
+Phase: 3 — Site Compiler & Per-Site Memory
+Plan: 03-01 substrate and 03-02 multi-page observer complete; 04-01 execution foundation complete with full phases still open
+Status: Phase 2 complete; Phase 01.1 has actual Windows evidence with RUNTIME-03 firewall acceptance open
+Last activity: 2026-11-13 — Windows validation reproduced both the pre-CIM ownership gap and cancellable process-creation return gap. Final correction 67b6098 preallocates the .NET process, retains exact identity checks and handles failed starts without masking errors. Actual Chrome passed 12/12 startup interruption trials, full semantic replay without host Node/pnpm, occupied-port retry/refusal, native launch failure, build/test Ctrl-C and container stop. No owned processes/rules/containers/networks/listeners remained; profile and unrelated Chrome survived. Firewall profiles were disabled, so enforcement remains unverified. Hosted deployment remains 0954811; health returned 200 and storage is unaffected by this Windows-only correction.
 
-Progress: 1/8 roadmap phases complete. See TESTABLE-MILESTONE.md for evidence-based lab and real-world gates.
+Review follow-up: 12a399c fixes boolean checkbox state through raw/guarded actors and common dotted/encoded site routes through one canonical pathname schema. Both failures were reproduced before the fix. Typechecks, 115 unit tests, 22 standard browser/API tests and the CDP tracer pass. These library fixes are not deployed; hosted revision remains 0954811. No new environment dependencies or blueprint changes are needed.
+
+Agent foundation (2026-11-14, implementation bf1ec85): `@juno/agent` adds bounded multi-page observation, typed catalog interpretation, guarded multi-operation execution, expected/verified effect receipts and crash-safe request recovery. `pnpm agent:demo` creates a contact and dependent follow-up; a second process reuses the verified task with zero writes. `pnpm agent:benchmark` passes 17/17 checks in Chrome and the Docker image's bundled Chromium. Full typechecks, 134 unit tests, 23 browser/API tests and two native CDP tests pass. Live OpenAI interpretation returned HTTP 401, so model-backed planning remains unverified; no application writes followed. See Phase 4 verification for scope and remaining gates. No hosted deployment occurred. Existing Node 24/Chrome blueprint covers this increment without changes.
+
+Review follow-up 816ffe8: setup failure cleanup, exact query/fragment policy scope and audited one-shot network write grants are fixed. HTTP redirects are refused, and hostile page scripts cannot POST outside an approved payload. Reproduced lifecycle, scope and write-canary failures before the fixes. Typechecks, 141 unit tests, 23 browser/API tests and two native CDP tests pass; the expanded benchmark passes 19/19 in Chrome and rebuilt Docker Chromium. Browser lab's legitimate requestId query is explicitly host-reviewed and its full regression flow passes. No new environment dependencies, blueprint changes or hosted deployment.
+
+Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 9
 - Average duration: -
-- Total execution time: 0 hours
+- Total execution time: Not instrumented; see plan summaries and verification evidence
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 3 | - | - |
+| 01.1 | 2 accepted; launcher acceptance open | - | - |
+| 02 | 1 | - | - |
+| 03 substrate/observer | 2 | - | - |
+| 04 foundation | 1 | - | - |
 
 **Recent Trend:**
 
-- Last 5 plans: none yet
+- Recently accepted: Phase 01.1 P01/P02 runtime and container harness; P03 launcher acceptance remains partial
 - Trend: -
 
 *Updated after each plan completion*
@@ -87,6 +97,8 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
+- Live intent-planner verification is blocked by HTTP 401 from the configured OpenAI credential. Typed CLI execution, offline planner/provider contracts and the full browser benchmark pass without a model key. Authentication must be repaired before claiming live interpretation.
+
 - Replacement Coolify token works and is saved. Public HTTPS and redeploy persistence passed on the temporary hostname; requested hostname DNS and valid HTTPS passed on 2026-11-13.
 - Coolify API status disagrees with observed application availability. Keep that monitoring gap explicit.
 - The public task is a pair of deterministic read-only GitHub API operations. It is not a general Muse-style chat planner or evidence of learned browser semantics on external sites.
@@ -105,6 +117,8 @@ Recent decisions affecting current work:
 | 261112-p1y | Coolify deployment, valid public HTTPS on temporary and requested hostnames, live research/browser checks and hosted memory/account persistence across redeploy | Monitoring discrepancy and user/UI trial | [Plan, summary and verification](quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/) |
 | 261113-0u5 | Impeccable-informed research desk and memory interface deployed on requested domain; 25 hosted assertions including asset hashes, recovery and upgrade persistence passed | Jack's own trial and monitoring discrepancy; recorded UI verification followed in 261113-2ca | [Plan, summary and verification](quick/261113-0u5-rethink-juno-interface-using-impeccable-/) |
 | 261113-2ca | Recorded hosted research/memory/recovery and lab UI trial; empty-state and stale-notice corrections with shipped-client regressions, deployed to requested domain | Jack's own trial, listed UI coverage limits and monitoring discrepancy | [Plan, summary and verification](quick/261113-2ca-fix-empty-research-workspace-initializat/) |
+| 261113-mny | Actual Windows matrix; two Ctrl-C startup-race corrections; final real Chrome sweep 12/12 and full semantic/lifecycle rerun passed | RUNTIME-03 enabled-firewall enforcement; Windows 10/11 and other backends unverified | [Plan and summary](quick/261113-mny-fix-windows-ctrl-c-startup-ownership-cle/) |
+| 261113-o3i | False checkbox input and canonical route review regressions reproduced/fixed; typecheck, 115 unit tests, 22 browser/API tests and CDP tracer pass | Broader compiler and firewall gates unchanged; hosted revision unchanged | [Plan and summary](quick/261113-o3i-fix-value-aware-checkbox-actions-and-can/) |
 
 - Phase 5 (Teach-by-Showing): single-demonstration → parameterized-skill generalization is MEDIUM confidence in research — needs a spike during planning
 - Phase 6 (Portal Recognition): portal fingerprinting approach needs empirical validation against real job portals (Greenhouse, Lever, Workday)
@@ -118,6 +132,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-11-13T02:05:24Z
-Stopped at: Recorded hosted UI trial passed after deployed corrections; Jack's own trial pending; Phase 01.1 remains unimplemented
-Resume file: None
+Last session: 2026-11-14
+Stopped at: Typed execution foundation and all three review fixes passed Chrome, Chromium-container and repository checks. Live provider auth returned HTTP 401; broader site validation, authenticated execution and RUNTIME-03 firewall enforcement remain open.
+Resume file: .planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md

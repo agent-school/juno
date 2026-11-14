@@ -1,17 +1,29 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { BrowserSession, SemanticActor, SemanticPageReader, type SemanticRef } from '@juno/browser';
-import { compile, checkBindings, categoryFor } from './compiler.js';
+import { BrowserSession, createGuardedActor, type BenignPolicy, type SemanticRef } from '@juno/browser';
+import { SiteKnowledgeStore } from '@juno/knowledge';
+import { compile, compileFixtureKnowledge, checkBindings, categoryFor } from './compiler.js';
 import { durableTree, verifyInteraction, type Inputs, type Receipt } from './contracts.js';
 import type { Store } from './store.js';
+
+const fixtureSearch = (requestId: string | null) => requestId ? `?${new URLSearchParams({ requestId })}` : '';
 
 export class Runner {
   private active = false;
   private owner: string | null = null;
   private session: BrowserSession | null = null;
   private cancelled = false;
-  constructor(private store: Store, private origin: string) {}
+  private readonly knowledge: SiteKnowledgeStore;
+  constructor(private store: Store, private origin: string) {
+    this.knowledge = new SiteKnowledgeStore(path.join(store.directory, 'site-knowledge'));
+  }
+  inspectKnowledge(owner: string) { return this.knowledge.versions(owner, this.origin); }
+  forgetKnowledge(owner: string) {
+    if (this.active) throw new Error('Wait for the browser run to finish before forgetting its model.');
+    this.knowledge.forget(owner, this.origin);
+    this.store.update(owner, state => { state.model = null; });
+  }
   isBusy(): boolean { return this.active; }
   async cancel(owner: string): Promise<void> {
     if (!this.active || owner !== this.owner) return;
@@ -40,7 +52,7 @@ export class Runner {
       // Browser is confined to this process's fixture; no arbitrary navigation or external requests.
       await page.context().route('**/*', route => new URL(route.request().url()).origin === this.origin ? route.continue() : route.abort());
       await page.context().addCookies([{ name: 'juno_lab', value: owner, url: this.origin, httpOnly: true, sameSite: 'Strict' }]);
-      await session.goto(`${this.origin}/fixture${requestId ? `?requestId=${requestId}` : ''}`);
+      await session.goto(`${this.origin}/fixture${fixtureSearch(requestId)}`);
       return await work(session);
     } finally {
       if (timer) clearTimeout(timer);
@@ -53,9 +65,11 @@ export class Runner {
   }
   async compile(owner: string): Promise<void> {
     await this.browser(owner, null, async session => {
-      const tree = await new SemanticPageReader().read(session.page!);
+      const { actor } = createGuardedActor(session.page!, { mode: 'read-only', audit: async () => {} });
+      const tree = await actor.read();
       this.assertActive();
       const model = compile(tree);
+      model.knowledge = this.knowledge.save(owner, compileFixtureKnowledge(this.origin, tree, model));
       this.store.update(owner, state => { state.model = model; });
     });
   }
@@ -71,7 +85,7 @@ export class Runner {
     const receipt: Receipt = {
       id: requestId, operation: 'capture_interaction', inputs, modelVersion: state.model?.version ?? null,
       variant: state.variant, startedAt: new Date().toISOString(), durationMs: 0, status: 'running',
-      actions: [], assertions: [], observations: {}, recovery: [],
+      actions: [], audit: [], assertions: [], observations: {}, recovery: [],
       metrics: { modelCalls: 0, modelCostUsd: 0, browserActions: 0 },
     };
     this.store.update(owner, current => { current.receipts.push(receipt); });
@@ -80,11 +94,32 @@ export class Runner {
     try {
       if (!state.model) throw new Error('Observe and compile this fixture before replaying.');
       const model = state.model;
+      if (model.knowledge) {
+        const saved = this.knowledge.latest(owner, this.origin);
+        if (!saved || saved.version !== model.knowledge.version || saved.structuralRevision !== model.knowledge.structuralRevision) {
+          throw new Error('Saved site knowledge changed or is missing. Explicitly recompile before execution.');
+        }
+      }
       await this.browser(owner, requestId, async session => {
         const page = session.page!;
-        const reader = new SemanticPageReader();
-        const actor = new SemanticActor(page, reader, { timeoutMs: 2500 });
-        receipt.observations.before = durableTree(await reader.read(page));
+        // The host-owned fixture contract grants only these exact benign mutations.
+        // A site's observed content or saved risk string never grants execution authority.
+        const fixtureScope = { origin: this.origin, pathname: '/fixture', search: fixtureSearch(requestId) };
+        const benignPolicies: BenignPolicy[] = [
+          { id: 'fixture.person', ...fixtureScope, method: 'selectOption', ref: model.bindings.person },
+          ...(['note', 'occurred_at', 'next_action'] as const).map(key => ({
+            id: `fixture.${key}`, ...fixtureScope, method: 'fill' as const, ref: model.bindings[key],
+          })),
+          { id: 'fixture.submit', ...fixtureScope, method: 'click', ref: model.bindings.submit },
+        ];
+        const { actor } = createGuardedActor(page, { runId: requestId, benignPolicies, audit: async entry => {
+          receipt.audit!.push(entry);
+          this.store.update(owner, current => {
+            const stored = current.receipts.find(item => item.id === requestId);
+            if (stored) stored.audit = [...receipt.audit!];
+          });
+        } });
+        receipt.observations.before = durableTree(await actor.read());
         checkBindings(receipt.observations.before, model);
         const act = async (method: string, target: SemanticRef, perform: () => Promise<void>) => {
           this.assertActive();
@@ -104,7 +139,7 @@ export class Runner {
         await act('click', model.bindings.submit, () => actor.click(model.bindings.submit));
         const saved = await response;
         if (!saved.ok()) throw new Error('Fixture rejected the write.');
-        receipt.observations.after = durableTree(await reader.read(page));
+        receipt.observations.after = durableTree(await actor.read());
         receipt.assertions = verifyInteraction(this.store.read(owner).interactions, requestId, inputs);
         receipt.status = receipt.assertions.every(assertion => assertion.passed) ? 'verified' : 'failed';
         if (receipt.status !== 'verified') {

@@ -95,8 +95,16 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/workspace') {
       return send(res, 200, { ...store.read(owner).workspace, account: accounts.handle(owner), researchBusy: research.isBusy() });
     }
+    if (req.method === 'GET' && url.pathname === '/api/site-knowledge') {
+      return send(res, 200, { versions: runner.inspectKnowledge(owner) });
+    }
     if (req.method !== 'POST') throw new HttpError(404, 'Not found');
     const payload = await body(req);
+    if (url.pathname === '/api/site-knowledge/forget') {
+      z.object({}).strict().parse(payload);
+      runner.forgetKnowledge(owner);
+      return send(res, 200, { forgotten: true });
+    }
     if (url.pathname === '/api/account/register') {
       const data = CredentialsSchema.parse(payload);
       try { await accounts.register(owner, data); }

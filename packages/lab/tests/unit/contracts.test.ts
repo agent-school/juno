@@ -18,7 +18,8 @@ describe('semantic binding boundary', () => {
     expect(() => checkBindings({ children: [...tree.children].reverse() }, model)).not.toThrow();
     expect(() => checkBindings({ children: tree.children.slice(0, -1) }, model)).toThrow('observed 0');
     expect(() => compile({ children: [...tree.children, tree.children[4]!] })).toThrow('observed 2');
-    expect(JSON.stringify(model)).not.toContain('e16');
+    // UUIDs can contain "e16" by chance; reject ephemeral reference fields structurally.
+    for (const binding of Object.values(model.bindings)) expect(binding).not.toHaveProperty('ref');
     expect(JSON.stringify(durableTree(tree))).not.toContain('"box"');
   });
   it('rejects invalid dates and any undeclared input field', () => {

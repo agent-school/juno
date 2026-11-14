@@ -62,6 +62,8 @@ export interface BrowserSessionOptions {
   headless?: boolean;
   /** 'chrome' (system Google Chrome, default) or 'chromium' (Playwright's bundled build). */
   channel?: 'chrome' | 'chromium';
+  /** Block for untrusted agent pages so context request interception covers all resources. */
+  serviceWorkers?: 'allow' | 'block';
 }
 
 /**
@@ -76,6 +78,7 @@ export class BrowserSession {
   private readonly profileDirOverride: string | undefined;
   private readonly headless: boolean;
   private readonly channel: 'chrome' | 'chromium';
+  private readonly serviceWorkers: 'allow' | 'block';
 
   private context: BrowserContext | null = null;
   private _page: Page | null = null;
@@ -84,6 +87,7 @@ export class BrowserSession {
     this.profileDirOverride = options.profileDir;
     this.headless = options.headless ?? false;
     this.channel = options.channel ?? 'chrome';
+    this.serviceWorkers = options.serviceWorkers ?? 'allow';
   }
 
   /** The live page of this session. Null before launch() / after close(). */
@@ -118,6 +122,7 @@ export class BrowserSession {
       this.context = await chromium.launchPersistentContext(profileDir, {
         ...(this.channel === 'chrome' ? { channel: 'chrome' } : {}),
         headless: this.headless,
+        serviceWorkers: this.serviceWorkers,
       });
     } catch (error) {
       // Chrome's profile lock: a second Chromium process on the same
