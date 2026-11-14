@@ -8,6 +8,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY packages/browser/package.json packages/browser/package.json
 COPY packages/lab/package.json packages/lab/package.json
 COPY packages/knowledge/package.json packages/knowledge/package.json
+COPY packages/agent/package.json packages/agent/package.json
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @juno/browser exec playwright install --with-deps chromium
 COPY packages/ packages/
@@ -17,6 +18,8 @@ ENV NODE_ENV=production
 ENV PORT=5123
 ENV JUNO_LAB_CHANNEL=chromium
 ENV JUNO_LAB_DATA_DIR=/data
+ENV JUNO_AGENT_CHANNEL=chromium
+ENV JUNO_AGENT_DATA_DIR=/data/agent
 EXPOSE 5123
 VOLUME /data
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD node -e "fetch('http://127.0.0.1:5123/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
