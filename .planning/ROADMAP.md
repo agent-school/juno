@@ -100,7 +100,7 @@ Plans:
   5. Stored knowledge consists of semantic descriptions (role/label/text), not brittle locators or coordinates
   6. Secret session/credential state lives in a separate store from shareable semantic knowledge, and a semantic-knowledge export contains no secrets
 
-**Plans**: TBD
+**Plans**: 03-01 typed substrate and 03-02 bounded multi-page observer complete; broader site validation remains open.
 
 ### Phase 4: Planner, Execution & Authenticated Sites
 
@@ -119,7 +119,7 @@ Plans:
   7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
   8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 
-**Plans**: TBD
+**Plans**: 04-01 reproducible task-runtime/interpretation foundation complete; live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
 
 ### Phase 5: Teach-by-Showing
 
@@ -168,15 +168,15 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. The hosted fixture lab is a bounded quick task; see [the evidence ledger](TESTABLE-MILESTONE.md).
+Phases retain numeric acceptance order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 → 7. Bounded foundations may be co-developed without closing earlier gates. The hosted fixture lab is a bounded quick task; see [the evidence ledger](TESTABLE-MILESTONE.md).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Browser Core | 3/3 | Complete    | 2026-08-24 |
 | 1.1. Host-Browser Runtime & Windows | 2/3 accepted | Windows lifecycle verified; RUNTIME-03 firewall acceptance open | - |
 | 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
-| 3. Site Compiler & Per-Site Memory | 1 substrate plan | In progress; broader site validation open | - |
-| 4. Planner, Execution & Authenticated Sites | 0/TBD | Not started | - |
+| 3. Site Compiler & Per-Site Memory | 2 bounded plans | In progress; broader site validation open | - |
+| 4. Planner, Execution & Authenticated Sites | 1 foundation plan | In progress; live/auth/repair gates open | - |
 | 5. Teach-by-Showing | 0/TBD | Not started | - |
 | 6. Portal Recognition | 0/TBD | Not started | - |
 | 7. Voice Control | 0/TBD | Not started | - |

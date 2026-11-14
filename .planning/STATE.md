@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: Checkbox-state and canonical-route review fixes verified; firewall enforcement and broader compiler gates remain open
-last_updated: "2026-11-13"
-last_activity: 2026-11-13
-last_activity_desc: Reproduced and fixed false checkbox inputs and common website route rejection from PR review
-state_head: 12a399c1dfd042d6ebfc225ada37a6a9cbb9be47
+stopped_at: Reproducible multi-page task foundation verified locally and in Docker; live provider auth and broader site gates remain open
+last_updated: "2026-11-14"
+last_activity: 2026-11-14
+last_activity_desc: Added typed task runtime, durable crash recovery, bounded intent interpretation and 17-condition browser benchmark
+state_head: bf1ec85
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 7
+  total_plans: 10
+  completed_plans: 9
   percent: 25
 ---
 
@@ -28,11 +28,13 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 ## Current Position
 
 Phase: 3 — Site Compiler & Per-Site Memory
-Plan: 03-01 substrate complete; broader site compiler validation remains
+Plan: 03-01 substrate and 03-02 multi-page observer complete; 04-01 execution foundation complete with full phases still open
 Status: Phase 2 complete; Phase 01.1 has actual Windows evidence with RUNTIME-03 firewall acceptance open
 Last activity: 2026-11-13 — Windows validation reproduced both the pre-CIM ownership gap and cancellable process-creation return gap. Final correction 67b6098 preallocates the .NET process, retains exact identity checks and handles failed starts without masking errors. Actual Chrome passed 12/12 startup interruption trials, full semantic replay without host Node/pnpm, occupied-port retry/refusal, native launch failure, build/test Ctrl-C and container stop. No owned processes/rules/containers/networks/listeners remained; profile and unrelated Chrome survived. Firewall profiles were disabled, so enforcement remains unverified. Hosted deployment remains 0954811; health returned 200 and storage is unaffected by this Windows-only correction.
 
 Review follow-up: 12a399c fixes boolean checkbox state through raw/guarded actors and common dotted/encoded site routes through one canonical pathname schema. Both failures were reproduced before the fix. Typechecks, 115 unit tests, 22 standard browser/API tests and the CDP tracer pass. These library fixes are not deployed; hosted revision remains 0954811. No new environment dependencies or blueprint changes are needed.
+
+Agent foundation (2026-11-14, implementation bf1ec85): `@juno/agent` adds bounded multi-page observation, typed catalog interpretation, guarded multi-operation execution, expected/verified effect receipts and crash-safe request recovery. `pnpm agent:demo` creates a contact and dependent follow-up; a second process reuses the verified task with zero writes. `pnpm agent:benchmark` passes 17/17 checks in Chrome and the Docker image's bundled Chromium. Full typechecks, 134 unit tests, 23 browser/API tests and two native CDP tests pass. Live OpenAI interpretation returned HTTP 401, so model-backed planning remains unverified; no application writes followed. See Phase 4 verification for scope and remaining gates. No hosted deployment occurred. Existing Node 24/Chrome blueprint covers this increment without changes.
 
 Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
@@ -40,7 +42,7 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 
 **Velocity:**
 
-- Total plans completed: 7
+- Total plans completed: 9
 - Average duration: -
 - Total execution time: Not instrumented; see plan summaries and verification evidence
 
@@ -51,7 +53,8 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 | 01 | 3 | - | - |
 | 01.1 | 2 accepted; launcher acceptance open | - | - |
 | 02 | 1 | - | - |
-| 03 substrate | 1 | - | - |
+| 03 substrate/observer | 2 | - | - |
+| 04 foundation | 1 | - | - |
 
 **Recent Trend:**
 
@@ -91,6 +94,8 @@ Recent decisions affecting current work:
 - Decide with Jack whether newer Notion Rolo → Canvas validation order supersedes the older Instagram-first validation target.
 
 ### Blockers/Concerns
+
+- Live intent-planner verification is blocked by HTTP 401 from the configured OpenAI credential. Typed CLI execution, offline planner/provider contracts and the full browser benchmark pass without a model key. Authentication must be repaired before claiming live interpretation.
 
 - Replacement Coolify token works and is saved. Public HTTPS and redeploy persistence passed on the temporary hostname; requested hostname DNS and valid HTTPS passed on 2026-11-13.
 - Coolify API status disagrees with observed application availability. Keep that monitoring gap explicit.
