@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: Reproducible multi-page task foundation verified locally and in Docker; live provider auth and broader site gates remain open
+stopped_at: Task foundation and three review fixes verified locally and in Docker; live provider auth and broader site gates remain open
 last_updated: "2026-11-14"
 last_activity: 2026-11-14
-last_activity_desc: Added typed task runtime, durable crash recovery, bounded intent interpretation and 17-condition browser benchmark
-state_head: bf1ec85
+last_activity_desc: Hardened audited one-shot request authority, exact URL policies and setup cleanup; 19-condition benchmark passes
+state_head: 816ffe8d25332b6fcd18e9d2ce04753555afc58b
 progress:
   total_phases: 8
   completed_phases: 2
@@ -35,6 +35,8 @@ Last activity: 2026-11-13 — Windows validation reproduced both the pre-CIM own
 Review follow-up: 12a399c fixes boolean checkbox state through raw/guarded actors and common dotted/encoded site routes through one canonical pathname schema. Both failures were reproduced before the fix. Typechecks, 115 unit tests, 22 standard browser/API tests and the CDP tracer pass. These library fixes are not deployed; hosted revision remains 0954811. No new environment dependencies or blueprint changes are needed.
 
 Agent foundation (2026-11-14, implementation bf1ec85): `@juno/agent` adds bounded multi-page observation, typed catalog interpretation, guarded multi-operation execution, expected/verified effect receipts and crash-safe request recovery. `pnpm agent:demo` creates a contact and dependent follow-up; a second process reuses the verified task with zero writes. `pnpm agent:benchmark` passes 17/17 checks in Chrome and the Docker image's bundled Chromium. Full typechecks, 134 unit tests, 23 browser/API tests and two native CDP tests pass. Live OpenAI interpretation returned HTTP 401, so model-backed planning remains unverified; no application writes followed. See Phase 4 verification for scope and remaining gates. No hosted deployment occurred. Existing Node 24/Chrome blueprint covers this increment without changes.
+
+Review follow-up 816ffe8: setup failure cleanup, exact query/fragment policy scope and audited one-shot network write grants are fixed. HTTP redirects are refused, and hostile page scripts cannot POST outside an approved payload. Reproduced lifecycle, scope and write-canary failures before the fixes. Typechecks, 141 unit tests, 23 browser/API tests and two native CDP tests pass; the expanded benchmark passes 19/19 in Chrome and rebuilt Docker Chromium. Browser lab's legitimate requestId query is explicitly host-reviewed and its full regression flow passes. No new environment dependencies, blueprint changes or hosted deployment.
 
 Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not establish Muse parity or authenticated-site execution. See phase verification files for remaining gates.
 
@@ -131,5 +133,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-11-14
-Stopped at: Bounded multi-page observation and the typed execution/interpretation foundation passed Chrome, Chromium-container and repository checks. Live provider auth returned HTTP 401; broader site validation, authenticated execution and RUNTIME-03 firewall enforcement remain open.
+Stopped at: Typed execution foundation and all three review fixes passed Chrome, Chromium-container and repository checks. Live provider auth returned HTTP 401; broader site validation, authenticated execution and RUNTIME-03 firewall enforcement remain open.
 Resume file: .planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md
