@@ -68,7 +68,7 @@ export function createJSONModel(options: ModelOptions, maxTokens: number) {
     if (content.length > 50_000) throw new ModelError('Model response exceeds budget.');
     // Accept one final JSON object with an optional text introduction/fence. Never choose between objects.
     // The caller still validates every field and grants all authority independently.
-    const trimmed = content.trim(), fenced = /^[^{]*?```(?:json)?\s*\n(\{[\s\S]*\})\s*\n```$/i.exec(trimmed);
+    const trimmed = content.trim(), fenced = /^[^{]*?```(?:json)?\s*\n\s*(\{[\s\S]*\})\s*\n```$/i.exec(trimmed);
     const start = trimmed.indexOf('{');
     try {
       if (start === -1 || (!fenced && trimmed.slice(0, start).includes('```'))) throw new Error('No single JSON object');

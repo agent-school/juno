@@ -35,7 +35,7 @@ it.each(['max_tokens', 'tool_use', 'guardrail_intervened'])('rejects an unfinish
 });
 
 it('accepts one final JSON object with a formatting introduction, without treating prose as a decision', async () => {
-  for (const content of ['Here is the decision: {"steps":[]}', 'I will read the source.\n```json\n{"steps":[]}\n```']) {
+  for (const content of ['Here is the decision: {"steps":[]}', 'I will read the source.\n```json\n{"steps":[]}\n```', '```json\n  {"steps":[]}\n```']) {
     vi.stubGlobal('fetch', async () => new Response(JSON.stringify(envelope(content))));
     expect(await createJSONModel(options, 3000)(messages, new AbortController().signal)).toEqual({ steps: [] });
   }
