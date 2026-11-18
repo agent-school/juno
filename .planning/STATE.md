@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: General public-web Agent implemented and browser/API checked; production/UI verification underway, live model credential remains unavailable
+stopped_at: General public-web Agent deployed and UI verified; source collection works, live goal interpretation still needs valid provider authentication
 last_updated: "2026-11-18"
 last_activity: 2026-11-18
-last_activity_desc: Replaced task-specific composition with general goals, public navigation/evidence and per-site memory; preparing production verification
-state_head: a2c4cf7db581a3ccb14eede2efc9205af3f76e75
+last_activity_desc: Verified general public-web source tasks, durable site memory, follow-ups and corrected selection reload on the hosted UI
+state_head: 53386ed117cd29686de62450e35e2b833416bfab
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 11
-  completed_plans: 10
+  total_plans: 12
+  completed_plans: 11
   percent: 25
 ---
 
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** 04-03 generalizes the hosted Agent beyond the contact fixture: goals, optional starting websites, bounded public search/navigation, exact-source evidence, comparison/extraction decisions, follow-up context, per-domain structural memory and durable workspace APIs. Contact execution/recovery and the 19-condition matrix remain in Engine tests. Real Chrome read three unrelated documentation sites. Production/container/UI checks are underway. Live model authentication remains blocked after the stored OpenAI key returned HTTP 401; evidence collection works without a model. Full compiler, auth, repair, teaching and RUNTIME-03 firewall gates remain open. PR #3 carries the work and remains unmerged; PR #2's merge was refused by GitHub integration HTTP 403.
+**Current focus:** 04-03 generalizes the hosted Agent beyond the contact fixture: goals, optional websites, bounded public navigation/evidence, explicit follow-up context and reusable per-domain structural memory. Public source tasks, persistence through container/Coolify replacement and corrected hosted UI on 53386ed are verified. Contact execution/recovery and its 19-condition matrix remain in Engine tests. General goal reasoning/comparison/extraction is implemented and tested with a controlled interpreter; live provider authentication remains unavailable after HTTP 401. The deployed source-collection mode makes no goal-interpretation claim. Full compiler, auth, repair, teaching and RUNTIME-03 firewall gates remain open. PR #3 remains unmerged; PR #2's merge was refused by GitHub integration HTTP 403.
 
 ## Current Position
 
 Phase: 3 — Site Compiler & Per-Site Memory
-Plan: 03-01 substrate, 03-02 multi-page observer, 04-01 execution foundation and 04-02 hosted integration complete as bounded slices; full phases remain open
+Plan: 03-01 substrate, 03-02 multi-page observer, 04-01 execution foundation, 04-02 hosted integration and 04-03 general public-web tasks complete as bounded slices; full phases remain open
 Status: Phase 2 complete; Phase 01.1 has actual Windows evidence with RUNTIME-03 firewall acceptance open
-Last activity: 2026-11-18 — 04-02 connects Agent as the main view and exposes the engine through a workspace-isolated backend. Hosted API and recorded real-Chromium UI flows pass. The 19-condition matrix passes in-app; replay adds zero writes. Tasks, receipts, frames, knowledge, reports and research notes survived an actual Coolify replacement. Preparation shutdown now aborts compilation and waits for cleanup. Typechecks, 146 unit tests, 30 browser/API tests, two CDP tests, Docker build and implementation CI pass. See the 04-02 summary for evidence and limits.
+Last activity: 2026-11-18 — 04-03 replaces contact-specific composition with general goals and optional public websites. Typechecks, 157 unit tests, 35 browser/API tests, Docker Chromium and implementation CI pass. Real public source collection and knowledge/receipt/frame/note persistence through Coolify replacement pass. Recorded hosted UI on 53386ed verifies the general composer, unrelated websites, follow-ups, URL rejection, memory, corrected task reload, 390px keyboard and polling stability. UI cancellation/live model output remain explicit gaps. See the 04-03 summary and Phase 4 verification.
 
 Windows acceptance remains as recorded in 67b6098: actual Chrome/Docker execution and 12/12 startup interruption trials passed; enabled-firewall enforcement, other Windows configurations and forced host termination remain outside that evidence.
 

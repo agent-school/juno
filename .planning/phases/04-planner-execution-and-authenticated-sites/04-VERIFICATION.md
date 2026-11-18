@@ -64,3 +64,22 @@ Production deployed a2c4cf7 in Coolify job `3wbopiyho1yqswkd8ljcntos`; the previ
 The primary annotated UI evidence is attached to the [session](https://app.devin.ai/sessions/d0f8409f16a04d4eb9746c4504fc750c?testRecording=c8594148-0221-4c02-8b3a-17d508aab3c1). Not independently driven in this UI run: five-job cap, standalone ambiguous/injection/follow-up-renamed trials, preparation shutdown, physical mobile, Windows UI, configured language planning and feedback submission. Ambiguity/injection are included in the matrix. No new dependencies or blueprint changes were required.
 
 Remaining acceptance: live model authentication and interpretation, user-selected real-site adapters, protected sessions and auth expiry, dynamic field discovery, structured page extraction, safe interactive approval, evidence-based repair/alternate paths and broader compiler validation. RUNTIME-03 firewall enforcement remains open independently.
+
+## 04-03: General public-web tasks
+
+Accepted implementation: 5a6da72, review corrections f7d48d8, hosted selection correction 53386ed. [Scope and remaining limits](04-03-SUMMARY.md). This extends source reading/navigation across public websites; general authenticated/mutating execution is not accepted.
+
+| Gate | Observed evidence | Scope |
+|---|---|---|
+| General goal representation | Main Agent accepts goal, optional websites and explicit mode; contact fields exist only under Engine tests | Goal interpretation requires a configured provider; no hard-coded task routing |
+| Semantic composition | Browser fixture follows product pricing and unrelated admissions pages, compares/extracts with exact source quotes, rejects invented quotes/raw actions | Controlled interpreter, not live provider success |
+| Public network boundary | Private/reserved/mapped IPs, mixed DNS results, credentials/action URLs, browser POST and metadata/private redirects rejected; fragment-bearing safe redirect chains succeed | DNS-pinned HTTP transport, bounded browser/proxy/UDP restrictions; no OS/firewall acceptance claim |
+| Durable backend | Owner isolation, inert immutable review, shared browser exclusion, stop/cleanup, interrupted restart state and no implicit replay pass | 157 unit tests and 35 repository browser/API tests; general browser tests also pass in Docker |
+| Real sources and memory | Actual Chrome reads Playwright, Puppeteer and Python documentation; captures text/links, screenshots and per-domain structure | Public source collection; no generated completion claim |
+| Replacement persistence | Local container and real Coolify replacement retain exact task receipt, source pages, knowledge, screenshot and personal note; replay refused | Same workspace and unchanged `/data` volume |
+| Hosted interface | Corrected older-task reload, composer reload, explicit source runs, source/receipt inspection, follow-up dependency and deletion flow, memory forgetting with retained evidence, private/credential rejection, Research/Memory/Engine navigation pass | Recorded real Chromium on 53386ed; no real accounts |
+| Interaction | 390px keyboard review and wrapping pass; five real polls preserve draft/focus/caret, three preserve source disclosure | Emulated viewport and passive polling measurements, not physical mobile/Windows |
+
+Coolify job `j4sfhoivwmame0ibkyiq41gk` deployed f7d48d8 and passed live replacement persistence. Job `pimudrto0ejivojcsoosdiwg` deployed 53386ed and passed HTTPS, configured commit, six asset hashes and unchanged volume identity. Coolify's cached `exited:unhealthy` remains inconsistent with live checks. [Primary final annotated UI recording](https://app.devin.ai/sessions/d0f8409f16a04d4eb9746c4504fc750c?testRecording=ba0a6a52-598c-4f58-82ea-4406cb3d4292); the interrupted pre-correction recording is superseded.
+
+UI Stop was not exercised because the task finished before the click; synthetic runtime/service/API cancellation checks pass. Successful provider-backed search/planning/answers and generated answer/table UI are untested after the stored key's HTTP 401; production intentionally reports no configured model. Evidence mode is independently usable and explicitly states that no interpretation occurred. Public search may encounter challenges. Authenticated sessions, arbitrary external mutations, executable operation discovery, teaching, general repair, desktop control and firewall enforcement remain open. Existing environment setup sufficed; no blueprint update was needed. No merge was performed.
