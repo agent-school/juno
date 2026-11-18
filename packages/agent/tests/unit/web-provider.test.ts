@@ -1,5 +1,22 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { createWebInterpreter } from '../../src/web/runtime.js';
+import { WebDecisionSchema, validateAnswer } from '../../src/web/contracts.js';
+
+it('resolves evidence IDs to the host’s exact observed punctuation and rejects invented IDs', async () => {
+  const page = { id: 'p1', url: 'https://example.com/', title: 'Source', observedAt: new Date().toISOString(), hash: 'a'.repeat(64),
+    text: 'The source uses “curly quotes” and an exact published value of 19 dollars.', links: [] };
+  let quoteId = 'q0-1';
+  vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'The price is 19 dollars [p1].',
+    citations: [{ pageId: 'p1', quoteId }], rows: [{ label: 'Price', value: '19 dollars', pageId: 'p1', quoteId }] }) } }] })));
+  const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
+  const request = { goal: 'Extract the published price', pages: [page], rememberedRoutes: [], remainingPages: 9 };
+  const decision = WebDecisionSchema.parse(await infer(request, new AbortController().signal));
+  if (decision.action !== 'finish') throw new Error('Expected an answer');
+  expect(validateAnswer(decision, [page]).citations[0]?.quote).toBe(page.text);
+  expect(decision.citations[0]).not.toHaveProperty('quoteId');
+  quoteId = 'invented';
+  await expect(infer(request, new AbortController().signal)).rejects.toThrow('unknown source excerpt');
+});
 const request = { goal: 'Compare these public sources', pages: [], rememberedRoutes: [], remainingPages: 10 };
 afterEach(() => vi.unstubAllGlobals());
 it('keeps a server credential out of model context and sends bounded generic decisions through the configured HTTPS provider', async () => {

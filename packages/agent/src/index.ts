@@ -8,3 +8,5 @@ export { TaskPlanSchema, RunReceiptSchema, EffectObservationSchema } from './con
 export type { TaskPlan, RunReceipt, EffectObservation } from './contracts.js';
 export { planTask, createChatInterpreter, TaskProposalSchema } from './planner.js';
 export type { IntentInterpreter, Interpretation } from './planner.js';
+export { ModelProtocolSchema } from './model.js';
+export type { ModelOptions } from './model.js';

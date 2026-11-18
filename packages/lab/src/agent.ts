@@ -6,6 +6,7 @@ import { RunStore, TaskPlanSchema, planTask, createChatInterpreter, type RunRece
 import { hostFor, makePlan, startFixture, RecordsSchema, VariantSchema } from '@juno/agent/owned';
 import { SiteKnowledgeStore } from '@juno/knowledge';
 import { runBenchmark } from '@juno/agent/benchmark';
+import { plannerConnection, plannerStatus } from './model.js';
 
 export class AgentError extends Error { constructor(readonly status: number, message: string) { super(message); } }
 const uuid = z.uuid();
@@ -131,7 +132,7 @@ export class AgentService {
         const value = this.read(file, checksSchema);
         return { ...value, status: value.status === 'running' && !(this.active?.owner === owner && this.active.id === value.id) ? 'interrupted' : value.status };
       }).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-      planner: { configured: !!(process.env.JUNO_PLANNER_API_KEY && process.env.JUNO_PLANNER_MODEL), model: process.env.JUNO_PLANNER_MODEL ?? null },
+      planner: plannerStatus(),
     };
   }
   async observe(owner: string) {
@@ -146,7 +147,8 @@ export class AgentService {
     // Validate before acquiring resources or opening the browser.
     const data = language ? z.object({ intent: z.string().trim().min(1).max(2000) }).strict().parse(input) : AgentTaskInputSchema.parse(input);
     if (this.entries(owner, 'tasks').length >= 100) throw new AgentError(409, 'This workspace has reached its 100-task limit.');
-    if (language && !(process.env.JUNO_PLANNER_API_KEY && process.env.JUNO_PLANNER_MODEL)) throw new AgentError(503, 'Language planning needs a configured model connection. Use the task form below.');
+    const connection = plannerConnection();
+    if (language && !connection) throw new AgentError(503, 'Language planning needs a configured model connection. Use the task form below.');
     const active = this.reserve(owner, 'prepare', randomUUID());
     return this.track(active, async () => {
       const context = await this.open(owner);
@@ -158,7 +160,7 @@ export class AgentService {
         if ('intent' in data) {
           try {
             const result = await planTask({ intent: data.intent, model, operations: context.host.operations,
-              interpret: createChatInterpreter({ apiKey: process.env.JUNO_PLANNER_API_KEY!, model: process.env.JUNO_PLANNER_MODEL!, endpoint: process.env.JUNO_PLANNER_ENDPOINT ?? 'https://api.openai.com/v1/chat/completions' }), signal: active.abort.signal });
+              interpret: createChatInterpreter(connection!), signal: active.abort.signal });
             plan = result;
           } catch { throw new AgentError(503, 'The language planner could not produce a valid plan. Check the server’s model connection, or use the task form. No task actions were attempted.'); }
         } else {

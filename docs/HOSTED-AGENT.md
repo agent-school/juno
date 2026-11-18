@@ -5,7 +5,7 @@ Open [Juno](https://juno.agentschool.io) and select **Agent**. The main screen a
 ## General public-web tasks
 
 1. Describe a goal: compare products, investigate documentation, find a policy, extract requirements or answer a sourced question. Optionally supply up to five HTTPS starting URLs. Examples help compose a task; they are not hard-coded workflows.
-2. Select **Pursue the goal** for model-directed search, navigation, reading, comparison and extraction. The server needs `JUNO_PLANNER_API_KEY` and `JUNO_PLANNER_MODEL`, with optional HTTPS `JUNO_PLANNER_ENDPOINT` for an OpenAI-compatible provider. A configured key is not evidence of successful authentication.
+2. Select **Pursue the goal** for model-directed search, navigation, reading, comparison and extraction. The server needs `JUNO_PLANNER_API_KEY` and `JUNO_PLANNER_MODEL`. `JUNO_PLANNER_PROTOCOL` defaults to `openai`, with optional HTTPS `JUNO_PLANNER_ENDPOINT` for Chat Completions. For native AWS Bedrock, set the protocol to `bedrock-converse` and the endpoint to the HTTPS runtime **origin**, such as `https://bedrock-runtime.us-east-1.amazonaws.com`; the host binds the encoded model route. Credentials must be runtime-only secrets. A configured key is not evidence of successful authentication.
 3. Without a model, select **Collect source evidence** and supply at least one URL. This reads the starting websites, captures accessible text and links, and saves site structure. It deliberately does not claim to interpret or complete the goal.
 4. **Review task** saves an immutable scope before opening a browser or calling a model. **Run reviewed task** starts the single shared worker. Watch events, source observations and browser frames; Stop retains captured evidence.
 5. Model answers require exact quotes from captured source text. Extracted table values must occur in their quoted source. This checks provenance, not semantic truth or completeness. A source's own claim is not independent proof of its correctness.
@@ -43,7 +43,9 @@ The in-app matrix runs the CLI's 19 checks in an isolated child workspace. Resul
 
 ## Optional language planning
 
-The typed task form needs no model key. Written requests require `JUNO_PLANNER_API_KEY` and `JUNO_PLANNER_MODEL` in the server environment; `JUNO_PLANNER_ENDPOINT` optionally selects an HTTPS OpenAI-compatible endpoint. Credentials stay server-side and are not accepted from the frontend. Only the reviewed contact operations are available to the interpreter. Every proposal is validated and saved for review before execution. A configured connection is not proof of valid provider authentication; failures leave task actions unexecuted. Successful live provider planning remains an explicit verification gate.
+The typed task form needs no model key. Written requests use the same server-only connection and protocol as public-web interpretation. Credentials are not accepted from the frontend. Only the reviewed contact operations are available to this interpreter. Every proposal is validated and saved for review before execution. A configured connection is not proof of valid provider authentication; failures leave task actions unexecuted.
+
+Both protocols use bounded text-only inference, reject redirects, enforce a 30-second call timeout and a 64 KB response limit, and reject truncated or tool responses. Only a single enclosing JSON code fence is tolerated; surrounding prose is rejected. Public-web models can select host-generated excerpt IDs; the host resolves these to exact observed quotes before the existing grounding validator runs. Models cannot supply the quote text for an ID or invent source IDs. Literal quote proposals remain subject to the same validator. Rejected grounding can request at most two corrections within the original twelve-decision/two-minute budgets; no rejected answer is saved as a result. Grounding checks provenance, not factual truth or completeness.
 
 ## Deployment and persistence
 

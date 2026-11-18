@@ -38,13 +38,14 @@ export const WebTaskSchema = z.object({
 export type WebTask = z.infer<typeof WebTaskSchema>;
 
 const normalize = (value: string) => value.replace(/\s+/g, ' ').trim();
+export class AnswerValidationError extends Error {}
 /** Ground evidence in an actual observation; the model cannot mint source quotes or extracted values. */
 export function validateAnswer(decision: Extract<WebDecision, { action: 'finish' }>, pages: WebPage[]) {
   const grounded = (pageId: string, quote: string) => {
     const page = pages.find(page => page.id === pageId);
     return page && normalize(page.text).includes(normalize(quote));
   };
-  if (decision.citations.some(citation => !grounded(citation.pageId, citation.quote))) throw new Error('The answer cited text that was not observed. No answer was accepted.');
-  if (decision.rows.some(row => !grounded(row.pageId, row.quote) || !normalize(row.quote).includes(normalize(row.value)))) throw new Error('An extracted value was not present in its source quote. No answer was accepted.');
+  if (decision.citations.some(citation => !grounded(citation.pageId, citation.quote))) throw new AnswerValidationError('The answer cited text that was not observed. No answer was accepted.');
+  if (decision.rows.some(row => !grounded(row.pageId, row.quote) || !normalize(row.quote).includes(normalize(row.value)))) throw new AnswerValidationError('An extracted value was not present in its source quote. No answer was accepted.');
   return decision;
 }

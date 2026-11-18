@@ -7,7 +7,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe('OpenAI-compatible interpretation transport', () => {
   it('sends one bounded JSON request and returns only the structured proposal', async () => {
     const fetch = vi.fn(async (_url, options: RequestInit) => {
-      expect((options.headers as Record<string, string>).Authorization).toBe('Bearer private-test-credential');
+      expect(new Headers(options.headers).get('authorization')).toBe('Bearer private-test-credential');
       expect(options.redirect).toBe('error');
       const body = JSON.parse(String(options.body));
       expect(body.max_tokens).toBe(2048);
@@ -21,7 +21,7 @@ describe('OpenAI-compatible interpretation transport', () => {
   });
   it('reports provider authentication failure without echoing its response body', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('Untrusted error body: private-test-credential', { status: 401 })));
-    await expect(invoke()).rejects.toThrow(/^Planner provider returned HTTP 401$/);
+    await expect(invoke()).rejects.toThrow(/^Model connection returned HTTP 401\. Check the server credential, endpoint and model\. Source evidence has been retained\.$/);
   });
   it.each(['length', 'content_filter', 'tool_calls'])('rejects incomplete or non-text completion: %s', async finish_reason => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ choices: [{ finish_reason, message: { content: '{"steps":[]}' } }] }))));

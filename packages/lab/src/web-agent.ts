@@ -6,6 +6,7 @@ import { SiteKnowledgeStore } from '@juno/knowledge';
 import { createWebInterpreter, runWebTask, WebTaskInputSchema, WebTaskSchema, type WebTask } from '@juno/agent/web';
 import { publicUrl } from '@juno/agent/web';
 import { AgentError } from './agent.js';
+import { plannerConnection, plannerStatus } from './model.js';
 
 const ownerSchema = z.string().regex(/^[a-f0-9]{64}$/);
 const uuid = z.uuid();
@@ -49,7 +50,7 @@ export class WebAgentService {
     const directory = path.join(this.workspace(owner), 'tasks');
     return fs.existsSync(directory) ? fs.readdirSync(directory).filter(file => /^[a-f0-9-]{36}\.json$/.test(file)).map(file => this.detail(owner, file.slice(0, -5))).sort((a, b) => b.createdAt.localeCompare(a.createdAt)) : [];
   }
-  modelStatus() { return { configured: !!(process.env.JUNO_PLANNER_API_KEY && process.env.JUNO_PLANNER_MODEL), model: process.env.JUNO_PLANNER_MODEL ?? null }; }
+  modelStatus() { return plannerStatus(); }
   state(owner: string) {
     return { busy: this.isBusy() || this.otherBrowserBusy(), activeId: this.active?.owner === owner ? this.active.id : null,
       model: this.modelStatus(), tasks: this.tasks(owner).map(({ pages, events, answer, rows, citations, ...summary }) => ({ ...summary, pageCount: pages.length })),
@@ -78,7 +79,8 @@ export class WebAgentService {
     const abort = new AbortController();
     const parent = task.input.parentId ? this.detail(owner, task.input.parentId) : undefined;
     const priorTask = parent ? { id: parent.id, goal: parent.input.goal, answer: parent.answer?.slice(0, 4000), sourceUrls: parent.pages.map(page => page.url).slice(0, 10) } : undefined;
-    const interpret = task.input.mode === 'agent' && this.modelStatus().configured ? createWebInterpreter({ apiKey: process.env.JUNO_PLANNER_API_KEY!, model: process.env.JUNO_PLANNER_MODEL!, endpoint: process.env.JUNO_PLANNER_ENDPOINT }) : undefined;
+    const connection = plannerConnection();
+    const interpret = task.input.mode === 'agent' && connection ? createWebInterpreter(connection) : undefined;
     const active: Active = { owner, id, abort, promise: Promise.resolve() };
     this.active = active;
     active.promise = Promise.resolve().then(() => runWebTask({ task, owner, signal: abort.signal, interpret, priorTask,

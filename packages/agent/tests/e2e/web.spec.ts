@@ -55,6 +55,14 @@ test('general loop composes navigation, comparison and extraction across unrelat
     expect(new SiteKnowledgeStore(info.outputPath('knowledge')).latest(owner, b.origin)).not.toBeNull();
     const fake = task([a.origin]); await run(fake, async () => ({ action: 'finish', answer: 'Untrue', citations: [{ pageId: 'p1', quote: 'The imaginary price is one million dollars.' }] }));
     expect(fake.status).toBe('failed'); expect(fake.answer).toBeUndefined();
+    expect(fake.modelCalls).toBe(3); // Two corrections, always within the existing decision budget.
+    const corrected = task([a.origin]);
+    await run(corrected, async ({ feedback }) => feedback ? {
+      action: 'finish', answer: 'North is a public comparison product [p1].',
+      citations: [{ pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }],
+    } : { action: 'finish', answer: 'Untrue', citations: [{ pageId: 'p1', quote: 'The imaginary price is one million dollars.' }] });
+    expect(corrected.status).toBe('answered'); expect(corrected.modelCalls).toBe(2);
+    expect(corrected.answer).not.toContain('Untrue');
     const raw = task([a.origin]); await run(raw, async () => ({ action: 'click', selector: '#send' }));
     expect(raw.status).toBe('failed'); expect(raw.answer).toBeUndefined();
     const abort = new AbortController(), stopped = task([a.origin]);
