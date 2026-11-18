@@ -147,7 +147,7 @@ export async function runWebTask(options: WebRuntimeOptions): Promise<void> {
       if (!options.interpret) throw new Error('A working server model connection is required to interpret this goal. Evidence collection is available without a model.');
       let focus: Request['focus'];
       let reviewDraft: Request['reviewDraft'];
-      let feedback: string | undefined, corrections = 0, previousProposal: unknown;
+      let feedback: string | undefined, corrections = 0, sourceRevisions = 0, previousProposal: unknown;
       const correct = (reason: string) => {
         if (corrections >= 2) throw new TaskError(reason);
         feedback = `${reason} Return exactly one supported decision. For finish use citations:[{pageId,quoteId}] and rows:[{label,value,pageId,quoteId}], selecting observed excerpt IDs. Each extracted value must occur verbatim in its selected excerpt. Return only rows requested by the goal; put explanations in answer.`;
@@ -160,7 +160,18 @@ export async function runWebTask(options: WebRuntimeOptions): Promise<void> {
         try {
           proposed = await boundedDecision(() => options.interpret!({ goal: task.input.goal, pages: task.pages, focus, priorTask: options.priorTask, feedback, previousProposal, reviewDraft,
             rememberedRoutes: [...rememberedRoutes].filter(url => url.length <= 500).slice(0, 20), remainingPages: 10 - task.pages.length }, signal), signal);
-        } catch (error) { if (!(error instanceof ModelOutputError)) throw error; if (error instanceof ReviewRejection) { reviewDraft = undefined; event('model', error.message); } previousProposal = error.proposal; correct(error.message); continue; }
+        } catch (error) {
+          if (!(error instanceof ModelOutputError)) throw error;
+          previousProposal = error.proposal;
+          if (error instanceof ReviewRejection) {
+            if (sourceRevisions >= 2) throw new TaskError(error.message);
+            reviewDraft = undefined;
+            feedback = `${error.message} Revise the draft using observed excerpts and cite the conditions needed to support it. Keep extracted values literal.`;
+            sourceRevisions++;
+            event('model', `Source review requested revision (${sourceRevisions}/2). ${error.message}`);
+          } else correct(error.message);
+          continue;
+        }
         feedback = undefined;
         previousProposal = proposed;
         const parsed = WebDecisionSchema.safeParse(proposed);
