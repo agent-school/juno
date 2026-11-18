@@ -5,7 +5,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { chromium } from 'playwright';
 import { SiteKnowledgeStore } from '@juno/knowledge';
-import { runWebTask, WebTaskSchema, type WebTask, type WebInterpreter } from '../../src/web/index.js';
+import { createWebInterpreter, runWebTask, WebTaskSchema, type WebTask, type WebInterpreter } from '../../src/web/index.js';
 import { confinePublicBrowser } from '../../src/web/network.js';
 
 async function fixture(html: (url: string) => string) {
@@ -98,6 +98,32 @@ test('general loop composes navigation, comparison and extraction across unrelat
     });
     expect(references.status, JSON.stringify(references.events)).toBe('answered'); expect(references.modelCalls).toBe(4);
     expect(references.pages).toHaveLength(2); expect(references.events.filter(event => event.kind === 'opening')).toHaveLength(2);
+    const reviewed = task([a.origin]);
+    const reviewing: WebInterpreter = Object.assign(async ({ reviewDraft }: Parameters<WebInterpreter>[0]) => {
+      expect(reviewed.answer).toBeUndefined(); expect(reviewed.citations).toEqual([]);
+      if (reviewDraft) expect(reviewDraft.answer).toContain('private');
+      return { action: 'finish', answer: reviewDraft ? 'North is a public comparison product [p1].' : 'North is a private product [p1].', citations: [{ pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }] };
+    }, { reviewAnswers: true });
+    await run(reviewed, reviewing);
+    expect(reviewed.status).toBe('answered'); expect(reviewed.modelCalls).toBe(2); expect(reviewed.answer).not.toContain('private');
+    const rejectedReview = task([a.origin]);
+    await run(rejectedReview, Object.assign(async ({ reviewDraft }: Parameters<WebInterpreter>[0]) => ({ action: 'finish', answer: 'Draft must not leak', citations: [{ pageId: 'p1', quote: reviewDraft ? 'Invented text that was never observed.' : 'North is a public comparison product with useful documentation.' }] }), { reviewAnswers: true }));
+    expect(rejectedReview.status).toBe('failed'); expect(rejectedReview.modelCalls).toBe(4);
+    expect(rejectedReview.answer).toBeUndefined(); expect(rejectedReview.citations).toEqual([]);
+    const nativeReview = task([a.origin]), originalFetch = globalThis.fetch;
+    let nativeCalls = 0;
+    globalThis.fetch = async (_url, init) => {
+      const input = JSON.parse(JSON.parse(init!.body as string).messages.find((message: { role: string }) => message.role === 'user').content);
+      nativeCalls++; expect(nativeReview.answer).toBeUndefined(); expect(nativeReview.citations).toEqual([]);
+      if (nativeCalls === 3) { expect(input.reviewDraft).toBeUndefined(); expect(input.feedback).toContain('Source consistency'); }
+      const result = input.parts ? { checks: input.parts.map((part: { id: number }) => ({ id: part.id, issue: nativeCalls === 2 ? 'scope' : 'none', note: 'Check the source scope' })) }
+        : { action: 'finish', answer: nativeCalls === 1 ? 'North is private [p1].' : 'North is a public comparison product [p1].', citations: [{ pageId: 'p1', quoteId: 'q0-1' }] };
+      return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(result) } }] }));
+    };
+    try { await run(nativeReview, createWebInterpreter({ apiKey: 'synthetic-test-key', model: 'test' })); }
+    finally { globalThis.fetch = originalFetch; }
+    expect(nativeReview.status, JSON.stringify(nativeReview.events)).toBe('answered'); expect(nativeReview.modelCalls).toBe(4);
+    expect(nativeReview.answer).not.toContain('private');
     const abort = new AbortController(), stopped = task([a.origin]);
     await run(stopped, async () => { abort.abort(); return new Promise(() => {}); }, abort.signal);
     expect(stopped.status).toBe('stopped'); expect(stopped.pages).toHaveLength(1);
