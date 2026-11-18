@@ -119,7 +119,7 @@ Plans:
   7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
   8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 
-**Plans**: 04-01 reproducible task-runtime/interpretation foundation and 04-02 hosted frontend/backend integration complete. Agent is deployed and recorded UI verification passed; live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
+**Plans**: 04-01 reproducible task-runtime/interpretation foundation and 04-02 hosted frontend/backend integration complete. 04-03 generalizes Agent to goal-driven public-web tasks, cross-site evidence and reusable structure, with contact execution moved into Engine tests; implementation checks pass and deployment/UI verification are being recorded. Live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
 
 ### Phase 5: Teach-by-Showing
 

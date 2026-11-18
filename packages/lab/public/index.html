@@ -2,7 +2,7 @@
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f6f8">
   <title>Agent — Juno</title><link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/agent.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script><script defer src="/agent.js"></script>
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/agent.css"><link rel="stylesheet" href="/web-agent.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script><script defer src="/agent.js"></script><script defer src="/web-agent.js"></script>
 </head><body>
 <a class="skip-link" href="#main">Skip to workspace</a>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -18,12 +18,13 @@
 </defs></svg>
 <aside class="sidebar" aria-label="Workspace navigation">
   <a class="brand" href="#agent" aria-label="Juno agent"><span class="brand-mark" aria-hidden="true">j.</span>juno<span class="edition">preview</span></a>
-  <button class="new-research" data-tab="agent" data-agent-new><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New task</button>
+  <button class="new-research" data-tab="agent" data-web-new><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New task</button>
   <nav aria-label="Main">
     <button class="nav active" data-tab="agent" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Agent</span></button>
     <button class="nav" data-tab="tasks"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Research</span></button>
     <button class="nav" data-tab="memory"><svg class="icon" aria-hidden="true"><use href="#i-memory"/></svg><span>Memory</span><span id="nav-memory-count" class="count">0</span></button>
     <div class="nav-label">Explore Juno</div>
+    <button class="nav" data-tab="engine"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Engine tests</span></button>
     <button class="nav" data-tab="experiment"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Browser lab</span></button>
     <button class="nav" data-tab="evidence"><svg class="icon" aria-hidden="true"><use href="#i-receipt"/></svg><span>Lab receipts</span><span id="history-count" class="count">0</span></button>
     <button class="nav" data-tab="progress"><svg class="icon" aria-hidden="true"><use href="#i-roadmap"/></svg><span>Roadmap</span></button>
@@ -33,8 +34,32 @@
 </aside>
 <main id="main" tabindex="-1">
   <header class="topbar"><span class="location">Workspace <span aria-hidden="true">/</span> <b id="breadcrumb">Agent</b></span><a href="/api/export" class="export"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export<span class="export-extra"> research &amp; lab</span></a></header>
-  <section class="page" id="agent" aria-labelledby="agent-heading">
-    <div class="page-heading"><div><h1 id="agent-heading" tabindex="-1">Agent</h1><p>Give Juno a task. Follow every step.</p></div><span class="source-label">Private contact workspace</span></div>
+  <section class="page" id="agent" aria-labelledby="web-heading">
+    <div class="page-heading"><div><h1 id="web-heading" tabindex="-1">Agent</h1><p>Start with a goal. Work across websites. Keep the evidence.</p></div><span class="source-label">Public web</span></div>
+    <div id="web-notice" class="agent-notice" role="status" aria-live="polite"></div>
+    <div class="web-desk"><div>
+      <section id="web-composer" aria-labelledby="web-compose-heading">
+        <h2 id="web-compose-heading">What would you like to find out?</h2>
+        <p id="web-followup" class="hint hidden"></p>
+        <form id="web-task-form">
+          <label for="web-goal">Your goal</label><textarea id="web-goal" name="goal" rows="3" minlength="8" maxlength="2000" required placeholder="Compare these tools, find a policy, extract the requirements, or investigate a question…"></textarea>
+          <label for="web-urls">Starting websites <span>optional for goal-driven mode; up to five, one per line</span></label><textarea id="web-urls" name="urls" rows="2" maxlength="12000" placeholder="https://…"></textarea>
+          <div class="web-examples" aria-label="Task examples"><button type="button" data-web-example="compare">Compare tools</button><button type="button" data-web-example="docs">Investigate documentation</button><button type="button" data-web-example="extract">Extract requirements</button></div>
+          <label for="web-mode">How Juno should work</label><select id="web-mode" name="mode"><option value="agent">Pursue the goal · model connection required</option><option value="evidence">Collect source evidence · no model needed</option></select>
+          <p id="web-model-status" class="hint">Checking model connection configuration…</p>
+          <div class="web-composer-footer"><p>Browse public pages, follow links, compare sources and extract information. Review the scope before starting.</p><button type="submit" class="primary" id="web-review">Review task →</button></div>
+        </form>
+        <p class="web-scope">This worker reads public websites. Sign-in, messages, purchases and form submissions need additional execution capabilities. Your personal browser and accounts are separate.</p>
+      </section>
+      <section id="web-detail" class="hidden" aria-live="polite" aria-label="Task progress and results"></section>
+    </div><aside class="web-aside" aria-label="Task history and website memory">
+      <section><div class="agent-section-heading"><h2>Recent tasks</h2><button type="button" class="text-button" data-web-new>New</button></div><div id="web-history"><p class="hint">Your goals, observations and answers stay here.</p></div></section>
+      <section><h2>Website memory</h2><p class="hint">Structure learned from the websites you visit. Juno refreshes observations before using them.</p><div id="web-sites"></div><a href="/api/web/knowledge" download="juno-public-sites.json">Download website knowledge ↓</a></section>
+      <section><h2>Your context</h2><p class="hint">Personal notes and preferences live in Memory. This public-web worker uses the goal you provide and its site observations.</p><button type="button" class="text-button" data-tab="memory">Open personal memory ↗</button></section>
+    </aside></div>
+  </section>
+  <section class="page hidden" id="engine" aria-labelledby="agent-heading">
+    <div class="page-heading"><div><h1 id="agent-heading" tabindex="-1">Engine tests</h1><p>Controlled execution, recovery and reliability experiments.</p></div><span class="source-label">Private test workspace</span></div>
     <div id="agent-notice" class="agent-notice" role="status" aria-live="polite"></div>
     <div class="agent-desk"><div class="agent-document">
       <section id="agent-composer" aria-labelledby="agent-compose-heading">

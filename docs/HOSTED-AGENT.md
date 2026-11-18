@@ -1,8 +1,25 @@
 # Agent workspace
 
-Open [Juno](https://juno.agentschool.io) and select **Agent**. This screen uses `@juno/agent` through the hosted backend; browser actions, receipts, verification and recovery use the same runtime as `pnpm agent:demo`.
+Open [Juno](https://juno.agentschool.io) and select **Agent**. The main screen accepts a general goal and optional public starting URLs. The synthetic contact example is now in **Engine tests**, alongside its verified write/recovery matrix.
 
-## Run a supported task
+## General public-web tasks
+
+1. Describe a goal: compare products, investigate documentation, find a policy, extract requirements or answer a sourced question. Optionally supply up to five HTTPS starting URLs. Examples help compose a task; they are not hard-coded workflows.
+2. Select **Pursue the goal** for model-directed search, navigation, reading, comparison and extraction. The server needs `JUNO_PLANNER_API_KEY` and `JUNO_PLANNER_MODEL`, with optional HTTPS `JUNO_PLANNER_ENDPOINT` for an OpenAI-compatible provider. A configured key is not evidence of successful authentication.
+3. Without a model, select **Collect source evidence** and supply at least one URL. This reads the starting websites, captures accessible text and links, and saves site structure. It deliberately does not claim to interpret or complete the goal.
+4. **Review task** saves an immutable scope before opening a browser or calling a model. **Run reviewed task** starts the single shared worker. Watch events, source observations and browser frames; Stop retains captured evidence.
+5. Model answers require exact quotes from captured source text. Extracted table values must occur in their quoted source. This checks provenance, not semantic truth or completeness. A source's own claim is not independent proof of its correctness.
+6. **Review a follow-up** explicitly references the prior task's goal, answer and source URLs. Sources must be observed again before citation. **Website memory** reuses per-domain routes and semantic structure; it refreshes every page used as current evidence. No personal notes, accounts or browser cookies are implicitly imported.
+
+The generic worker exposes `search`, `open`, observed-link `follow`, paginated source `read`, cited `finish` and `blocked` decisions. Clients/models cannot submit selectors, JavaScript, raw browser methods, credentials or execution authority. Every browser HTTP request uses a bounded DNS-pinned Node transport that rejects private/reserved IPs and non-GET/HEAD methods. Redirects are paused and followed by host code after validation; raw redirect headers never reach Chromium. Browser proxy/UDP/WebSocket/service-worker restrictions complement this boundary. This is not a completed OS/firewall sandbox acceptance claim. Subresource redirects, authenticated sessions, private networks, arbitrary external writes, PDFs/vision-only pages and challenges can remain unsupported.
+
+Each task is limited to ten observed pages, twelve model decisions and two minutes; provider calls have a thirty-second bound. Per-workspace limits are thirty tasks, twenty site origins and ten structural revisions per origin. Requests/bytes, response bodies, prompts and output are bounded. Failed or interrupted tasks retain evidence, never claim an answer, and do not silently replay. A new reviewed task is required to browse again.
+
+The general API is `/api/web`: state, task preparation, explicit run/stop, receipts/screenshots, site knowledge and forgetting. Saved files are under `/data/web-workspaces/<owner>` in Docker and share the existing workspace recovery identity. Task/knowledge forgetting is explicit; forgetting site structure does not erase source evidence already captured in task receipts.
+
+## Engine tests: verified contact/follow-up execution
+
+Select **Engine tests** for the owned application. This exercises the same typed executor as `pnpm agent:demo` and remains separate from the public-web worker.
 
 1. Select **Use example** or enter a contact, email, follow-up note and date. Use synthetic data. Category and subscribed state are typed inputs.
 2. Select **Review task**. Juno observes three approved pages when site knowledge is missing, validates the complete plan and saves it. No contact or follow-up is created during planning.
@@ -34,4 +51,4 @@ Run `pnpm lab` with Node 24 or use the existing Docker image. Docker sets both l
 
 Use one process/replica with persistent local storage. Keep the data directory private and backed up; receipts and screenshots contain task inputs and application data. This is not an encrypted credential vault. No daily browser profile or real-account credentials are used. Research, personal Memory and Browser lab remain available in their own tabs.
 
-Hosted API, container/redeploy persistence and recorded Agent UI checks are recorded separately in [GSD verification](../.planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md), with their coverage limits. Authenticated websites, arbitrary-site discovery, teach-by-showing, semantic repair, destructive-action approval and general desktop control remain unfinished.
+Hosted evidence and coverage limits are recorded in [GSD verification](../.planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md). General public-site reading and structural memory now have their own worker; automatic executable operation discovery, authenticated workflows, teach-by-showing, semantic repair, general destructive-action approval and desktop control remain unfinished. Live model success remains a separate gate after the stored key returned HTTP 401.

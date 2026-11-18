@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: Hosted Agent frontend/backend deployed and UI verified; broader compiler, live planner, auth and repair gates remain open
+stopped_at: General public-web Agent implemented and browser/API checked; production/UI verification underway, live model credential remains unavailable
 last_updated: "2026-11-18"
 last_activity: 2026-11-18
-last_activity_desc: Connected the engine to hosted task review/execution/recovery/memory/reliability controls; verified redeploy persistence and recorded UI
+last_activity_desc: Replaced task-specific composition with general goals, public navigation/evidence and per-site memory; preparing production verification
 state_head: a2c4cf7db581a3ccb14eede2efc9205af3f76e75
 progress:
   total_phases: 8
@@ -23,7 +23,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** The engine is now connected to the hosted Agent frontend/backend at https://juno.agentschool.io. Supported task review, verified execution, evidence, stop/resume, versioned site memory and reliability jobs are deployed in a2c4cf7, with recorded hosted UI and actual redeploy-persistence evidence. Broader Phase 3 compilation and full Phase 4 acceptance remain open. Actual Windows lifecycle evidence includes 12/12 startup interruption trials; RUNTIME-03 firewall enforcement remains open. PR #2's merge was refused by GitHub integration HTTP 403; PR #3 carries the new work and remains unmerged.
+**Current focus:** 04-03 generalizes the hosted Agent beyond the contact fixture: goals, optional starting websites, bounded public search/navigation, exact-source evidence, comparison/extraction decisions, follow-up context, per-domain structural memory and durable workspace APIs. Contact execution/recovery and the 19-condition matrix remain in Engine tests. Real Chrome read three unrelated documentation sites. Production/container/UI checks are underway. Live model authentication remains blocked after the stored OpenAI key returned HTTP 401; evidence collection works without a model. Full compiler, auth, repair, teaching and RUNTIME-03 firewall gates remain open. PR #3 carries the work and remains unmerged; PR #2's merge was refused by GitHub integration HTTP 403.
 
 ## Current Position
 

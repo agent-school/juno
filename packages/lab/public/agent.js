@@ -136,7 +136,7 @@
     if (target.id === 'agent-check-stop') void act(async () => { await request(`/checks/${target.dataset.id}/stop`, {}); }, 'Stopping after the current controlled check…');
   });
   document.addEventListener('change', event => { if (event.target.id === 'agent-scenario') scenario = event.target.value; });
-  window.addEventListener('hashchange', () => { if (location.hash === '#agent') void refresh().catch(error => notice(error.message, true)); });
-  setInterval(() => { if (!document.hidden && !find('#agent').classList.contains('hidden')) void refresh().catch(() => notice('Juno is unreachable. A saved task may still be running; reconnect before starting another request.', true)); }, 1500);
+  window.addEventListener('hashchange', () => { if (location.hash === '#engine') void refresh().catch(error => notice(error.message, true)); });
+  setInterval(() => { if (!document.hidden && !find('#engine').classList.contains('hidden')) void refresh().catch(() => notice('Juno is unreachable. A saved task may still be running; reconnect before starting another request.', true)); }, 1500);
   void refresh().catch(error => notice(error.message, true));
 })();

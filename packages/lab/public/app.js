@@ -23,7 +23,7 @@ function setBusy(value) {
   $('#forget-site').disabled = value || !state?.model;
   $('#run').innerHTML = value ? 'Browser working…' : 'Run saved operation <span aria-hidden="true">→</span>';
 }
-const tabNames = { agent: 'Agent', tasks: 'Research', memory: 'Memory', evidence: 'Lab receipts', progress: 'Roadmap', experiment: 'Browser lab' };
+const tabNames = { agent: 'Agent', engine: 'Engine tests', tasks: 'Research', memory: 'Memory', evidence: 'Lab receipts', progress: 'Roadmap', experiment: 'Browser lab' };
 function showTab(tab, { focus = false, history = true } = {}) {
   if (!Object.hasOwn(tabNames, tab)) tab = 'agent';
   for (const page of document.querySelectorAll('.page')) page.classList.toggle('hidden', page.id !== tab);
