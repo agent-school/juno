@@ -49,6 +49,30 @@ it('requires every draft part to pass a separate review and keeps critique text 
   await expect(infer({ ...request, reviewDraft: draft }, new AbortController().signal)).rejects.toThrow('unsupported source review');
 });
 afterEach(() => vi.unstubAllGlobals());
+it('never marks discarded source text complete and retains a short final answer in a citable excerpt', async () => {
+  const text = 'Published product information. '.repeat(16) + 'Refunds: No.';
+  const page = { id: 'p1', url: 'https://example.com/', title: 'Refund policy', observedAt: new Date().toISOString(), hash: 'a'.repeat(64), text, links: [] };
+  vi.stubGlobal('fetch', async (_url: unknown, options: RequestInit) => {
+    const body = JSON.parse(options.body as string);
+    const context = JSON.parse(body.messages.find((message: { role: string }) => message.role === 'user').content);
+    const source = context.pages[0];
+    const provided = source.excerpts.map((excerpt: { text: string }) => excerpt.text).join(' ').replace(/\s+/g, ' ').trim();
+    if (source.completeCapturedText) expect(provided).toBe(page.text);
+    if (page.text.length > 15) {
+      expect(source.completeCapturedText).toBe(true);
+      expect(provided).toContain('Refunds: No.');
+      return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'Refunds are unavailable [p1].', citations: [{ pageId: 'p1', quoteId: source.excerpts.at(-1).id }], rows: [{ label: 'Refund policy', value: 'Refunds: No.', pageId: 'p1', quoteId: source.excerpts.at(-1).id }] }) } }] }));
+    }
+    expect(source.completeCapturedText).toBe(false);
+    return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'blocked', reason: 'No citable excerpt' }) } }] }));
+  });
+  const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
+  const result = WebDecisionSchema.parse(await infer({ ...request, pages: [page] }, new AbortController().signal));
+  if (result.action !== 'finish') throw new Error('Expected the source-grounded refund answer');
+  expect(validateAnswer(result, [page]).rows[0]?.value).toBe('Refunds: No.');
+  page.text = 'Refunds: No.';
+  expect(await infer({ ...request, pages: [page] }, new AbortController().signal)).toMatchObject({ action: 'blocked' });
+});
 it('shows deeper planning excerpts without exceeding the UTF-8 context budget across many sources', async () => {
   vi.stubGlobal('fetch', async (_url: unknown, options: RequestInit) => {
     const body = JSON.parse(options.body as string);

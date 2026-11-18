@@ -274,14 +274,18 @@ export function createWebInterpreter(options: ModelOptions): WebInterpreter {
       const pageBytes = Math.floor(50_000 / Math.max(1, request.pages.length));
       while (Buffer.byteLength(text) > pageBytes) text = text.slice(0, -250).trim();
       const excerpts: { id: string; text: string }[] = [];
+      let omittedText = false;
       for (let start = 0; start < text.length;) {
         let end = Math.min(start + 500, text.length);
         if (end < text.length) { const space = text.lastIndexOf(' ', end); if (space > start) end = space; }
+        // A short tail may contain the answer or a necessary qualification.
+        if (text.slice(end).trim().length < 15) end = text.length;
         const quote = text.slice(start, end).trim(), id = `q${offset}-${excerpts.length + 1}`;
         if (quote.length >= 15) { excerpts.push({ id, text: quote }); quotes.set(`${source.id}:${id}`, quote); }
+        else if (quote) omittedText = true;
         start = end;
       }
-      return { id: source.id, url: source.url, title: source.title, excerpts, textOffset: offset, completeCapturedText: offset === 0 && text === source.text.replace(/\s+/g, ' ').trim(),
+      return { id: source.id, url: source.url, title: source.title, excerpts, textOffset: offset, completeCapturedText: !omittedText && offset === 0 && text === source.text.replace(/\s+/g, ' ').trim(),
         totalCharacters: source.text.length, links: source.links.slice(0, 30).map(({ id, name }) => ({ id, name: name.slice(0, 120) })) };
     });
     const refSchema = z.object({ pageId: z.string(), quoteId: z.string() }).strict();
