@@ -5,6 +5,8 @@ export type ModelOptions = { apiKey: string; model: string; endpoint?: string; p
 type Message = { role: 'system' | 'user'; content: string };
 /** Only curated, credential-free messages from this class may enter task receipts. */
 export class ModelError extends Error {}
+/** A response may be regenerated before any decision is accepted; connection/refusal failures may not. */
+export class ModelOutputError extends ModelError {}
 
 async function body(response: Response, limit: number) {
   const reader = response.body?.getReader();
@@ -64,6 +66,6 @@ export function createJSONModel(options: ModelOptions, maxTokens: number) {
     // A single enclosing JSON fence is formatting, never authority. Surrounding prose is rejected.
     const fenced = /^```(?:json)?\s*\n([\s\S]*?)\n```$/i.exec(content.trim());
     try { return JSON.parse(fenced ? fenced[1]! : content); }
-    catch { throw new ModelError('The model returned invalid JSON. No decision was accepted.'); }
+    catch { throw new ModelOutputError('The model returned invalid JSON. No decision was accepted.'); }
   };
 }

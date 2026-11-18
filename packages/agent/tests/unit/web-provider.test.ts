@@ -16,6 +16,9 @@ it('resolves evidence IDs to the host’s exact observed punctuation and rejects
   expect(decision.citations[0]).not.toHaveProperty('quoteId');
   quoteId = 'invented';
   await expect(infer(request, new AbortController().signal)).rejects.toThrow('unknown source excerpt');
+  vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'A result',
+    citations: [{ pageId: 'p1', quote: page.text }], rows: [{ label: 'Price', value: '19 dollars', pageId: 'p1', quoteId: 'q0-1' }] }) } }] })));
+  await expect(infer(request, new AbortController().signal)).rejects.toThrow('unsupported answer format');
 });
 const request = { goal: 'Compare these public sources', pages: [], rememberedRoutes: [], remainingPages: 10 };
 afterEach(() => vi.unstubAllGlobals());

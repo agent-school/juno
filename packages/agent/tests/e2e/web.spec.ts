@@ -65,6 +65,12 @@ test('general loop composes navigation, comparison and extraction across unrelat
     expect(corrected.answer).not.toContain('Untrue');
     const raw = task([a.origin]); await run(raw, async () => ({ action: 'click', selector: '#send' }));
     expect(raw.status).toBe('failed'); expect(raw.answer).toBeUndefined();
+    expect(raw.modelCalls).toBe(3);
+    const malformed = task([a.origin]);
+    await run(malformed, async ({ feedback }) => feedback ? {
+      action: 'finish', answer: 'North is a public comparison product [p1].', citations: [{ pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }],
+    } : { action: 'click', selector: '#send' });
+    expect(malformed.status).toBe('answered'); expect(malformed.modelCalls).toBe(2);
     const abort = new AbortController(), stopped = task([a.origin]);
     await run(stopped, async () => { abort.abort(); return new Promise(() => {}); }, abort.signal);
     expect(stopped.status).toBe('stopped'); expect(stopped.pages).toHaveLength(1);
