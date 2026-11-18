@@ -12,6 +12,9 @@
   };
   let state, detail, selected, parentId, initialized = false, working = false, refreshing, again = false, generation = 0;
   let historySignature = '', sitesSignature = '', detailSignature = '';
+  const selectionKey = 'juno-web-selected-task';
+  function savedSelection() { try { return sessionStorage.getItem(selectionKey); } catch { return null; } }
+  function rememberSelection() { try { sessionStorage.setItem(selectionKey, selected || 'new'); } catch { /* Browsing still works when storage is unavailable. */ } }
   const form = $('#web-task-form');
   async function api(path = '', data) {
     const response = await fetch(`/api/web${path}`, { signal: AbortSignal.timeout(10_000), ...(data === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json', 'x-juno-request': '1' }, body: JSON.stringify(data) }) });
@@ -62,7 +65,12 @@
   async function load() {
     const version = generation;
     state = await api();
-    if (!initialized) { selected = state.activeId || state.tasks[0]?.id; initialized = true; if (!state.model.configured) form.elements.mode.value = 'evidence'; }
+    if (!initialized) {
+      const saved = savedSelection();
+      selected = saved === 'new' ? undefined : state.tasks.find(task => task.id === saved)?.id || state.activeId || state.tasks[0]?.id;
+      initialized = true; rememberSelection();
+      if (!state.model.configured) form.elements.mode.value = 'evidence';
+    }
     const id = selected;
     const next = id ? await api(`/tasks/${id}`) : undefined;
     if (version !== generation || id !== selected) { again = true; return; }
@@ -81,6 +89,7 @@
   }
   function composer(input, parent) {
     generation++; selected = undefined; detail = undefined; initialized = true; renderDetail();
+    rememberSelection();
     parentId = parent?.id;
     $('#web-followup').classList.toggle('hidden', !parent);
     $('#web-followup').textContent = parent ? `Follow-up to: ${parent.input.goal}. The previous task stays available as context.` : '';
@@ -93,13 +102,13 @@
     event.preventDefault();
     const input = { goal: form.elements.goal.value, urls: form.elements.urls.value.split(/\r?\n/).map(url => url.trim()).filter(Boolean), mode: form.elements.mode.value, ...(parentId ? { parentId } : {}) };
     const version = generation;
-    void act(async () => { const task = await api('/prepare', input); if (version === generation) { generation++; selected = task.id; initialized = true; } });
+    void act(async () => { const task = await api('/prepare', input); if (version === generation) { generation++; selected = task.id; initialized = true; rememberSelection(); } });
   });
   document.addEventListener('click', event => {
     const button = event.target.closest('button'); if (!button) return;
     if (button.hasAttribute('data-web-new')) return composer();
     if (button.dataset.webExample) return composer(examples[button.dataset.webExample]);
-    if (button.dataset.webTask) { generation++; selected = button.dataset.webTask; void refresh().catch(error => notice(error.message, true)); }
+    if (button.dataset.webTask) { generation++; selected = button.dataset.webTask; rememberSelection(); void refresh().catch(error => notice(error.message, true)); }
     if (button.id === 'web-run' && detail) { const id = detail.id; void act(() => api(`/tasks/${id}/run`, {})); }
     if (button.id === 'web-stop' && detail) { const id = detail.id; void act(() => api(`/tasks/${id}/stop`, {})); }
     if (button.id === 'web-repeat' && detail) return composer({ ...detail.input, goal: '', urls: detail.pages.length ? detail.pages.map(page => page.url).slice(0, 5) : detail.input.urls }, detail);
