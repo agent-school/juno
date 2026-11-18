@@ -49,6 +49,31 @@ it('requires every draft part to pass a separate review and keeps critique text 
   await expect(infer({ ...request, reviewDraft: draft }, new AbortController().signal)).rejects.toThrow('unsupported source review');
 });
 afterEach(() => vi.unstubAllGlobals());
+it('reviews many long and multibyte sources within budget while retaining cited policy and surrounding conditions', async () => {
+  const quote = 'The support policy lasts thirty months for this version only.';
+  const condition = 'Earlier versions follow a different support schedule.';
+  let calls = 0;
+  vi.stubGlobal('fetch', async (_url: unknown, options: RequestInit) => {
+    const body = JSON.parse(options.body as string);
+    const prompt = body.messages.find((message: { role: string }) => message.role === 'user').content;
+    expect(Buffer.byteLength(prompt)).toBeLessThanOrEqual(100_000);
+    const context = JSON.parse(prompt);
+    expect(context.sources).toHaveLength(calls++ === 0 ? 4 : 10);
+    const cited = context.sources.find((source: { id: string }) => source.id === 'p4');
+    expect(JSON.stringify(cited)).toContain(quote); expect(JSON.stringify(cited)).toContain(condition);
+    expect(cited.partial).toBe(true);
+    const checks = context.parts.map((part: { id: number }) => ({ id: part.id, issue: 'none', note: '' }));
+    return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ checks }) } }] }));
+  });
+  const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
+  const draft = { action: 'finish' as const, answer: 'This version has thirty months of support [p4].', citations: [{ pageId: 'p4', quote }], rows: [] };
+  for (const [count, filler] of [[4, 'a'], [10, '文']] as const) {
+    const pages = Array.from({ length: count }, (_, i) => ({ id: `p${i + 1}`, url: `https://example.com/${i}`, title: 'Policy', observedAt: new Date().toISOString(), hash: 'a'.repeat(64),
+      text: filler.repeat(29_000) + condition + ' ' + quote + filler.repeat(2800), links: [] }));
+    expect(await infer({ ...request, pages, reviewDraft: draft }, new AbortController().signal)).toEqual(draft);
+  }
+  expect(calls).toBe(2);
+});
 it('keeps a server credential out of model context and sends bounded generic decisions through the configured HTTPS provider', async () => {
   const response = { choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'search', query: 'official browser documentation', reason: 'Find starting sources' }) } }] };
   const fetcher = vi.fn(async () => new Response(JSON.stringify(response), { headers: { 'content-type': 'application/json' } }));
