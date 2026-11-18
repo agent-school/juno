@@ -2,7 +2,7 @@
 
 Juno now has a reusable semantic task runtime, a provider-neutral intent boundary and a reproducible browser benchmark. Its reference adapter operates an owned three-page contact workspace: create a contact, then add a follow-up that requires that contact to exist. It verifies the stored records independently of the browser's success message.
 
-This is a bounded browser-agent foundation. Arbitrary-site discovery, generalized self-healing, real-account support, teach-by-showing and desktop/vision control remain open. The hosted research desk does not expose this CLI yet.
+This is a bounded browser-agent foundation. Arbitrary-site discovery, generalized self-healing, real-account support, teach-by-showing and desktop/vision control remain open. The [Agent workspace](HOSTED-AGENT.md) exposes this runtime and benchmark through the web frontend and backend, alongside the research desk.
 
 ## Try the complete loop
 

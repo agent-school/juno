@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f6f8">
-  <title>Research — Juno</title><link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script>
+  <title>Agent — Juno</title><link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/agent.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script><script defer src="/agent.js"></script>
 </head><body>
 <a class="skip-link" href="#main">Skip to workspace</a>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -17,10 +17,11 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
 <aside class="sidebar" aria-label="Workspace navigation">
-  <a class="brand" href="#tasks" aria-label="Juno research"><span class="brand-mark" aria-hidden="true">j.</span>juno<span class="edition">preview</span></a>
-  <button class="new-research" data-tab="tasks" data-new-research><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New research</button>
+  <a class="brand" href="#agent" aria-label="Juno agent"><span class="brand-mark" aria-hidden="true">j.</span>juno<span class="edition">preview</span></a>
+  <button class="new-research" data-tab="agent" data-agent-new><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New task</button>
   <nav aria-label="Main">
-    <button class="nav active" data-tab="tasks" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Research</span></button>
+    <button class="nav active" data-tab="agent" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Agent</span></button>
+    <button class="nav" data-tab="tasks"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Research</span></button>
     <button class="nav" data-tab="memory"><svg class="icon" aria-hidden="true"><use href="#i-memory"/></svg><span>Memory</span><span id="nav-memory-count" class="count">0</span></button>
     <div class="nav-label">Explore Juno</div>
     <button class="nav" data-tab="experiment"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Browser lab</span></button>
@@ -31,8 +32,36 @@
   <div class="sidebar-bottom"><button class="workspace-switch" data-tab="memory" data-workspace-settings><span class="workspace-avatar" aria-hidden="true">W</span><span><strong id="workspace-name">Browser workspace</strong><small>Workspace settings</small></span><span aria-hidden="true">⌁</span></button><a href="https://github.com/agent-school/juno" target="_blank" rel="noreferrer">Juno on GitHub <span aria-hidden="true">↗</span></a></div>
 </aside>
 <main id="main" tabindex="-1">
-  <header class="topbar"><span class="location">Workspace <span aria-hidden="true">/</span> <b id="breadcrumb">Research</b></span><a href="/api/export" class="export"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export<span class="export-extra"> workspace</span></a></header>
-  <section class="page" id="tasks" aria-labelledby="research-heading">
+  <header class="topbar"><span class="location">Workspace <span aria-hidden="true">/</span> <b id="breadcrumb">Agent</b></span><a href="/api/export" class="export"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export<span class="export-extra"> research &amp; lab</span></a></header>
+  <section class="page" id="agent" aria-labelledby="agent-heading">
+    <div class="page-heading"><div><h1 id="agent-heading" tabindex="-1">Agent</h1><p>Give Juno a task. Follow every step.</p></div><span class="source-label">Private contact workspace</span></div>
+    <div id="agent-notice" class="agent-notice" role="status" aria-live="polite"></div>
+    <div class="agent-desk"><div class="agent-document">
+      <section id="agent-composer" aria-labelledby="agent-compose-heading">
+        <div class="agent-section-heading"><h2 id="agent-compose-heading">Create a contact. Set a follow-up.</h2><button type="button" class="text-button" id="agent-example">Use example</button></div>
+        <p class="agent-intro">Juno will use its browser to enter the contact, add the follow-up, and check that both were saved. You review the plan first.</p>
+        <p class="agent-scope">This is an owned test application. It is separate from your real contacts and accounts.</p>
+        <form id="agent-task-form">
+          <fieldset id="agent-inputs"><legend class="sr-only">Contact and follow-up details</legend>
+            <div class="agent-fields"><label>Contact name<input name="name" required maxlength="100" placeholder="Ada Lovelace" autocomplete="off"></label><label>Contact email<input name="email" type="email" required maxlength="200" placeholder="ada@example.test" autocomplete="off"></label></div>
+            <label>Follow-up note<textarea name="note" required maxlength="1000" rows="3" placeholder="What should you come back to?"></textarea></label>
+            <div class="agent-fields"><label>Follow-up date<input name="due" type="date" required></label><label>Category<select name="category"><option>Research</option><option>Partner</option></select></label></div>
+            <label class="agent-checkbox"><input name="subscribed" type="checkbox">Mark this contact as subscribed in the test workspace</label>
+          </fieldset>
+          <div class="agent-form-footer"><span>No model connection needed</span><button type="submit" class="primary" id="agent-review">Review task <span aria-hidden="true">→</span></button></div>
+        </form>
+        <details class="agent-language"><summary>Plan from a written request</summary><p id="agent-planner-hint" class="hint">Checking the language planner…</p><form id="agent-intent-form"><label>Your request<textarea name="intent" rows="3" maxlength="2000" required placeholder="Create a contact for Ada Lovelace at ada@example.test, then…" disabled></textarea></label><button type="submit" class="secondary" disabled>Build a plan to review</button></form></details>
+      </section>
+      <section id="agent-run" class="hidden" aria-label="Selected agent task"></section>
+      <section class="agent-results" aria-labelledby="agent-results-heading"><div class="agent-section-heading"><h2 id="agent-results-heading">Saved in your contact workspace</h2><span id="agent-record-count" class="hint">0 records</span></div><p class="hint">Read from the application’s stored data, independently of the browser.</p><div id="agent-records"><p class="agent-empty">Your contacts and follow-ups will appear here.</p></div></section>
+      <details class="agent-checks"><summary>Reliability checks <span id="agent-check-summary">Not run in this workspace</span></summary><p class="hint">Run the engine’s controlled test matrix, including layout changes, interruption recovery, duplicate prevention and blocked page-script writes. These checks use separate test data.</p><button type="button" id="agent-check-start" class="secondary">Run reliability checks</button><div id="agent-check-results" aria-live="polite"></div></details>
+    </div><aside class="agent-rail" aria-label="Agent history and memory">
+      <section><div class="agent-section-heading"><h2>Recent tasks</h2><button type="button" class="text-button" data-agent-new>New</button></div><div id="agent-history"><p class="hint">Loading your tasks…</p></div></section>
+      <section class="agent-site-memory"><div class="agent-section-heading"><h2>Site memory</h2><span id="agent-memory-count" class="hint"></span></div><p class="hint">Website controls and reviewed operations Juno can reuse across runs.</p><div id="agent-site-memory"></div><p><a class="text-button" href="/api/agent/knowledge" download="juno-site-knowledge.json">Download site knowledge</a></p><button type="button" class="secondary full" id="agent-observe">Observe contact workspace</button><details class="agent-forget"><summary>Forget site knowledge</summary><p class="hint">Saved plans depend on this knowledge. Forgetting it requires observing the site and reviewing a new task.</p><button type="button" id="agent-forget" class="text-button forget">Confirm forget</button></details></section>
+      <section><h2>Your context</h2><p class="hint">Your notes, preferences and research are kept in Memory. Task plans and site knowledge are saved separately in this workspace.</p><button type="button" class="text-button" data-tab="memory">Open personal memory <span aria-hidden="true">↗</span></button></section>
+    </aside></div>
+  </section>
+  <section class="page hidden" id="tasks" aria-labelledby="research-heading">
     <div class="page-heading"><div><h1 id="research-heading" tabindex="-1">Research</h1><p>Find the right tools. Keep a shortlist. Follow what changes.</p></div><span class="source-label">GitHub public projects</span></div>
     <div class="research-desk"><div class="research-document">
       <form id="research-form" class="research-composer">

@@ -104,6 +104,9 @@ importers:
 
   packages/lab:
     dependencies:
+      '@juno/agent':
+        specifier: workspace:*
+        version: link:../agent
       '@juno/browser':
         specifier: workspace:*
         version: link:../browser

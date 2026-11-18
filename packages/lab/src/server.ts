@@ -11,12 +11,14 @@ import { fixture } from './fixture.js';
 import { Accounts, CredentialsSchema } from './accounts.js';
 import { ResearchService } from './research.js';
 import { TaskRequestSchema, PreferencesSchema, editNote } from './workspace.js';
+import { AgentService, AgentError } from './agent.js';
 
 const port = Number(process.env.PORT ?? 5123);
 const store = new Store(path.resolve(process.env.JUNO_LAB_DATA_DIR ?? '.juno-lab'));
 const runner = new Runner(store, `http://127.0.0.1:${port}`);
 const accounts = new Accounts(store.directory);
 const research = new ResearchService(store);
+const agent = new AgentService(path.join(store.directory, 'agent-workspaces'), () => runner.isBusy());
 const publicDir = fileURLToPath(new URL('../public/', import.meta.url));
 const rates = new Map<string, { at: number; count: number }>();
 const assets: Record<string, [string, string]> = {
@@ -24,6 +26,7 @@ const assets: Record<string, [string, string]> = {
   '/app.css': ['app.css', 'text/css'], '/fixture.js': ['fixture.js', 'text/javascript'],
   '/fixture.css': ['fixture.css', 'text/css'],
   '/workspace.js': ['workspace.js', 'text/javascript'], '/workspace.css': ['workspace.css', 'text/css'],
+  '/agent.js': ['agent.js', 'text/javascript'], '/agent.css': ['agent.css', 'text/css'],
   '/fonts/public-sans-latin.woff2': ['fonts/public-sans-latin.woff2', 'font/woff2'],
   '/fonts/sora-latin.woff2': ['fonts/sora-latin.woff2', 'font/woff2'],
 };
@@ -90,7 +93,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === 'GET' && ['/api/state', '/api/export'].includes(url.pathname)) {
       if (url.pathname === '/api/export') res.setHeader('content-disposition', 'attachment; filename="juno-lab-evidence.json"');
-      return send(res, 200, { ...store.read(owner), browserBusy: runner.isBusy() });
+      return send(res, 200, { ...store.read(owner), browserBusy: runner.isBusy() || agent.isBusy() });
     }
     if (req.method === 'GET' && url.pathname === '/api/workspace') {
       return send(res, 200, { ...store.read(owner).workspace, account: accounts.handle(owner), researchBusy: research.isBusy() });
@@ -98,8 +101,39 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/api/site-knowledge') {
       return send(res, 200, { versions: runner.inspectKnowledge(owner) });
     }
+    if (req.method === 'GET' && url.pathname === '/api/agent') return send(res, 200, agent.state(owner));
+    if (req.method === 'GET' && url.pathname === '/api/agent/knowledge') return send(res, 200, { versions: agent.knowledge(owner) });
+    const agentTask = url.pathname.match(/^\/api\/agent\/tasks\/([a-f0-9-]{36})(?:\/(receipt|screenshot))?$/);
+    if (req.method === 'GET' && agentTask) {
+      const id = agentTask[1]!;
+      if (agentTask[2] === 'screenshot') { const frame = agent.screenshot(owner, id); res.writeHead(200, { 'content-type': 'image/png' }); return res.end(frame); }
+      const task = agent.detail(owner, id);
+      if (agentTask[2] === 'receipt') {
+        res.setHeader('content-disposition', `attachment; filename="juno-${id}.json"`);
+        return send(res, 200, { scope: 'Private owned contact workspace; reviewed operations; no real accounts', plan: task.plan, receipt: task.receipt });
+      }
+      return send(res, 200, task);
+    }
+    const checkReport = url.pathname.match(/^\/api\/agent\/checks\/([a-f0-9-]{36})\/report$/);
+    if (req.method === 'GET' && checkReport) {
+      res.setHeader('content-disposition', 'attachment; filename="juno-reliability-report.json"');
+      return send(res, 200, agent.checksReport(owner, checkReport[1]!));
+    }
     if (req.method !== 'POST') throw new HttpError(404, 'Not found');
     const payload = await body(req);
+    if (url.pathname === '/api/agent/prepare') return send(res, 201, await agent.prepare(owner, payload));
+    if (url.pathname === '/api/agent/plan') return send(res, 201, await agent.prepare(owner, payload, true));
+    if (url.pathname === '/api/agent/observe') { z.object({}).strict().parse(payload); return send(res, 200, { model: await agent.observe(owner) }); }
+    if (url.pathname === '/api/agent/knowledge/forget') { z.object({}).strict().parse(payload); agent.forgetKnowledge(owner); return send(res, 200, { forgotten: true }); }
+    if (url.pathname === '/api/agent/checks') { z.object({}).strict().parse(payload); return send(res, 202, agent.startChecks(owner)); }
+    const stopChecks = url.pathname.match(/^\/api\/agent\/checks\/([a-f0-9-]{36})\/stop$/);
+    if (stopChecks) { z.object({}).strict().parse(payload); agent.stopChecks(owner, stopChecks[1]!); return send(res, 200, { stopRequested: true }); }
+    const agentControl = url.pathname.match(/^\/api\/agent\/tasks\/([a-f0-9-]{36})\/(run|stop)$/);
+    if (agentControl) {
+      if (agentControl[2] === 'run') { const data = z.object({ variant: z.string().optional() }).strict().parse(payload); return send(res, 202, agent.start(owner, agentControl[1]!, data.variant)); }
+      z.object({}).strict().parse(payload); agent.stop(owner, agentControl[1]!); return send(res, 200, { stopRequested: true });
+    }
+    if (agent.isBusy() && ['/api/compile', '/api/run'].includes(url.pathname)) throw new HttpError(409, 'Juno’s browser is busy with an agent task.');
     if (url.pathname === '/api/site-knowledge/forget') {
       z.object({}).strict().parse(payload);
       runner.forgetKnowledge(owner);
@@ -241,7 +275,7 @@ const server = http.createServer(async (req, res) => {
   } catch (error) {
     if (res.headersSent) { res.end(); return; }
     if (error instanceof z.ZodError) return send(res, 400, { error: 'Invalid request', issues: error.issues.map(issue => ({ path: issue.path, message: issue.message })) });
-    if (error instanceof HttpError) return send(res, error.status, { error: error.message });
+    if (error instanceof HttpError || error instanceof AgentError) return send(res, error.status, { error: error.message });
     console.error('Lab request failed:', error instanceof Error ? error.name : 'unknown');
     send(res, 500, { error: 'Lab could not complete the request. Check server availability or data capacity.' });
   }
@@ -250,6 +284,6 @@ server.requestTimeout = 45_000;
 server.headersTimeout = 10_000;
 server.listen(port, process.env.HOST ?? '0.0.0.0', () => console.log(`Juno lab listening on ${port}`));
 for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => {
-  server.close(() => process.exit(0));
+  server.close(() => { void agent.close().finally(() => process.exit(0)); });
   setTimeout(() => process.exit(0), 8000).unref();
 });

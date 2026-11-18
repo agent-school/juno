@@ -10,7 +10,7 @@ import { hostFor, makePlan, owner } from './host.js';
 import { startFixture } from './fixture.js';
 
 const actions = (receipt: RunReceipt) => receipt.steps.flatMap(step => step.audit).filter(entry => entry.status === 'completed' && entry.risk !== 'read').length;
-export async function runBenchmark(directory: string, options: { headless?: boolean; trace?: boolean } = {}) {
+export async function runBenchmark(directory: string, options: { headless?: boolean; trace?: boolean; signal?: AbortSignal; onCheck?: (checks: { name: string; passed: boolean; durationMs: number; detail?: string }[]) => void } = {}) {
   if (fs.existsSync(directory) && fs.readdirSync(directory).length) throw new Error('Benchmark output must be an empty directory; use the demo to resume an existing task');
   fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   let app = await startFixture(path.join(directory, 'application'));
@@ -22,10 +22,11 @@ export async function runBenchmark(directory: string, options: { headless?: bool
   const receipts: { name: string; file: string; status: string; browserActions: number }[] = [];
   const startedAt = new Date().toISOString(), start = performance.now();
   const check = async (name: string, work: () => Promise<void>) => {
+    options.signal?.throwIfAborted();
     const start = performance.now();
     try { await work(); checks.push({ name, passed: true, durationMs: performance.now() - start }); }
     catch (error) { checks.push({ name, passed: false, durationMs: performance.now() - start, detail: error instanceof Error ? error.message : 'Assertion failed' }); }
-    finally { app.setVariant('normal'); }
+    finally { app.setVariant('normal'); options.onCheck?.(structuredClone(checks)); }
   };
   const record = (name: string, receipt: RunReceipt) => {
     const file = `${name}.receipt.json`;

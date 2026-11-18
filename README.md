@@ -1,12 +1,14 @@
 # Juno
 
-## Try Juno's task and memory workbench
+## Try Juno's agent, research and memory workbench
+
+**Agent** connects the semantic engine to the web app. Fill in the supported contact/follow-up task, review its two typed operations, then run it. Watch browser frames and progress, inspect independently verified records, stop a run, resume its saved request without blind writes, download receipts and inspect or forget versioned site memory. The in-app reliability matrix runs the same 19 controlled checks as the CLI. This adapter uses a private owned test application; real accounts and arbitrary websites are not connected. See the [hosted agent guide](docs/HOSTED-AGENT.md).
 
 Juno now has a web workbench with a real read-only task: research public open-source projects, inspect live source evidence, explicitly remember a shortlist, and refresh it later to see what changed. Preferences, editable notes, reusable searches and task receipts persist. Protect a workspace with a passphrase to reopen it on another device. This first task uses GitHub's API and structured filters; it is not an open-ended chat planner.
 
 The separate **Browser lab** operates a synthetic relationship app with the real `@juno/browser` reader and actor: save semantic bindings, replay `capture_interaction(...)`, change the page, and inspect verified effects. It is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
 
-Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). The interface is a research desk with recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
+Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). Agent is the main view; Research retains recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
 
 ```bash
 # Node 24 is required by the pinned pnpm 11 toolchain.
@@ -18,7 +20,7 @@ pnpm lab
 
 No API key is needed. In **Research**, try `browser automation`, remember a project, then use **Check for changes** in Working memory. **Memory** lets you find, correct and forget context. Use **Export workspace** to keep a copy (it can contain your private notes). Data persists in `.juno-lab/`, isolated by a random HttpOnly cookie with optional passphrase recovery. For the browser sandbox use synthetic inputs only. [Task and memory walkthrough](docs/TASKS-AND-MEMORY.md).
 
-For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). The separate CLI agent and its reproducibility benchmark are described in [the computer-use guide](docs/COMPUTER-USE-AGENT.md); they are not exposed in the hosted interface yet.
+For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). The same engine also provides a CLI agent and reproducibility benchmark, described in [the computer-use guide](docs/COMPUTER-USE-AGENT.md).
 
 Juno is a semantic website compiler: it learns how any website works through safe exploration and teach-by-showing, saves that understanding permanently per site, and replays it to automate actions that are hard to automate any other way (messaging someone on Instagram, signing a contract, applying to a job).
 
