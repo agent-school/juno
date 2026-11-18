@@ -119,7 +119,7 @@ Plans:
   7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
   8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 
-**Plans**: 04-01 reproducible task-runtime/interpretation foundation complete; live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
+**Plans**: 04-01 reproducible task-runtime/interpretation foundation and 04-02 hosted frontend/backend integration complete. Agent is deployed and recorded UI verification passed; live provider, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
 
 ### Phase 5: Teach-by-Showing
 
@@ -176,7 +176,7 @@ Phases retain numeric acceptance order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 
 | 1.1. Host-Browser Runtime & Windows | 2/3 accepted | Windows lifecycle verified; RUNTIME-03 firewall acceptance open | - |
 | 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
 | 3. Site Compiler & Per-Site Memory | 2 bounded plans | In progress; broader site validation open | - |
-| 4. Planner, Execution & Authenticated Sites | 1 foundation plan | In progress; live/auth/repair gates open | - |
+| 4. Planner, Execution & Authenticated Sites | 2 bounded plans | Hosted Agent deployed/verified; live/auth/repair gates open | - |
 | 5. Teach-by-Showing | 0/TBD | Not started | - |
 | 6. Portal Recognition | 0/TBD | Not started | - |
 | 7. Voice Control | 0/TBD | Not started | - |

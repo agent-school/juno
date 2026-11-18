@@ -34,4 +34,4 @@ Run `pnpm lab` with Node 24 or use the existing Docker image. Docker sets both l
 
 Use one process/replica with persistent local storage. Keep the data directory private and backed up; receipts and screenshots contain task inputs and application data. This is not an encrypted credential vault. No daily browser profile or real-account credentials are used. Research, personal Memory and Browser lab remain available in their own tabs.
 
-Hosted API integration and container checks are recorded in GSD. Interactive usability testing of the new Agent screen is tracked separately from API tests. Authenticated websites, arbitrary-site discovery, teach-by-showing, semantic repair, destructive-action approval and general desktop control remain unfinished.
+Hosted API, container/redeploy persistence and recorded Agent UI checks are recorded separately in [GSD verification](../.planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md), with their coverage limits. Authenticated websites, arbitrary-site discovery, teach-by-showing, semantic repair, destructive-action approval and general desktop control remain unfinished.

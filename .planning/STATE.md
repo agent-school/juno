@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: Task foundation and three review fixes verified locally and in Docker; live provider auth and broader site gates remain open
-last_updated: "2026-11-14"
-last_activity: 2026-11-14
-last_activity_desc: Hardened audited one-shot request authority, exact URL policies and setup cleanup; 19-condition benchmark passes
-state_head: 816ffe8d25332b6fcd18e9d2ce04753555afc58b
+stopped_at: Hosted Agent frontend/backend deployed and UI verified; broader compiler, live planner, auth and repair gates remain open
+last_updated: "2026-11-18"
+last_activity: 2026-11-18
+last_activity_desc: Connected the engine to hosted task review/execution/recovery/memory/reliability controls; verified redeploy persistence and recorded UI
+state_head: a2c4cf7db581a3ccb14eede2efc9205af3f76e75
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 9
+  total_plans: 11
+  completed_plans: 10
   percent: 25
 ---
 
@@ -23,16 +23,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** Phase 2 guarded execution and the Phase 3 typed site-knowledge substrate are deployed and verified in Browser lab. Broader site compilation remains in progress. Approved actual Windows Server 2022 / Chrome Stable / Docker Desktop WSL2 validation covers discovery, profile/ownership safety, host-Node-free semantic execution and lifecycle cases. Two startup Ctrl-C races are corrected in 67b6098, which passed 12/12 actual Chrome interruption trials and full semantic execution; RUNTIME-03 firewall enforcement remains open. PR #2 merge was refused by GitHub integration HTTP 403 despite explicit user authorization; PR #3 carries the new work.
+**Current focus:** The engine is now connected to the hosted Agent frontend/backend at https://juno.agentschool.io. Supported task review, verified execution, evidence, stop/resume, versioned site memory and reliability jobs are deployed in a2c4cf7, with recorded hosted UI and actual redeploy-persistence evidence. Broader Phase 3 compilation and full Phase 4 acceptance remain open. Actual Windows lifecycle evidence includes 12/12 startup interruption trials; RUNTIME-03 firewall enforcement remains open. PR #2's merge was refused by GitHub integration HTTP 403; PR #3 carries the new work and remains unmerged.
 
 ## Current Position
 
 Phase: 3 — Site Compiler & Per-Site Memory
-Plan: 03-01 substrate and 03-02 multi-page observer complete; 04-01 execution foundation complete with full phases still open
+Plan: 03-01 substrate, 03-02 multi-page observer, 04-01 execution foundation and 04-02 hosted integration complete as bounded slices; full phases remain open
 Status: Phase 2 complete; Phase 01.1 has actual Windows evidence with RUNTIME-03 firewall acceptance open
-Last activity: 2026-11-13 — Windows validation reproduced both the pre-CIM ownership gap and cancellable process-creation return gap. Final correction 67b6098 preallocates the .NET process, retains exact identity checks and handles failed starts without masking errors. Actual Chrome passed 12/12 startup interruption trials, full semantic replay without host Node/pnpm, occupied-port retry/refusal, native launch failure, build/test Ctrl-C and container stop. No owned processes/rules/containers/networks/listeners remained; profile and unrelated Chrome survived. Firewall profiles were disabled, so enforcement remains unverified. Hosted deployment remains 0954811; health returned 200 and storage is unaffected by this Windows-only correction.
+Last activity: 2026-11-18 — 04-02 connects Agent as the main view and exposes the engine through a workspace-isolated backend. Hosted API and recorded real-Chromium UI flows pass. The 19-condition matrix passes in-app; replay adds zero writes. Tasks, receipts, frames, knowledge, reports and research notes survived an actual Coolify replacement. Preparation shutdown now aborts compilation and waits for cleanup. Typechecks, 146 unit tests, 30 browser/API tests, two CDP tests, Docker build and implementation CI pass. See the 04-02 summary for evidence and limits.
 
-Review follow-up: 12a399c fixes boolean checkbox state through raw/guarded actors and common dotted/encoded site routes through one canonical pathname schema. Both failures were reproduced before the fix. Typechecks, 115 unit tests, 22 standard browser/API tests and the CDP tracer pass. These library fixes are not deployed; hosted revision remains 0954811. No new environment dependencies or blueprint changes are needed.
+Windows acceptance remains as recorded in 67b6098: actual Chrome/Docker execution and 12/12 startup interruption trials passed; enabled-firewall enforcement, other Windows configurations and forced host termination remain outside that evidence.
+
+Review follow-up: 12a399c fixes boolean checkbox state through raw/guarded actors and common dotted/encoded site routes through one canonical pathname schema. Both failures were reproduced before the fix. Typechecks, 115 unit tests, 22 standard browser/API tests and the CDP tracer passed then. These fixes are now included in the hosted integration. No new environment dependencies or blueprint changes were needed.
 
 Agent foundation (2026-11-14, implementation bf1ec85): `@juno/agent` adds bounded multi-page observation, typed catalog interpretation, guarded multi-operation execution, expected/verified effect receipts and crash-safe request recovery. `pnpm agent:demo` creates a contact and dependent follow-up; a second process reuses the verified task with zero writes. `pnpm agent:benchmark` passes 17/17 checks in Chrome and the Docker image's bundled Chromium. Full typechecks, 134 unit tests, 23 browser/API tests and two native CDP tests pass. Live OpenAI interpretation returned HTTP 401, so model-backed planning remains unverified; no application writes followed. See Phase 4 verification for scope and remaining gates. No hosted deployment occurred. Existing Node 24/Chrome blueprint covers this increment without changes.
 
@@ -44,7 +46,7 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: -
 - Total execution time: Not instrumented; see plan summaries and verification evidence
 
@@ -56,7 +58,7 @@ Progress: 2/8 roadmap phases complete. Runtime and knowledge increments do not e
 | 01.1 | 2 accepted; launcher acceptance open | - | - |
 | 02 | 1 | - | - |
 | 03 substrate/observer | 2 | - | - |
-| 04 foundation | 1 | - | - |
+| 04 foundation and hosted integration | 2 | - | - |
 
 **Recent Trend:**
 
@@ -101,7 +103,7 @@ Recent decisions affecting current work:
 
 - Replacement Coolify token works and is saved. Public HTTPS and redeploy persistence passed on the temporary hostname; requested hostname DNS and valid HTTPS passed on 2026-11-13.
 - Coolify API status disagrees with observed application availability. Keep that monitoring gap explicit.
-- The public task is a pair of deterministic read-only GitHub API operations. It is not a general Muse-style chat planner or evidence of learned browser semantics on external sites.
+- Agent is the public default view and executes reviewed contact/follow-up operations on a private synthetic application. Research remains a separate deterministic GitHub workflow. Arbitrary real sites/accounts and general Muse-style language autonomy remain unfinished.
 
 ## Quick Tasks Completed
 
@@ -132,6 +134,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-11-14
-Stopped at: Typed execution foundation and all three review fixes passed Chrome, Chromium-container and repository checks. Live provider auth returned HTTP 401; broader site validation, authenticated execution and RUNTIME-03 firewall enforcement remain open.
+Last session: 2026-11-18
+Stopped at: Hosted Agent integration deployed in a2c4cf7; API, actual Coolify replacement and recorded UI checks pass. Review-before-run, evidence, stop/resume, site memory and 19/19 reliability jobs are available in the app. Live provider success, broader site discovery, authenticated workflows, semantic repair and RUNTIME-03 firewall acceptance remain open. No merge performed.
 Resume file: .planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md
