@@ -82,6 +82,22 @@ test('general loop composes navigation, comparison and extraction across unrelat
         rows: feedback ? [] : [{ label: 'Missing feature', value: 'No (not mentioned in source)', pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }] };
     });
     expect(interpreted.status).toBe('answered'); expect(interpreted.modelCalls).toBe(2); expect(interpreted.rows).toEqual([]);
+    const references = task([a.origin]);
+    await run(references, async ({ pages, feedback, previousProposal }) => {
+      if (references.modelCalls === 1) return { action: 'follow', pageId: 'p1', linkId: 'invented', reason: 'Invalid link must not navigate' };
+      if (references.modelCalls === 2) {
+        expect(feedback).toContain('not observed'); expect(previousProposal).toMatchObject({ linkId: 'invented' });
+        return { action: 'read', pageId: 'p1', offset: pages[0]!.text.length };
+      }
+      if (references.modelCalls === 3) {
+        expect(feedback).toContain('at or beyond its end'); expect(previousProposal).toMatchObject({ offset: pages[0]!.text.length });
+        return { action: 'follow', pageId: 'p1', linkId: 'l1', reason: 'Read the actual published price' };
+      }
+      expect(feedback).toBeUndefined();
+      return { action: 'finish', answer: 'North costs 19 dollars per month [p2].', citations: [{ pageId: 'p2', quote: 'The North starter plan costs 19 dollars per month.' }] };
+    });
+    expect(references.status, JSON.stringify(references.events)).toBe('answered'); expect(references.modelCalls).toBe(4);
+    expect(references.pages).toHaveLength(2); expect(references.events.filter(event => event.kind === 'opening')).toHaveLength(2);
     const abort = new AbortController(), stopped = task([a.origin]);
     await run(stopped, async () => { abort.abort(); return new Promise(() => {}); }, abort.signal);
     expect(stopped.status).toBe('stopped'); expect(stopped.pages).toHaveLength(1);
@@ -95,11 +111,15 @@ test('browser scripts cannot post, redirect to metadata or access another privat
   const browser = await chromium.launch({ headless: true, ...(process.env.JUNO_AGENT_CHANNEL === 'chromium' ? {} : { channel: 'chrome' }) });
   try {
     const context = await browser.newContext({ serviceWorkers: 'block' });
-    await confinePublicBrowser(context, { signal: new AbortController().signal, testOrigins: [publicFixture.origin] });
+    const network = await confinePublicBrowser(context, { signal: new AbortController().signal, testOrigins: [publicFixture.origin] });
     const page = await context.newPage(); await page.goto(publicFixture.origin);
     await page.waitForLoadState('networkidle');
     expect(publicFixture.writes()).toBe(0); expect(secret.secrets()).toBe(0);
     await expect(page.goto(`${publicFixture.origin}/redirect`)).rejects.toThrow();
     expect(secret.secrets()).toBe(0);
+    const budgetPage = await context.newPage();
+    await budgetPage.goto(publicFixture.origin);
+    await budgetPage.evaluate(() => Promise.allSettled(Array.from({ length: 165 }, (_, i) => fetch(`/budget?i=${i}`))));
+    expect(network.budgetError()).toContain('browser request budget');
   } finally { await browser.close(); await Promise.all([secret.close(), publicFixture.close()]); }
 });

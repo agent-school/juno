@@ -38,6 +38,7 @@ export type WebNetworkOptions = { signal: AbortSignal; onBlocked?: (reason: stri
 
 export async function confinePublicBrowser(context: BrowserContext, options: WebNetworkOptions) {
   let requests = 0, totalBytes = 0;
+  let budgetError: string | undefined;
   const redirects = new Map<string, string>();
   const redirectKey = (value: string) => { const url = new URL(value); url.hash = ''; return url.href; };
   await context.routeWebSocket('**/*', socket => socket.close());
@@ -45,7 +46,7 @@ export async function confinePublicBrowser(context: BrowserContext, options: Web
     let destination: URL | undefined;
     try {
       options.signal.throwIfAborted();
-      if (++requests > 160) throw new Error('Browser request budget reached.');
+      if (++requests > 160) { budgetError = 'The browser request budget was reached. Saved evidence remains available; narrow the goal or supply direct source URLs.'; throw new Error(budgetError); }
       const request = route.request();
       if (!['GET', 'HEAD'].includes(request.method())) throw new Error('External writes are blocked; this task can only browse public information.');
       destination = new URL(request.url());
@@ -66,7 +67,7 @@ export async function confinePublicBrowser(context: BrowserContext, options: Web
           const chunks: Buffer[] = []; let size = 0;
           incoming.on('data', (chunk: Buffer) => {
             size += chunk.length; totalBytes += chunk.length;
-            if (size > 2_000_000 || totalBytes > 16_000_000) { incoming.destroy(new Error('Browser response budget reached.')); return; }
+            if (size > 2_000_000 || totalBytes > 16_000_000) { budgetError = 'The browser response byte budget was reached. Saved evidence remains available; narrow the goal or supply smaller source pages.'; incoming.destroy(new Error(budgetError)); return; }
             chunks.push(chunk);
           });
           incoming.on('error', reject);
@@ -100,5 +101,5 @@ export async function confinePublicBrowser(context: BrowserContext, options: Web
       await route.abort('blockedbyclient').catch(() => {});
     }
   });
-  return { takeRedirect(url: string) { const key = redirectKey(url); const target = redirects.get(key); redirects.delete(key); return target; } };
+  return { budgetError: () => budgetError, takeRedirect(url: string) { const key = redirectKey(url); const target = redirects.get(key); redirects.delete(key); return target; } };
 }
