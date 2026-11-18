@@ -76,9 +76,13 @@ export function hostFor(directory: string, origin: string, options: { headless?:
   };
   return {
     knowledge, runs, boundary, operations, policies, openBrowser,
-    compile: async () => {
+    compile: async (options: { signal?: AbortSignal } = {}) => {
+      options.signal?.throwIfAborted();
       const browser = await openBrowser();
-      try { return await observeSite({ page: browser.page, boundary, operations: contracts, store: knowledge, owner: workspaceOwner }); }
+      try {
+        options.signal?.throwIfAborted();
+        return await observeSite({ page: browser.page, boundary, operations: contracts, store: knowledge, owner: workspaceOwner, signal: options.signal });
+      }
       finally { await browser.close(); }
     },
     runtime: (overrides: Partial<ConstructorParameters<typeof AgentRuntime>[0]> = {}) => new AgentRuntime({ owner: workspaceOwner, knowledge, runs, boundary, operations, benignPolicies: policies, openBrowser, ...overrides }),

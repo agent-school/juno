@@ -37,6 +37,7 @@ type Active = { owner: string; id: string; kind: 'prepare' | 'task' | 'checks'; 
  */
 export class AgentService {
   private active?: Active;
+  private closing = false;
   constructor(private readonly directory: string, private readonly otherBrowserBusy = () => false) {
     fs.mkdirSync(directory, { recursive: true, mode: 0o700 });
   }
@@ -63,12 +64,18 @@ export class AgentService {
   private taskFile(owner: string, id: string) { return path.join(this.workspace(owner), 'tasks', `${uuid.parse(id)}.json`); }
   private task(owner: string, id: string) { return this.read(this.taskFile(owner, id), taskSchema); }
   private reserve(owner: string, kind: Active['kind'], id: string): Active {
+    if (this.closing) throw new AgentError(503, 'Juno is shutting down. Try again after reconnecting.');
     if (this.active || this.otherBrowserBusy()) throw new AgentError(409, 'Juno’s browser is busy. Wait for the current run to finish.');
     const directory = this.workspace(owner);
     if (!fs.existsSync(directory) && fs.readdirSync(this.directory).length >= 100) throw new AgentError(409, 'Hosted workspace capacity reached.');
     return this.active = { owner, kind, id, abort: new AbortController() };
   }
   private release(active: Active) { if (this.active === active) this.active = undefined; }
+  private track<T>(active: Active, work: () => Promise<T>): Promise<T> {
+    const promise = Promise.resolve().then(() => { active.abort.signal.throwIfAborted(); return work(); }).finally(() => this.release(active));
+    active.promise = promise;
+    return promise;
+  }
   private async open(owner: string) {
     const directory = this.workspace(owner), metadataFile = path.join(directory, 'application.json');
     const metadata = fs.existsSync(metadataFile) ? this.read(metadataFile, metadataSchema) : { port: 0, token: randomBytes(32).toString('hex') };
@@ -129,8 +136,11 @@ export class AgentService {
   }
   async observe(owner: string) {
     const active = this.reserve(owner, 'prepare', randomUUID());
-    try { const context = await this.open(owner); try { return await context.host.compile(); } finally { await context.close(); } }
-    finally { this.release(active); }
+    return this.track(active, async () => {
+      const context = await this.open(owner);
+      try { return await context.host.compile({ signal: active.abort.signal }); }
+      finally { await context.close(); }
+    });
   }
   async prepare(owner: string, input: unknown, language = false) {
     // Validate before acquiring resources or opening the browser.
@@ -138,10 +148,12 @@ export class AgentService {
     if (this.entries(owner, 'tasks').length >= 100) throw new AgentError(409, 'This workspace has reached its 100-task limit.');
     if (language && !(process.env.JUNO_PLANNER_API_KEY && process.env.JUNO_PLANNER_MODEL)) throw new AgentError(503, 'Language planning needs a configured model connection. Use the task form below.');
     const active = this.reserve(owner, 'prepare', randomUUID());
-    try {
+    return this.track(active, async () => {
       const context = await this.open(owner);
       try {
-        const model = context.host.knowledge.latest(owner, context.app.origin) ?? await context.host.compile();
+        active.abort.signal.throwIfAborted();
+        const model = context.host.knowledge.latest(owner, context.app.origin) ?? await context.host.compile({ signal: active.abort.signal });
+        active.abort.signal.throwIfAborted();
         let plan;
         if ('intent' in data) {
           try {
@@ -153,12 +165,13 @@ export class AgentService {
           plan = makePlan(model.version, data);
           plan.steps[0]!.inputs.category = data.category; plan.steps[0]!.inputs.subscribed = data.subscribed;
         }
+        active.abort.signal.throwIfAborted();
         const task = taskSchema.parse({ id: plan.id, plan, createdAt: new Date().toISOString(),
           title: 'intent' in data ? data.intent.slice(0, 160) : `Contact and follow-up for ${data.name}`, source: language ? 'language' : 'form', status: 'ready', attempts: 0 });
         this.write(this.taskFile(owner, task.id), task);
         return this.detail(owner, task.id);
       } finally { await context.close(); }
-    } finally { this.release(active); }
+    });
   }
   start(owner: string, id: string, variant: unknown = 'normal') {
     const scenario = VariantSchema.parse(variant), task = this.task(owner, id);
@@ -239,7 +252,9 @@ export class AgentService {
     if (this.active?.owner === owner && this.active.id === id && this.active.kind === 'checks') this.active.abort.abort();
   }
   async close() {
-    this.active?.abort.abort();
-    await this.active?.promise;
+    this.closing = true;
+    const active = this.active;
+    active?.abort.abort();
+    await active?.promise?.catch(() => {});
   }
 }

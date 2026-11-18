@@ -283,7 +283,13 @@ const server = http.createServer(async (req, res) => {
 server.requestTimeout = 45_000;
 server.headersTimeout = 10_000;
 server.listen(port, process.env.HOST ?? '0.0.0.0', () => console.log(`Juno lab listening on ${port}`));
+let shuttingDown = false;
 for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => {
-  server.close(() => { void agent.close().finally(() => process.exit(0)); });
-  setTimeout(() => process.exit(0), 8000).unref();
+  if (shuttingDown) return;
+  shuttingDown = true;
+  const closed = agent.close();
+  server.close(() => { void closed.finally(() => process.exit(0)); });
+  server.closeIdleConnections();
+  // Drop abandoned HTTP clients after draining, but never skip owned-resource cleanup.
+  setTimeout(() => server.closeAllConnections(), 8000).unref();
 });
