@@ -36,7 +36,7 @@ it('resolves evidence IDs to the host’s exact observed punctuation and rejects
 const request = { goal: 'Compare these public sources', pages: [], rememberedRoutes: [], remainingPages: 10 };
 it('requires every draft part to pass a separate review and keeps critique text out of receipt errors', async () => {
   const draft = { action: 'finish' as const, answer: 'Every version has the same support policy.', citations: [{ pageId: 'p1', quote: 'Version 27 starts a new support policy.' }], rows: [] };
-  let checks: unknown = [{ id: 0, issue: 'scope', note: 'untrusted-review-sentinel' }];
+  let checks: unknown = [{ id: 0, issue: 'scope', note: 'untrusted-review-sentinel'.repeat(12) }];
   vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ checks }) } }] })));
   const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
   const rejected = await infer({ ...request, reviewDraft: draft }, new AbortController().signal).catch(error => error);
@@ -49,6 +49,22 @@ it('requires every draft part to pass a separate review and keeps critique text 
   await expect(infer({ ...request, reviewDraft: draft }, new AbortController().signal)).rejects.toThrow('unsupported source review');
 });
 afterEach(() => vi.unstubAllGlobals());
+it('shows deeper planning excerpts without exceeding the UTF-8 context budget across many sources', async () => {
+  vi.stubGlobal('fetch', async (_url: unknown, options: RequestInit) => {
+    const body = JSON.parse(options.body as string);
+    const prompt = body.messages.find((message: { role: string }) => message.role === 'user').content;
+    expect(Buffer.byteLength(prompt)).toBeLessThanOrEqual(100_000);
+    const context = JSON.parse(prompt);
+    if (context.pages.length === 1) expect(JSON.stringify(context.pages[0].excerpts)).toContain('a later necessary condition');
+    return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'blocked', reason: 'Bounded source fixture' }) } }] }));
+  });
+  const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
+  for (const count of [1, 10]) {
+    const pages = Array.from({ length: count }, (_, i) => ({ id: `p${i + 1}`, url: `https://example.com/${i}`, title: 'Source', observedAt: new Date().toISOString(), hash: 'a'.repeat(64),
+      text: '文'.repeat(7000) + ' a later necessary condition ' + '文'.repeat(20_000), links: [] }));
+    expect(await infer({ ...request, pages }, new AbortController().signal)).toMatchObject({ action: 'blocked' });
+  }
+});
 it('reviews many long and multibyte sources within budget while retaining cited policy and surrounding conditions', async () => {
   const quote = 'The support policy lasts thirty months for this version only.';
   const condition = 'Earlier versions follow a different support schedule.';
