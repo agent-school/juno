@@ -39,6 +39,7 @@ export type WebNetworkOptions = { signal: AbortSignal; onBlocked?: (reason: stri
 export async function confinePublicBrowser(context: BrowserContext, options: WebNetworkOptions) {
   let requests = 0, totalBytes = 0;
   const redirects = new Map<string, string>();
+  const redirectKey = (value: string) => { const url = new URL(value); url.hash = ''; return url.href; };
   await context.routeWebSocket('**/*', socket => socket.close());
   await context.route('**/*', async route => {
     let destination: URL | undefined;
@@ -88,7 +89,7 @@ export async function confinePublicBrowser(context: BrowserContext, options: Web
         const target = new URL(response.headers.location, url);
         if (!options.testOrigins?.includes(target.origin)) publicUrl(target.href);
         if (!request.isNavigationRequest() || request.frame().parentFrame()) throw new Error('Subresource redirects are blocked.');
-        redirects.set(request.url(), target.href);
+        redirects.set(redirectKey(request.url()), target.href);
         await route.fulfill({ status: 409, contentType: 'text/html', body: '<main>Juno is validating a navigation redirect.</main>' });
         return;
       }
@@ -99,5 +100,5 @@ export async function confinePublicBrowser(context: BrowserContext, options: Web
       await route.abort('blockedbyclient').catch(() => {});
     }
   });
-  return { takeRedirect(url: string) { const target = redirects.get(url); redirects.delete(url); return target; } };
+  return { takeRedirect(url: string) { const key = redirectKey(url); const target = redirects.get(key); redirects.delete(key); return target; } };
 }

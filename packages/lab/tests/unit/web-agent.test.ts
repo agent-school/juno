@@ -28,7 +28,11 @@ describe('durable general browser service', () => {
     expect(fresh.detail(owner, task.id).input).toEqual({ ...input, urls: ['https://example.com/'] });
     expect(fresh.state(other).tasks).toEqual([]);
     expect(() => fresh.prepare(other, { ...input, parentId: task.id })).toThrow('not found');
-    expect(fresh.prepare(owner, { ...input, parentId: task.id }).input.parentId).toBe(task.id);
+    const child = fresh.prepare(owner, { ...input, parentId: task.id });
+    expect(child.input.parentId).toBe(task.id);
+    expect(() => fresh.forgetTask(owner, task.id)).toThrow('reviewed follow-up');
+    expect(fresh.detail(owner, child.id).status).toBe('ready');
+    fresh.forgetTask(owner, child.id);
     fresh.forgetTask(owner, task.id);
     expect(() => fresh.detail(owner, task.id)).toThrow('not found');
   });

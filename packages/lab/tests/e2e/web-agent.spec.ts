@@ -16,6 +16,10 @@ test('general task review accepts unrelated goals, stays inert, isolates owners 
     expect((await (await other.get('/api/web')).json()).tasks).toEqual([]);
     expect((await (await other.get('/api/web/knowledge')).json()).sites).toEqual([]);
   } finally { await other.dispose(); }
+  const followup = await (await request.post('/api/web/prepare', { data: { goal: 'Compare this source against the new policy', urls: ['https://example.com'], mode: 'evidence', parentId: task.id } })).json();
+  const conflict = await request.post(`/api/web/tasks/${task.id}/forget`, { data: {} });
+  expect(conflict.status()).toBe(409); expect((await conflict.json()).error).toContain('Compare this source against the new policy');
+  expect((await request.post(`/api/web/tasks/${followup.id}/forget`, { data: {} })).status()).toBe(200);
   expect((await request.post(`/api/web/tasks/${task.id}/forget`, { data: {} })).status()).toBe(200);
   expect((await request.get(`/api/web/tasks/${task.id}`)).status()).toBe(404);
 });

@@ -15,6 +15,8 @@ async function fixture(html: (url: string) => string) {
     if (req.url === '/private') { secrets++; res.end('private'); return; }
     if (req.url === '/redirect') { res.writeHead(302, { location: 'http://169.254.169.254/latest/meta-data/' }); res.end(); return; }
     if (req.url === '/redirect-public') { res.writeHead(302, { location: '/pricing' }); res.end(); return; }
+    if (req.url === '/fragment-start') { res.writeHead(302, { location: '/fragment-middle#section' }); res.end(); return; }
+    if (req.url === '/fragment-middle') { res.writeHead(302, { location: '/pricing#cost' }); res.end(); return; }
     res.setHeader('content-type', 'text/html'); res.end(html(req.url ?? '/'));
   });
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -45,6 +47,8 @@ test('general loop composes navigation, comparison and extraction across unrelat
     expect(knowledge.latest(owner, a.origin)?.operations).toEqual([]);
     const redirected = task([`${a.origin}/redirect-public`], 'evidence'); await run(redirected);
     expect(redirected.status).toBe('evidence'); expect(redirected.pages[0]?.url).toBe(`${a.origin}/pricing`);
+    const fragments = task([`${a.origin}/fragment-start`], 'evidence'); await run(fragments);
+    expect(fragments.status, JSON.stringify(fragments.events)).toBe('evidence'); expect(fragments.pages[0]?.url).toBe(`${a.origin}/pricing`);
     const second = task([a.origin], 'evidence'); await run(second);
     expect(second.status).toBe('evidence'); expect(second.modelCalls).toBe(0); expect(second.pages[0]?.memory?.reused).toBe(true);
     expect(knowledge.latest(owner, a.origin)?.pages).toHaveLength(2);

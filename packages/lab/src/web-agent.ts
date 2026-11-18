@@ -127,6 +127,8 @@ export class WebAgentService {
   forgetTask(owner: string, id: string) {
     if (this.active?.owner === owner) throw new AgentError(409, 'Stop the task before forgetting workspace task history.');
     this.detail(owner, id);
+    const dependent = this.tasks(owner).find(task => task.status === 'ready' && task.input.parentId === id);
+    if (dependent) throw new AgentError(409, `Forget or finish the reviewed follow-up “${dependent.input.goal.slice(0, 100)}” before forgetting its context.`);
     for (const extension of ['json', 'png']) fs.rmSync(this.file(owner, id, extension), { force: true });
   }
   async close() { this.closing = true; this.active?.abort.abort(); await this.active?.promise; }

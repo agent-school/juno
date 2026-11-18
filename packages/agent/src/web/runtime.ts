@@ -80,6 +80,7 @@ export async function runWebTask(options: WebRuntimeOptions): Promise<void> {
       await page.waitForLoadState('networkidle', { timeout: 2000 }).catch(() => {});
       signal.throwIfAborted();
       const actual = options.testOrigins?.includes(new URL(page.url()).origin) ? new URL(page.url()) : publicUrl(page.url());
+      actual.hash = '';
       const tree = await reader.read(page);
       const afterCapture = new URL(page.url()); afterCapture.hash = '';
       if (afterCapture.href !== actual.href) throw new TaskError('The page navigated during observation. No evidence was accepted from an unstable URL.');
