@@ -12,7 +12,7 @@ export const WebDecisionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('search'), query: z.string().trim().min(2).max(300), reason: z.string().min(1).max(300) }).strict(),
   z.object({ action: z.literal('open'), url: z.url().max(2000), reason: z.string().min(1).max(300) }).strict(),
   z.object({ action: z.literal('follow'), pageId: z.string(), linkId: z.string(), reason: z.string().min(1).max(300) }).strict(),
-  z.object({ action: z.literal('read'), pageId: z.string(), offset: z.number().int().min(0).max(32000) }).strict(),
+  z.object({ action: z.literal('read'), pageId: z.string(), offset: z.number().int().min(0).max(32000), reason: z.string().min(1).max(300).optional() }).strict(),
   z.object({ action: z.literal('finish'), answer: z.string().min(1).max(8000), citations: z.array(CitationSchema).min(1).max(20),
     rows: z.array(z.object({ label: z.string().min(1).max(100), value: z.string().min(1).max(500), pageId: z.string(), quote: z.string().min(15).max(600) }).strict()).max(40).default([]),
   }).strict(),
@@ -38,7 +38,9 @@ export const WebTaskSchema = z.object({
 export type WebTask = z.infer<typeof WebTaskSchema>;
 
 const normalize = (value: string) => value.replace(/\s+/g, ' ').trim();
-export class AnswerValidationError extends Error {}
+export class AnswerValidationError extends Error {
+  constructor(message: string, readonly field?: string) { super(message); }
+}
 /** Ground evidence in an actual observation; the model cannot mint source quotes or extracted values. */
 export function validateAnswer(decision: Extract<WebDecision, { action: 'finish' }>, pages: WebPage[]) {
   const grounded = (pageId: string, quote: string) => {
@@ -46,6 +48,7 @@ export function validateAnswer(decision: Extract<WebDecision, { action: 'finish'
     return page && normalize(page.text).includes(normalize(quote));
   };
   if (decision.citations.some(citation => !grounded(citation.pageId, citation.quote))) throw new AnswerValidationError('The answer cited text that was not observed. No answer was accepted.');
-  if (decision.rows.some(row => !grounded(row.pageId, row.quote) || !normalize(row.quote).includes(normalize(row.value)))) throw new AnswerValidationError('An extracted value was not present in its source quote. No answer was accepted.');
+  const invalidRow = decision.rows.findIndex(row => !grounded(row.pageId, row.quote) || !normalize(row.quote).includes(normalize(row.value)));
+  if (invalidRow !== -1) throw new AnswerValidationError('An extracted value was not present in its source quote. No answer was accepted.', `rows[${invalidRow}].value`);
   return decision;
 }

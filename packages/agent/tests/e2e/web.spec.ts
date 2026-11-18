@@ -71,6 +71,17 @@ test('general loop composes navigation, comparison and extraction across unrelat
       action: 'finish', answer: 'North is a public comparison product [p1].', citations: [{ pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }],
     } : { action: 'click', selector: '#send' });
     expect(malformed.status).toBe('answered'); expect(malformed.modelCalls).toBe(2);
+    const interpreted = task([a.origin]);
+    await run(interpreted, async ({ feedback, previousProposal }) => {
+      if (feedback) {
+        expect(feedback).toContain('rows[0].value');
+        expect(previousProposal).toMatchObject({ rows: [{ value: 'No (not mentioned in source)' }] });
+      } else expect(previousProposal).toBeUndefined();
+      return { action: 'finish', answer: 'The source describes a public comparison product [p1].',
+        citations: [{ pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }],
+        rows: feedback ? [] : [{ label: 'Missing feature', value: 'No (not mentioned in source)', pageId: 'p1', quote: 'North is a public comparison product with useful documentation.' }] };
+    });
+    expect(interpreted.status).toBe('answered'); expect(interpreted.modelCalls).toBe(2); expect(interpreted.rows).toEqual([]);
     const abort = new AbortController(), stopped = task([a.origin]);
     await run(stopped, async () => { abort.abort(); return new Promise(() => {}); }, abort.signal);
     expect(stopped.status).toBe('stopped'); expect(stopped.pages).toHaveLength(1);

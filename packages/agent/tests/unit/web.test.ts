@@ -31,6 +31,7 @@ describe('general task and answer boundary', () => {
     expect(() => validateAnswer({ ...answer, rows: [{ ...answer.rows[0]!, value: 'Current' }] }, pages)).toThrow('not present');
   });
   it('allows general goals but rejects arbitrary browser tools, code, authority and host test boundaries', () => {
+    expect(WebDecisionSchema.parse({ action: 'read', pageId: 'p1', offset: 4000, reason: 'Find the explicit interpreter requirements' }).action).toBe('read');
     expect(WebTaskInputSchema.parse({ goal: 'Compare the pricing of these tools', urls: ['https://example.com'] }).mode).toBe('agent');
     expect(WebTaskInputSchema.parse({ goal: 'Find the official documentation for virtual environments' }).urls).toEqual([]);
     expect(() => WebTaskInputSchema.parse({ goal: 'Collect source evidence', mode: 'evidence' })).toThrow('starting URL');

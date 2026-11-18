@@ -6,7 +6,10 @@ type Message = { role: 'system' | 'user'; content: string };
 /** Only curated, credential-free messages from this class may enter task receipts. */
 export class ModelError extends Error {}
 /** A response may be regenerated before any decision is accepted; connection/refusal failures may not. */
-export class ModelOutputError extends ModelError {}
+export class ModelOutputError extends ModelError {
+  /** Untrusted response data for in-memory correction only, never a receipt/error message. */
+  constructor(message: string, readonly proposal?: unknown) { super(message); }
+}
 
 async function body(response: Response, limit: number) {
   const reader = response.body?.getReader();
@@ -63,9 +66,14 @@ export function createJSONModel(options: ModelOptions, maxTokens: number) {
       content = result.output.message.content.map(block => block.text).join('');
     }
     if (content.length > 50_000) throw new ModelError('Model response exceeds budget.');
-    // A single enclosing JSON fence is formatting, never authority. Surrounding prose is rejected.
-    const fenced = /^```(?:json)?\s*\n([\s\S]*?)\n```$/i.exec(content.trim());
-    try { return JSON.parse(fenced ? fenced[1]! : content); }
+    // Accept one final JSON object with an optional text introduction/fence. Never choose between objects.
+    // The caller still validates every field and grants all authority independently.
+    const trimmed = content.trim(), fenced = /^[^{]*?```(?:json)?\s*\n(\{[\s\S]*\})\s*\n```$/i.exec(trimmed);
+    const start = trimmed.indexOf('{');
+    try {
+      if (start === -1 || (!fenced && trimmed.slice(0, start).includes('```'))) throw new Error('No single JSON object');
+      return JSON.parse(fenced ? fenced[1]! : trimmed.slice(start));
+    }
     catch { throw new ModelOutputError('The model returned invalid JSON. No decision was accepted.'); }
   };
 }

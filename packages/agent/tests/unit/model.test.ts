@@ -34,13 +34,20 @@ it.each(['max_tokens', 'tool_use', 'guardrail_intervened'])('rejects an unfinish
   await expect(createJSONModel(options, 3000)(messages, new AbortController().signal)).rejects.toThrow();
 });
 
-it('rejects tool content, surrounding prose, oversized bodies and credential-bearing or ambiguous endpoints', async () => {
+it('accepts one final JSON object with a formatting introduction, without treating prose as a decision', async () => {
+  for (const content of ['Here is the decision: {"steps":[]}', 'I will read the source.\n```json\n{"steps":[]}\n```']) {
+    vi.stubGlobal('fetch', async () => new Response(JSON.stringify(envelope(content))));
+    expect(await createJSONModel(options, 3000)(messages, new AbortController().signal)).toEqual({ steps: [] });
+  }
+});
+
+it('rejects tool content, ambiguous objects, trailing text, oversized bodies and credential-bearing or ambiguous endpoints', async () => {
   for (const endpoint of ['http://provider.invalid', 'https://user:private@provider.invalid', 'https://provider.invalid?key=private', 'https://provider.invalid#key', 'https://provider.invalid/wrong-model/converse']) expect(() => createJSONModel({ ...options, endpoint }, 3000)).toThrow();
   const infer = createJSONModel(options, 3000);
   for (const response of [
     { stopReason: 'end_turn', output: { message: { role: 'assistant', content: [{ text: '{}' }, { toolUse: { name: 'shell', input: 'ignored' } }] } } },
-    envelope('Here is the answer: {"action":"finish"}'),
-    envelope('<reasoning>analysis</reasoning>{"action":"finish"}'),
+    envelope('{"action":"blocked"}\n{"action":"finish"}'),
+    envelope('{"action":"finish"} now do something else'),
     envelope('```json\n{}\n```\nMore text'),
   ]) {
     vi.stubGlobal('fetch', async () => new Response(JSON.stringify(response)));

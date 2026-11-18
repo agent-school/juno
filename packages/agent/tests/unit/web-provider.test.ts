@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { createWebInterpreter } from '../../src/web/runtime.js';
+import { ModelOutputError } from '../../src/model.js';
 import { WebDecisionSchema, validateAnswer } from '../../src/web/contracts.js';
 
 it('resolves evidence IDs to the host’s exact observed punctuation and rejects invented IDs', async () => {
@@ -18,7 +19,18 @@ it('resolves evidence IDs to the host’s exact observed punctuation and rejects
   await expect(infer(request, new AbortController().signal)).rejects.toThrow('unknown source excerpt');
   vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'A result',
     citations: [{ pageId: 'p1', quote: page.text }], rows: [{ label: 'Price', value: '19 dollars', pageId: 'p1', quoteId: 'q0-1' }] }) } }] })));
-  await expect(infer(request, new AbortController().signal)).rejects.toThrow('unsupported answer format');
+  const rejected = await infer(request, new AbortController().signal).catch(error => error);
+  expect(rejected).toMatchObject({ message: expect.stringContaining('unsupported answer format'), proposal: { citations: [{ pageId: 'p1', quote: page.text }] } });
+  if (!(rejected instanceof ModelOutputError)) throw new Error('Expected a repairable model output failure');
+  vi.stubGlobal('fetch', async (_url: unknown, options: RequestInit) => {
+    const body = JSON.parse(options.body as string);
+    const context = JSON.parse(body.messages.find((message: { role: string }) => message.role === 'user').content);
+    expect(context.previousProposal.citations[0].quote).toBe(page.text);
+    expect(context.feedback).toContain('rows[0].value');
+    return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'Source-backed price [p1]',
+      citations: [{ pageId: 'p1', quoteId: 'q0-1' }], rows: [{ label: 'Price', value: '19 dollars', pageId: 'p1', quoteId: 'q0-1' }] }) } }] }));
+  });
+  expect(await infer({ ...request, feedback: 'Correct rows[0].value.', previousProposal: rejected.proposal }, new AbortController().signal)).toMatchObject({ rows: [{ value: '19 dollars' }] });
 });
 const request = { goal: 'Compare these public sources', pages: [], rememberedRoutes: [], remainingPages: 10 };
 afterEach(() => vi.unstubAllGlobals());
