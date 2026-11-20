@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { emptyState } from '../../src/contracts.js';
 
 // HTTP integration tests only: no external network or browser UI is required by CI.
 test('protects, restores and isolates durable memory; supports correction, forgetting and credential-free export', async ({ request, playwright }) => {
@@ -31,6 +34,41 @@ test('protects, restores and isolates durable memory; supports correction, forge
     expect((await other.post('/api/account/login', { data: credentials })).ok()).toBe(true);
     expect((await (await other.get('/api/workspace')).json()).preferences.minStars).toBe(250);
   } finally { await other.dispose(); }
+});
+
+test('recovers an existing workspace without a cookie at storage capacity', async ({ request, playwright }, testInfo) => {
+  const credentials = { handle: `capacity-${randomUUID().slice(0, 8)}`, passphrase: randomUUID() };
+  const note = 'This note was saved before the capacity limit.';
+  expect((await request.post('/api/memory/note', { data: { text: note } })).ok()).toBe(true);
+  expect((await request.post('/api/account/register', { data: credentials })).status()).toBe(201);
+
+  const dataDir: string = testInfo.config.metadata.dataDir;
+  const count = () => fs.readdirSync(dataDir).filter(file => file.endsWith('.json')).length;
+  const fillers: string[] = [];
+  const fresh = await playwright.request.newContext({ baseURL: 'http://127.0.0.1:5124', extraHTTPHeaders: { 'x-juno-request': '1' } });
+  try {
+    for (let n = count(); n < 500; n++) {
+      const file = path.join(dataDir, `${randomBytes(32).toString('hex')}.json`);
+      fs.writeFileSync(file, JSON.stringify(emptyState()), { flag: 'wx' }); fillers.push(file);
+    }
+    const shell = await fresh.get('/');
+    expect(shell.status()).toBe(200);
+    expect(await shell.text()).toContain('id="account-form"');
+    expect(shell.headers()['set-cookie']).toBeUndefined();
+    expect((await fresh.get('/api/workspace')).status()).toBe(503);
+    expect((await fresh.post('/api/account/login', { data: credentials, headers: { 'sec-fetch-site': 'cross-site' } })).status()).toBe(403);
+    expect((await fresh.post('/api/account/login', { data: { ...credentials, passphrase: randomUUID() } })).status()).toBe(401);
+    expect((await fresh.post('/api/account/login', { data: credentials })).status()).toBe(200);
+    const restored = await (await fresh.get('/api/workspace')).json();
+    expect(restored.account).toBe(credentials.handle);
+    expect(restored.notes[0].text).toBe(note);
+    expect((await fresh.post('/api/account/logout', { data: {} })).status()).toBe(200);
+    expect((await fresh.get('/api/workspace')).status()).toBe(503);
+    expect(count()).toBe(500);
+  } finally {
+    for (const file of fillers) fs.unlinkSync(file);
+    await fresh.dispose();
+  }
 });
 
 test('rejects arbitrary tasks and URLs, cross-origin memory writes and ungrounded source saves', async ({ request }) => {
