@@ -1,13 +1,15 @@
 ---
 phase: 04-planner-execution-and-authenticated-sites
 status: partial
-verified: 2026-11-18
-implementation: a2c4cf7
+verified: 2026-11-20
+implementation: ee6213e
 ---
 
 # Phase 4 foundation and hosted integration evidence
 
 The bounded execution foundation is accepted. The full phase and its broader requirements remain open.
+
+Sections below record acceptance chronologically. The latest 04-04 evidence supersedes earlier provider-configuration and UI Stop gaps; earlier counts and limits describe their named revisions.
 
 | Gate | Observed evidence | Scope |
 |---|---|---|
@@ -83,3 +85,7 @@ Accepted implementation: 5a6da72, review corrections f7d48d8, hosted selection c
 Coolify job `j4sfhoivwmame0ibkyiq41gk` deployed f7d48d8 and passed live replacement persistence. Job `pimudrto0ejivojcsoosdiwg` deployed 53386ed and passed HTTPS, configured commit, six asset hashes and unchanged volume identity. Coolify's cached `exited:unhealthy` remains inconsistent with live checks. [Primary final annotated UI recording](https://app.devin.ai/sessions/d0f8409f16a04d4eb9746c4504fc750c?testRecording=ba0a6a52-598c-4f58-82ea-4406cb3d4292); the interrupted pre-correction recording is superseded.
 
 UI Stop was not exercised because the task finished before the click; synthetic runtime/service/API cancellation checks pass. Successful provider-backed search/planning/answers and generated answer/table UI are untested after the stored key's HTTP 401; production intentionally reports no configured model. Evidence mode is independently usable and explicitly states that no interpretation occurred. Public search may encounter challenges. Authenticated sessions, arbitrary external mutations, executable operation discovery, teaching, general repair, desktop control and firewall enforcement remain open. Existing environment setup sufficed; no blueprint update was needed. No merge was performed.
+
+## 04-04 — Live model research and source review
+
+[Live acceptance record and deployed revision](04-04-SUMMARY.md). Bedrock authentication, live goal-driven public reading and reviewed answers were demonstrated. Historical UI trials include comparison, follow-up, Stop and durable history. Later trials exposed that exact quote provenance can still accompany wrong version scope and that bounded correction can exhaust its allowance. Separate classification reduces that risk while retaining honest failures. This gate remains partial until comparison, follow-up and discovery are repeatable on the current deployment. No authenticated-site or operating-system firewall acceptance was added.

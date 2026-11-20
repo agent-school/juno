@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 current_phase: 3
 current_phase_name: Site Compiler and Per-Site Memory
 status: in_progress
-stopped_at: General public-web Agent deployed and UI verified; source collection works, live goal interpretation still needs valid provider authentication
-last_updated: "2026-11-18"
-last_activity: 2026-11-18
-last_activity_desc: Verified general public-web source tasks, durable site memory, follow-ups and corrected selection reload on the hosted UI
-state_head: 53386ed117cd29686de62450e35e2b833416bfab
+stopped_at: Native public-web research deployed; repeatable comparison and follow-up acceptance remain open
+last_updated: "2026-11-20"
+last_activity: 2026-11-20
+last_activity_desc: Simplified source review output, improved citation correction and restored workspace recovery at capacity
+state_head: ee6213e68d26a77b2e6933abdf61e0337ae45c0f
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 12
+  total_plans: 13
   completed_plans: 11
   percent: 25
 ---
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** Turn any website into a durable, reusable semantic understanding — learned through safe exploration and teach-by-showing — so hard-to-automate actions can be automated reliably without destructive guessing.
-**Current focus:** 04-03 generalizes the hosted Agent beyond the contact fixture: goals, optional websites, bounded public navigation/evidence, explicit follow-up context and reusable per-domain structural memory. Public source tasks, persistence through container/Coolify replacement and corrected hosted UI on 53386ed are verified. Contact execution/recovery and its 19-condition matrix remain in Engine tests. General goal reasoning/comparison/extraction is implemented and tested with a controlled interpreter; live provider authentication remains unavailable after HTTP 401. The deployed source-collection mode makes no goal-interpretation claim. Full compiler, auth, repair, teaching and RUNTIME-03 firewall gates remain open. PR #3 remains unmerged; PR #2's merge was refused by GitHub integration HTTP 403.
+**Current focus:** 04-04 connects the general public-web Agent to AWS Bedrock Converse using server-only credentials. The currently deployed Opus path requires a separate source-consistency check before publishing. Earlier Sonnet runs demonstrated hosted comparison, fresh-source follow-up, Stop, reload and account/write refusal; repeatable model performance remains an acceptance gate. Evidence collection is independently usable. Search-heavy pages can exhaust the request budget. Contact execution and the 19-condition matrix remain in Engine tests. Authenticated sites, repair, teaching, desktop control and RUNTIME-03 firewall enforcement remain open.
 
 ## Current Position
 
 Phase: 3 — Site Compiler & Per-Site Memory
 Plan: 03-01 substrate, 03-02 multi-page observer, 04-01 execution foundation, 04-02 hosted integration and 04-03 general public-web tasks complete as bounded slices; full phases remain open
 Status: Phase 2 complete; Phase 01.1 has actual Windows evidence with RUNTIME-03 firewall acceptance open
-Last activity: 2026-11-18 — 04-03 replaces contact-specific composition with general goals and optional public websites. Typechecks, 157 unit tests, 35 browser/API tests, Docker Chromium and implementation CI pass. Real public source collection and knowledge/receipt/frame/note persistence through Coolify replacement pass. Recorded hosted UI on 53386ed verifies the general composer, unrelated websites, follow-ups, URL rejection, memory, corrected task reload, 390px keyboard and polling stability. UI cancellation/live model output remain explicit gaps. See the 04-03 summary and Phase 4 verification.
+Last activity: 2026-11-20 — Typechecks, 172 unit tests and 36 browser/API tests pass. Draft review now uses a fixed issue classification for each supplied part ID and receives review-specific retry feedback. Invalid citations identify the exact field and observed IDs. At 500 saved workspaces, existing users can recover or sign out without consuming a slot. See the [04-04 summary](phases/04-planner-execution-and-authenticated-sites/04-04-SUMMARY.md) for deployment evidence and remaining reliability limits.
 
 Windows acceptance remains as recorded in 67b6098: actual Chrome/Docker execution and 12/12 startup interruption trials passed; enabled-firewall enforcement, other Windows configurations and forced host termination remain outside that evidence.
 
@@ -99,11 +99,11 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-- Live intent-planner verification is blocked by HTTP 401 from the configured OpenAI credential. Typed CLI execution, offline planner/provider contracts and the full browser benchmark pass without a model key. Authentication must be repaired before claiming live interpretation.
+- Saved OpenAI access returns HTTP 401 `ip_not_authorized`; OpenCode's free route hit its usage limit. Existing Bedrock credentials now authenticate and complete hosted public-web goals. This uses the existing metered AWS account. Engine written-request planning remains separately untested live.
 
 - Replacement Coolify token works and is saved. Public HTTPS and redeploy persistence passed on the temporary hostname; requested hostname DNS and valid HTTPS passed on 2026-11-13.
 - Coolify API status disagrees with observed application availability. Keep that monitoring gap explicit.
-- Agent is the public default view and executes reviewed contact/follow-up operations on a private synthetic application. Research remains a separate deterministic GitHub workflow. Arbitrary real sites/accounts and general Muse-style language autonomy remain unfinished.
+- Agent is the public default view for bounded, model-driven public-web information goals. Engine tests contain the synthetic contact/follow-up operations. Research remains a separate deterministic GitHub workflow. Search completeness, authenticated actions and general Muse-style autonomy remain unfinished.
 
 ## Quick Tasks Completed
 
@@ -134,6 +134,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-11-18
-Stopped at: Hosted Agent integration deployed in a2c4cf7; API, actual Coolify replacement and recorded UI checks pass. Review-before-run, evidence, stop/resume, site memory and 19/19 reliability jobs are available in the app. Live provider success, broader site discovery, authenticated workflows, semantic repair and RUNTIME-03 firewall acceptance remain open. No merge performed.
+Last session: 2026-11-20
+Stopped at: Native Bedrock inference and workspace recovery fixes are deployed. See 04-04 for current hosted and historical UI evidence. Public-web repeatability, authenticated workflows, semantic repair and RUNTIME-03 firewall acceptance remain open. No PR was merged.
 Resume file: .planning/phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md

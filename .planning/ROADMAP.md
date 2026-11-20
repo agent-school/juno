@@ -119,7 +119,7 @@ Plans:
   7. Self-healing is evidence-based: a candidate re-grounding must match semantic context (role, surrounding entity, expected effect) before use, with stronger evidence required for high-risk operations — never a look-alike swap
   8. Juno operates on an authenticated site (e.g., Outlook or Instagram) using the user's own session, and an expired session is detected with a handback to the user for re-authentication
 
-**Plans**: 04-01 execution foundation, 04-02 hosted integration and 04-03 bounded general public-web Agent are implemented and verified within their recorded scope. Agent now accepts general goals and public websites; source collection, site structure, follow-ups/history and the corrected UI are deployed and recorded. Contact execution remains in Engine tests. General reasoning is tested with a controlled interpreter; live provider authentication, authenticated-site and repair acceptance remain open. See `phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md`.
+**Plans**: 04-01 execution foundation, 04-02 hosted integration and 04-03 bounded public-web Agent are verified within their recorded scope. 04-04 adds native Bedrock inference, exact source grounding and a private source-consistency check. Earlier hosted comparison/follow-up and direct official-source discovery trials succeeded; repeated comparison reliability after the new review gate remains open. Contact execution remains in Engine tests. Authenticated-site and semantic-repair acceptance remain open. See [Phase 4 verification](phases/04-planner-execution-and-authenticated-sites/04-VERIFICATION.md).
 
 ### Phase 5: Teach-by-Showing
 
@@ -176,7 +176,7 @@ Phases retain numeric acceptance order: 1 → 1.1 → 2 → 3 → 4 → 5 → 6 
 | 1.1. Host-Browser Runtime & Windows | 2/3 accepted | Windows lifecycle verified; RUNTIME-03 firewall acceptance open | - |
 | 2. Safe-Execution Guard | 1/1 | Complete — guarded execution | 2026-11-13 |
 | 3. Site Compiler & Per-Site Memory | 2 bounded plans | In progress; broader site validation open | - |
-| 4. Planner, Execution & Authenticated Sites | 2 bounded plans | Hosted Agent deployed/verified; live/auth/repair gates open | - |
+| 4. Planner, Execution & Authenticated Sites | 3 completed bounded plans; 04-04 acceptance in progress | Live research available; repeatability, search, auth and repair remain open | - |
 | 5. Teach-by-Showing | 0/TBD | Not started | - |
 | 6. Portal Recognition | 0/TBD | Not started | - |
 | 7. Voice Control | 0/TBD | Not started | - |
