@@ -4,6 +4,8 @@ import { randomUUID } from 'node:crypto';
 import { emptyState, type LabState } from './contracts.js';
 import { emptyWorkspace } from './workspace.js';
 
+export class WorkspaceCapacityError extends Error {}
+
 /** Single-process lab store. Atomic replacement; bounded state; never user-supplied paths. */
 export class Store {
   constructor(readonly directory: string) {
@@ -59,7 +61,7 @@ export class Store {
   create(owner: string): void {
     // Hard bound for a public synthetic demo. No eviction of existing evidence.
     if (fs.readdirSync(this.directory).filter(file => file.endsWith('.json')).length >= 500) {
-      throw new Error('Lab capacity reached');
+      throw new WorkspaceCapacityError('New workspaces are unavailable because storage is full. Recover an existing workspace in Workspace settings.');
     }
     this.write(owner, emptyState());
   }

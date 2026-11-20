@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { Store } from './store.js';
+import { Store, WorkspaceCapacityError } from './store.js';
 import { Runner } from './runner.js';
 import { InputSchema, RunSchema, VariantSchema } from './contracts.js';
 import { fixture } from './fixture.js';
@@ -44,9 +44,9 @@ async function body(req: IncomingMessage): Promise<unknown> {
   try { return JSON.parse(Buffer.concat(parts).toString('utf8')); }
   catch { throw new HttpError(400, 'Invalid JSON'); }
 }
-function setCookie(req: IncomingMessage, res: ServerResponse, owner: string): void {
+function setCookie(req: IncomingMessage, res: ServerResponse, owner: string | null): void {
   const secure = req.headers['x-forwarded-proto'] === 'https' || !!('encrypted' in req.socket && req.socket.encrypted);
-  res.setHeader('set-cookie', `juno_lab=${owner}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000${secure ? '; Secure' : ''}`);
+  res.setHeader('set-cookie', `juno_lab=${owner ?? ''}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${owner ? 2592000 : 0}${secure ? '; Secure' : ''}`);
 }
 function session(req: IncomingMessage, res: ServerResponse): string {
   const value = req.headers.cookie?.split(';').map(part => part.trim()).find(part => part.startsWith('juno_lab='))?.slice(9);
@@ -69,16 +69,33 @@ const server = http.createServer(async (req, res) => {
     if (req.method !== 'GET' && req.method !== 'POST') throw new HttpError(405, 'Method not allowed');
     if (req.method === 'GET' && assets[url.pathname]) {
       const [file, type] = assets[url.pathname]!;
-      if (url.pathname === '/') session(req, res);
+      if (url.pathname === '/') {
+        try { session(req, res); }
+        catch (error) { if (!(error instanceof WorkspaceCapacityError)) throw error; }
+      }
       res.writeHead(200, { 'content-type': type.startsWith('text/') ? `${type}; charset=utf-8` : type });
       res.end(fs.readFileSync(path.join(publicDir, file)));
       return;
     }
     if (!url.pathname.startsWith('/api/') && url.pathname !== '/fixture') throw new HttpError(404, 'Not found');
-    const owner = session(req, res);
     if (req.method === 'POST') {
       // Custom header is unforgeable by cross-origin forms; no CORS allowance is emitted.
       if (req.headers['x-juno-request'] !== '1' || req.headers['sec-fetch-site'] === 'cross-site') throw new HttpError(403, 'Same-origin request required');
+      // Recovery uses the account service's attempt limit, without allocating a guest workspace.
+      if (url.pathname === '/api/account/login') {
+        const data = CredentialsSchema.parse(await body(req));
+        try { setCookie(req, res, await accounts.login(data)); }
+        catch (error) { throw new HttpError(401, error instanceof Error ? error.message : 'Workspace unavailable'); }
+        return send(res, 200, { restored: true });
+      }
+      if (url.pathname === '/api/account/logout') {
+        z.object({}).strict().parse(await body(req));
+        setCookie(req, res, null);
+        return send(res, 200, { signedOut: true });
+      }
+    }
+    const owner = session(req, res);
+    if (req.method === 'POST') {
       const now = Date.now();
       const rate = rates.get(owner);
       if (!rate || now - rate.at > 60_000) rates.set(owner, { at: now, count: 1 });
@@ -102,17 +119,6 @@ const server = http.createServer(async (req, res) => {
       try { await accounts.register(owner, data); }
       catch (error) { throw new HttpError(409, error instanceof Error ? error.message : 'Workspace unavailable'); }
       return send(res, 201, { handle: data.handle });
-    }
-    if (url.pathname === '/api/account/login') {
-      const data = CredentialsSchema.parse(payload);
-      try { const restored = await accounts.login(data); setCookie(req, res, restored); }
-      catch (error) { throw new HttpError(401, error instanceof Error ? error.message : 'Workspace unavailable'); }
-      return send(res, 200, { restored: true });
-    }
-    if (url.pathname === '/api/account/logout') {
-      z.object({}).strict().parse(payload);
-      const fresh = randomBytes(32).toString('hex'); store.create(fresh); setCookie(req, res, fresh);
-      return send(res, 200, { signedOut: true });
     }
     if (url.pathname === '/api/tasks') {
       const data = TaskRequestSchema.parse(payload);
@@ -234,6 +240,7 @@ const server = http.createServer(async (req, res) => {
     if (res.headersSent) { res.end(); return; }
     if (error instanceof z.ZodError) return send(res, 400, { error: 'Invalid request', issues: error.issues.map(issue => ({ path: issue.path, message: issue.message })) });
     if (error instanceof HttpError) return send(res, error.status, { error: error.message });
+    if (error instanceof WorkspaceCapacityError) return send(res, 503, { error: error.message });
     console.error('Lab request failed:', error instanceof Error ? error.name : 'unknown');
     send(res, 500, { error: 'Lab could not complete the request. Check server availability or data capacity.' });
   }
