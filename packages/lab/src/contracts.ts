@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import type { PageTree, SemanticRef } from '@juno/browser';
+import type { AuditEntry, PageTree, SemanticRef } from '@juno/browser';
+import type { SiteModel } from '@juno/knowledge';
 import { emptyWorkspace, type Workspace } from './workspace.js';
 
 export const InputSchema = z.object({
@@ -17,6 +18,7 @@ export const VariantSchema = z.enum(['original', 'reordered', 'renamed', 'ambigu
 export type Variant = z.infer<typeof VariantSchema>;
 export type Bindings = Record<keyof Inputs | 'submit', SemanticRef>;
 export interface Model {
+  knowledge?: SiteModel;
   version: string;
   compiledAt: string;
   operation: 'capture_interaction';
@@ -28,6 +30,7 @@ export interface Model {
 export interface Interaction extends Inputs { id: string; requestId: string; }
 export interface Assertion { name: string; passed: boolean; }
 export interface Receipt {
+  audit?: AuditEntry[];
   id: string;
   operation: 'capture_interaction';
   inputs: Inputs;

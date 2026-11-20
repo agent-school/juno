@@ -10,7 +10,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@juno/agent": "workspace:*",
     "@juno/browser": "workspace:*",
+    "@juno/knowledge": "workspace:*",
     "zod": "4.4.3"
   },
   "devDependencies": {

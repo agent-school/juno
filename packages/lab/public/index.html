@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f6f8">
-  <title>Research — Juno</title><link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script>
+  <title>Agent — Juno</title><link rel="preload" href="/fonts/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/workspace.css"><link rel="stylesheet" href="/agent.css"><link rel="stylesheet" href="/web-agent.css"><script defer src="/app.js"></script><script defer src="/workspace.js"></script><script defer src="/agent.js"></script><script defer src="/web-agent.js"></script>
 </head><body>
 <a class="skip-link" href="#main">Skip to workspace</a>
 <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -17,12 +17,14 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 </defs></svg>
 <aside class="sidebar" aria-label="Workspace navigation">
-  <a class="brand" href="#tasks" aria-label="Juno research"><span class="brand-mark" aria-hidden="true">j.</span>juno<span class="edition">preview</span></a>
-  <button class="new-research" data-tab="tasks" data-new-research><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New research</button>
+  <a class="brand" href="#agent" aria-label="Juno agent"><span class="brand-mark" aria-hidden="true">j.</span>juno<span class="edition">preview</span></a>
+  <button class="new-research" data-tab="agent" data-web-new><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>New task</button>
   <nav aria-label="Main">
-    <button class="nav active" data-tab="tasks" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Research</span></button>
+    <button class="nav active" data-tab="agent" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Agent</span></button>
+    <button class="nav" data-tab="tasks"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Research</span></button>
     <button class="nav" data-tab="memory"><svg class="icon" aria-hidden="true"><use href="#i-memory"/></svg><span>Memory</span><span id="nav-memory-count" class="count">0</span></button>
     <div class="nav-label">Explore Juno</div>
+    <button class="nav" data-tab="engine"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Engine tests</span></button>
     <button class="nav" data-tab="experiment"><svg class="icon" aria-hidden="true"><use href="#i-browser"/></svg><span>Browser lab</span></button>
     <button class="nav" data-tab="evidence"><svg class="icon" aria-hidden="true"><use href="#i-receipt"/></svg><span>Lab receipts</span><span id="history-count" class="count">0</span></button>
     <button class="nav" data-tab="progress"><svg class="icon" aria-hidden="true"><use href="#i-roadmap"/></svg><span>Roadmap</span></button>
@@ -31,8 +33,60 @@
   <div class="sidebar-bottom"><button class="workspace-switch" data-tab="memory" data-workspace-settings><span class="workspace-avatar" aria-hidden="true">W</span><span><strong id="workspace-name">Browser workspace</strong><small>Workspace settings</small></span><span aria-hidden="true">⌁</span></button><a href="https://github.com/agent-school/juno" target="_blank" rel="noreferrer">Juno on GitHub <span aria-hidden="true">↗</span></a></div>
 </aside>
 <main id="main" tabindex="-1">
-  <header class="topbar"><span class="location">Workspace <span aria-hidden="true">/</span> <b id="breadcrumb">Research</b></span><a href="/api/export" class="export"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export<span class="export-extra"> workspace</span></a></header>
-  <section class="page" id="tasks" aria-labelledby="research-heading">
+  <header class="topbar"><span class="location">Workspace <span aria-hidden="true">/</span> <b id="breadcrumb">Agent</b></span><a href="/api/export" class="export"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export<span class="export-extra"> research &amp; lab</span></a></header>
+  <section class="page" id="agent" aria-labelledby="web-heading">
+    <div class="page-heading"><div><h1 id="web-heading" tabindex="-1">Agent</h1><p>Start with a goal. Work across websites. Keep the evidence.</p></div><span class="source-label">Public web</span></div>
+    <div id="web-notice" class="agent-notice" role="status" aria-live="polite"></div>
+    <div class="web-desk"><div>
+      <section id="web-composer" aria-labelledby="web-compose-heading">
+        <h2 id="web-compose-heading">What would you like to find out?</h2>
+        <p id="web-followup" class="hint hidden"></p>
+        <form id="web-task-form">
+          <label for="web-goal">Your goal</label><textarea id="web-goal" name="goal" rows="3" minlength="8" maxlength="2000" required placeholder="Compare these tools, find a policy, extract the requirements, or investigate a question…"></textarea>
+          <label for="web-urls">Starting websites <span>optional for goal-driven mode; up to five, one per line</span></label><textarea id="web-urls" name="urls" rows="2" maxlength="12000" placeholder="https://…"></textarea>
+          <div class="web-examples" aria-label="Task examples"><button type="button" data-web-example="compare">Compare tools</button><button type="button" data-web-example="docs">Investigate documentation</button><button type="button" data-web-example="extract">Extract requirements</button></div>
+          <label for="web-mode">How Juno should work</label><select id="web-mode" name="mode"><option value="agent">Pursue the goal · model connection required</option><option value="evidence">Collect source evidence · no model needed</option></select>
+          <p id="web-model-status" class="hint">Checking model connection configuration…</p>
+          <div class="web-composer-footer"><p>Browse public pages, follow links, compare sources and extract information. Review the scope before starting.</p><button type="submit" class="primary" id="web-review">Review task →</button></div>
+        </form>
+        <p class="web-scope">This worker reads public websites. Sign-in, messages, purchases and form submissions need additional execution capabilities. Your personal browser and accounts are separate.</p>
+      </section>
+      <section id="web-detail" class="hidden" aria-live="polite" aria-label="Task progress and results"></section>
+    </div><aside class="web-aside" aria-label="Task history and website memory">
+      <section><div class="agent-section-heading"><h2>Recent tasks</h2><button type="button" class="text-button" data-web-new>New</button></div><div id="web-history"><p class="hint">Your goals, observations and answers stay here.</p></div></section>
+      <section><h2>Website memory</h2><p class="hint">Structure learned from the websites you visit. Juno refreshes observations before using them.</p><div id="web-sites"></div><a href="/api/web/knowledge" download="juno-public-sites.json">Download website knowledge ↓</a></section>
+      <section><h2>Your context</h2><p class="hint">Personal notes and preferences live in Memory. This public-web worker uses the goal you provide and its site observations.</p><button type="button" class="text-button" data-tab="memory">Open personal memory ↗</button></section>
+    </aside></div>
+  </section>
+  <section class="page hidden" id="engine" aria-labelledby="agent-heading">
+    <div class="page-heading"><div><h1 id="agent-heading" tabindex="-1">Engine tests</h1><p>Controlled execution, recovery and reliability experiments.</p></div><span class="source-label">Private test workspace</span></div>
+    <div id="agent-notice" class="agent-notice" role="status" aria-live="polite"></div>
+    <div class="agent-desk"><div class="agent-document">
+      <section id="agent-composer" aria-labelledby="agent-compose-heading">
+        <div class="agent-section-heading"><h2 id="agent-compose-heading">Create a contact. Set a follow-up.</h2><button type="button" class="text-button" id="agent-example">Use example</button></div>
+        <p class="agent-intro">Juno will use its browser to enter the contact, add the follow-up, and check that both were saved. You review the plan first.</p>
+        <p class="agent-scope">This is an owned test application. It is separate from your real contacts and accounts.</p>
+        <form id="agent-task-form">
+          <fieldset id="agent-inputs"><legend class="sr-only">Contact and follow-up details</legend>
+            <div class="agent-fields"><label>Contact name<input name="name" required maxlength="100" placeholder="Ada Lovelace" autocomplete="off"></label><label>Contact email<input name="email" type="email" required maxlength="200" placeholder="ada@example.test" autocomplete="off"></label></div>
+            <label>Follow-up note<textarea name="note" required maxlength="1000" rows="3" placeholder="What should you come back to?"></textarea></label>
+            <div class="agent-fields"><label>Follow-up date<input name="due" type="date" required></label><label>Category<select name="category"><option>Research</option><option>Partner</option></select></label></div>
+            <label class="agent-checkbox"><input name="subscribed" type="checkbox">Mark this contact as subscribed in the test workspace</label>
+          </fieldset>
+          <div class="agent-form-footer"><span>No model connection needed</span><button type="submit" class="primary" id="agent-review">Review task <span aria-hidden="true">→</span></button></div>
+        </form>
+        <details class="agent-language"><summary>Plan from a written request</summary><p id="agent-planner-hint" class="hint">Checking the language planner…</p><form id="agent-intent-form"><label>Your request<textarea name="intent" rows="3" maxlength="2000" required placeholder="Create a contact for Ada Lovelace at ada@example.test, then…" disabled></textarea></label><button type="submit" class="secondary" disabled>Build a plan to review</button></form></details>
+      </section>
+      <section id="agent-run" class="hidden" aria-label="Selected agent task"></section>
+      <section class="agent-results" aria-labelledby="agent-results-heading"><div class="agent-section-heading"><h2 id="agent-results-heading">Saved in your contact workspace</h2><span id="agent-record-count" class="hint">0 records</span></div><p class="hint">Read from the application’s stored data, independently of the browser.</p><div id="agent-records"><p class="agent-empty">Your contacts and follow-ups will appear here.</p></div></section>
+      <details class="agent-checks"><summary>Reliability checks <span id="agent-check-summary">Not run in this workspace</span></summary><p class="hint">Run the engine’s controlled test matrix, including layout changes, interruption recovery, duplicate prevention and blocked page-script writes. These checks use separate test data.</p><button type="button" id="agent-check-start" class="secondary">Run reliability checks</button><div id="agent-check-results" aria-live="polite"></div></details>
+    </div><aside class="agent-rail" aria-label="Agent history and memory">
+      <section><div class="agent-section-heading"><h2>Recent tasks</h2><button type="button" class="text-button" data-agent-new>New</button></div><div id="agent-history"><p class="hint">Loading your tasks…</p></div></section>
+      <section class="agent-site-memory"><div class="agent-section-heading"><h2>Site memory</h2><span id="agent-memory-count" class="hint"></span></div><p class="hint">Website controls and reviewed operations Juno can reuse across runs.</p><div id="agent-site-memory"></div><p><a class="text-button" href="/api/agent/knowledge" download="juno-site-knowledge.json">Download site knowledge</a></p><button type="button" class="secondary full" id="agent-observe">Observe contact workspace</button><details class="agent-forget"><summary>Forget site knowledge</summary><p class="hint">Saved plans depend on this knowledge. Forgetting it requires observing the site and reviewing a new task.</p><button type="button" id="agent-forget" class="text-button forget">Confirm forget</button></details></section>
+      <section><h2>Your context</h2><p class="hint">Your notes, preferences and research are kept in Memory. Task plans and site knowledge are saved separately in this workspace.</p><button type="button" class="text-button" data-tab="memory">Open personal memory <span aria-hidden="true">↗</span></button></section>
+    </aside></div>
+  </section>
+  <section class="page hidden" id="tasks" aria-labelledby="research-heading">
     <div class="page-heading"><div><h1 id="research-heading" tabindex="-1">Research</h1><p>Find the right tools. Keep a shortlist. Follow what changes.</p></div><span class="source-label">GitHub public projects</span></div>
     <div class="research-desk"><div class="research-document">
       <form id="research-form" class="research-composer">
@@ -68,7 +122,7 @@
     <p class="scope-note">This experiment uses real Chromium on the owned fixture below. Your accounts are not connected. General website discovery and the real Rolo benchmark are still ahead.</p>
     <div class="workspace lab-workspace">
       <section class="panel target"><div class="panel-head"><h2><span class="step">1</span>The website</h2><span class="subtle">Interactive fixture</span></div><div class="variant-bar"><label for="variant">Page variation</label><select id="variant"><option value="original">Original layout</option><option value="reordered">Reordered fields</option><option value="renamed">Renamed submit button</option><option value="ambiguous">Duplicate submit buttons</option><option value="no-effect">Write silently has no effect</option></select></div><iframe title="Relationship sandbox — synthetic contacts" src="/fixture" id="fixture" loading="lazy"></iframe></section>
-      <div class="control-stack"><section class="panel"><div class="panel-head"><h2><span class="step">2</span>Compile a binding</h2><span id="model-badge" class="tag">Not observed</span></div><div class="panel-body"><p class="hint">Save semantic bindings for this fixture’s known operation. Recompile explicitly after label changes.</p><button id="compile" class="secondary full">Observe &amp; compile</button><details id="model-details"><summary>Inspect saved operation</summary><pre id="model">No model saved yet.</pre></details></div></section>
+      <div class="control-stack"><section class="panel"><div class="panel-head"><h2><span class="step">2</span>Compile a binding</h2><span id="model-badge" class="tag">Not observed</span></div><div class="panel-body"><p class="hint">Save semantic bindings and a versioned contract for this fixture. Recompile explicitly after label changes.</p><button id="compile" class="secondary full">Observe &amp; compile</button><details id="model-details"><summary>Inspect saved operation</summary><pre id="model">No model saved yet.</pre><div class="button-row"><a class="text-button" href="/api/site-knowledge" target="_blank" rel="noreferrer">Site versions (JSON) ↗</a><button id="forget-site" class="text-button" type="button" disabled>Forget site model</button></div><p class="hint mini">Forgetting clears compiled knowledge. Run receipts remain in Lab receipts.</p></details></div></section>
       <section class="panel"><div class="panel-head"><h2><span class="step">3</span>Execute &amp; verify</h2><span class="tag">Sandbox write</span></div><form id="operation" class="panel-body"><code class="operation-name">capture_interaction(...)</code><div class="input-grid"><label>Person<select name="person"><option>Alice Smith</option><option>Bob Chen</option></select></label><label>Occurred on<input name="occurred_at" type="date" required></label></div><label>Interaction note<textarea name="note" required maxlength="500">Met at HackMIT. Interested in Juno.</textarea></label><label>Next action<input name="next_action" required maxlength="200" value="Send demo next week"></label><div class="button-row"><button id="run" class="primary" type="submit">Run saved operation <span aria-hidden="true">→</span></button><button id="stop" type="button" class="stop" disabled>Stop</button></div><p class="hint mini">Five semantic actions. Outcome checked against fixture state.</p></form></section></div>
     </div><section id="latest" class="panel latest"><div class="panel-head"><h2>Latest result</h2><span id="result-status" class="tag">Ready when you are</span></div><div id="result" class="panel-body empty">Compile a binding, then run the operation. Change the page variation to test replay and failure.</div></section><div id="notice" role="status" aria-live="polite"></div>
   </section>
@@ -80,7 +134,7 @@
   <section class="page hidden" id="progress" aria-labelledby="progress-heading">
     <div class="page-heading"><div><h1 id="progress-heading" tabindex="-1">Roadmap</h1><p>What works today, and what the next experiments need to prove.</p></div><a class="text-button" href="https://github.com/agent-school/juno/tree/main/.planning" target="_blank" rel="noreferrer">GSD plans ↗</a></div>
     <div class="progress-grid"><section class="panel"><div class="panel-head"><h2>Your lab checklist</h2><span id="gate-count" class="tag"></span></div><ol class="checklist" id="gates"></ol></section><section class="proof-note"><h2>What this experiment proves</h2><p>A stable <code>capture_interaction</code> contract can drive a changing, controlled UI through observed semantic references, then verify the resulting state.</p><p>Compilation uses a deterministic template for this fixture. General website discovery, demonstration-based learning and real Rolo integration need their own validation.</p><p>Zero model calls describes this execution path. We have not established a cost or reliability advantage over another agent.</p></section></div>
-    <section class="roadmap"><h2>Next experiments</h2><div class="milestone"><span class="milestone-num">01</span><div><h3>Browser foundation</h3><p>Persistent profile, accessibility perception, strict semantic actions.</p></div><span class="tag success">Built</span></div><div class="milestone"><span class="milestone-num">Lab</span><div><h3>Hosted controlled experiment</h3><p>Saved bindings, replay, UI mutations and verified receipts. Validate with the checklist above.</p></div><span class="tag">Try it</span></div><div class="milestone"><span class="milestone-num">1.1 / 2</span><div><h3>Windows runtime &amp; execution guard</h3><p>Complete the planned CDP runtime; add confirmations, audit, injection boundaries and kill-switch guarantees.</p></div><span class="tag muted">Pending</span></div><div class="milestone"><span class="milestone-num">Next</span><div><h3>Real Rolo, then read-only Canvas</h3><p>Verify capture_interaction in real Rolo, survive a UI mutation, then extract coursework across real courses. Compare repeated runs to a baseline.</p></div><span class="tag muted">Pending</span></div><div class="milestone"><span class="milestone-num">3–7</span><div><h3>General compiler, replay &amp; teaching</h3><p>Per-site knowledge, local repair, teach-by-showing, portal reuse, then voice.</p></div><span class="tag muted">Pending</span></div></section>
+    <section class="roadmap"><h2>Next experiments</h2><div class="milestone"><span class="milestone-num">01</span><div><h3>Browser foundation</h3><p>Persistent profile, accessibility perception, strict semantic actions.</p></div><span class="tag success">Built</span></div><div class="milestone"><span class="milestone-num">Lab</span><div><h3>Hosted controlled experiment</h3><p>Saved bindings, replay, UI mutations and verified receipts. Validate with the checklist above.</p></div><span class="tag">Try it</span></div><div class="milestone"><span class="milestone-num">1.1</span><div><h3>Host Chrome runtime</h3><p>Dedicated-profile attachment and the container tracer work. Windows launcher helper checks pass; the Windows Desktop smoke test remains.</p></div><span class="tag">Testing</span></div><div class="milestone"><span class="milestone-num">02</span><div><h3>Execution guard</h3><p>Read-only mode, scoped policies, confirmation gates, durable audit and abort protect Browser lab execution.</p></div><span class="tag success">Built</span></div><div class="milestone"><span class="milestone-num">03</span><div><h3>Typed site memory</h3><p>Versioned contracts, drift detection, reload validation and forgetting work in Browser lab. Broader site exploration remains.</p></div><span class="tag">In progress</span></div><div class="milestone"><span class="milestone-num">Next</span><div><h3>Real Rolo, then read-only Canvas</h3><p>Verify capture_interaction in real Rolo, survive a UI mutation, then extract coursework across real courses. Compare repeated runs to a baseline.</p></div><span class="tag muted">Pending</span></div><div class="milestone"><span class="milestone-num">4–7</span><div><h3>Planning, replay &amp; teaching</h3><p>Intent planning, authenticated tasks, local repair, teach-by-showing, portal reuse, then voice.</p></div><span class="tag muted">Pending</span></div></section>
     <p class="source-links"><a href="https://brain.jack-luo.com/n/philosophy/hermes-findings-on-semantic-website-compiler" target="_blank" rel="noreferrer">Learn once, replay fast ↗</a><a href="https://www.notion.so/3d98a2eef32081a6aaeddd78b815150c" target="_blank" rel="noreferrer">Rolo experiment ↗</a></p>
   </section>
   <footer><span>Juno · a semantic website compiler in progress</span><span>Observe. Verify. Remember.</span></footer>

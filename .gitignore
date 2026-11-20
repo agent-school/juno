@@ -25,3 +25,4 @@ blob-report/
 # Generated GSD research cache
 .planning/research/.cache/
 .juno-lab/
+.juno-agent/

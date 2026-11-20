@@ -3,6 +3,7 @@
 **/test-results
 **/playwright-report
 .juno-lab
+.juno-agent
 .planning
 .devin
 *.log

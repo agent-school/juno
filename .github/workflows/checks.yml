@@ -20,3 +20,12 @@ jobs:
       - run: pnpm build
       - run: pnpm test
       - run: pnpm test:e2e
+      - run: pnpm exec tsx scripts/test-cdp-linux.mts
+  windows-launcher-contracts:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows PowerShell launcher helper contracts
+        shell: powershell
+        run: ./scripts/windows/test-start-juno-chrome.ps1

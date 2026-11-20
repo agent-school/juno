@@ -1,0 +1,13 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { randomUUID } from 'node:crypto';
+import { parseArgs } from 'node:util';
+const { values } = parseArgs({ options: { output: { type: 'string' }, headed: { type: 'boolean' }, trace: { type: 'boolean' } } });
+const data = process.env.JUNO_AGENT_DATA_DIR ?? fileURLToPath(new URL('../../../.juno-agent', import.meta.url));
+const directory = path.resolve(values.output ?? path.join(data, 'benchmarks', randomUUID()));
+process.env.JUNO_LOG_LEVEL ??= 'silent';
+const { runBenchmark } = await import('./evaluate.js');
+const report = await runBenchmark(directory, { headless: !values.headed, trace: values.trace });
+for (const check of report.checks) console.log(`${check.passed ? 'PASS' : 'FAIL'} ${check.name}${check.detail ? `: ${check.detail}` : ''}`);
+console.log(`${report.summary.passed}/${report.summary.total} checks passed. Evidence: ${directory}`);
+if (report.summary.passed !== report.summary.total) process.exitCode = 1;

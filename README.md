@@ -1,12 +1,14 @@
 # Juno
 
-## Try Juno's task and memory workbench
+## Try Juno's agent, research and memory workbench
+
+**Agent** connects the semantic engine to the web app. Fill in the supported contact/follow-up task, review its two typed operations, then run it. Watch browser frames and progress, inspect independently verified records, stop a run, resume its saved request without blind writes, download receipts and inspect or forget versioned site memory. The in-app reliability matrix runs the same 19 controlled checks as the CLI. This adapter uses a private owned test application; real accounts and arbitrary websites are not connected. See the [hosted agent guide](docs/HOSTED-AGENT.md).
 
 Juno now has a web workbench with a real read-only task: research public open-source projects, inspect live source evidence, explicitly remember a shortlist, and refresh it later to see what changed. Preferences, editable notes, reusable searches and task receipts persist. Protect a workspace with a passphrase to reopen it on another device. This first task uses GitHub's API and structured filters; it is not an open-ended chat planner.
 
 The separate **Browser lab** operates a synthetic relationship app with the real `@juno/browser` reader and actor: save semantic bindings, replay `capture_interaction(...)`, change the page, and inspect verified effects. It is a precursor to the real Rolo experiment; it does not yet automate Rolo, Canvas or arbitrary websites.
 
-Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). The interface is a research desk with recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
+Try the [hosted Coolify workbench](https://juno.agentschool.io). Its DNS resolves to `54.157.57.51` and certificate-verified HTTPS `/healthz` returns 200. Live research, workspace recovery and persistence through a Coolify redeploy have passed HTTP checks; [deployment evidence and monitoring caveat](.planning/quick/261112-p1y-deploy-verified-juno-workbench-to-coolif/261112-p1y-VERIFICATION.md). Agent is the main view; Research retains recent tasks, readable source rows and working memory; [design direction](DESIGN.md).
 
 ```bash
 # Node 24 is required by the pinned pnpm 11 toolchain.
@@ -18,19 +20,19 @@ pnpm lab
 
 No API key is needed. In **Research**, try `browser automation`, remember a project, then use **Check for changes** in Working memory. **Memory** lets you find, correct and forget context. Use **Export workspace** to keep a copy (it can contain your private notes). Data persists in `.juno-lab/`, isolated by a random HttpOnly cookie with optional passphrase recovery. For the browser sandbox use synthetic inputs only. [Task and memory walkthrough](docs/TASKS-AND-MEMORY.md).
 
-For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). Only Browser Core is a completed roadmap phase; the lab does not mark the larger compiler, safety or teach-by-showing phases complete.
+For container hosting, persistence, acceptance steps and limitations, see [docs/LAB.md](docs/LAB.md). For engineering milestones, see [.planning/TESTABLE-MILESTONE.md](.planning/TESTABLE-MILESTONE.md). The same engine also provides a CLI agent and reproducibility benchmark, described in [the computer-use guide](docs/COMPUTER-USE-AGENT.md).
 
 Juno is a semantic website compiler: it learns how any website works through safe exploration and teach-by-showing, saves that understanding permanently per site, and replays it to automate actions that are hard to automate any other way (messaging someone on Instagram, signing a contract, applying to a job).
 
-**Status:** Browser Core is complete; Phase 01.1 (host-browser runtime and Windows compatibility) is planned. Task/memory and the fixture lab are bounded GSD quick tasks, not completed compiler/guard phases. The browser core loads sites in a dedicated persistent Chrome profile, reads their accessibility structure, and acts by semantic reference. Later phases add the full safety guard, site compiler, planner/replay, teach-by-showing, and voice.
+**Status:** Browser Core and the Safe-Execution Guard are complete. The host-Chrome runtime has actual Windows lifecycle evidence with firewall enforcement still open. Typed site memory, bounded multi-page observation and a reproducible task-runtime foundation are implemented; broader compiler, authenticated-site and live language-planner validation remain open. These branch milestones and the hosted deployment are tracked separately in GSD.
 
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | Browser Core | ✓ Complete |
-| 01.1 | Host-Browser Runtime & Windows Compatibility | planned |
-| 2 | Safe-Execution Guard | planned |
-| 3 | Site Compiler & Per-Site Memory | planned |
-| 4 | Planner, Execution & Authenticated Sites | planned |
+| 01.1 | Host-Browser Runtime & Windows Compatibility | Windows lifecycle verified; firewall gate open |
+| 2 | Safe-Execution Guard | Complete |
+| 3 | Site Compiler & Per-Site Memory | In progress; typed substrate and multi-page observer |
+| 4 | Planner, Execution & Authenticated Sites | In progress; bounded task-runtime foundation |
 | 5 | Teach-by-Showing | planned |
 | 6 | Portal Recognition | planned |
 | 7 | Voice Control | planned |
@@ -85,6 +87,8 @@ What the e2e suite proves, in plain language:
 The e2e suite needs no manual setup — Playwright auto-starts the deterministic fixture server on `127.0.0.1:8931` (and reuses one if already running).
 
 ## How to try it (demo)
+
+For the reproducible multi-page task runner, use `pnpm agent:demo` (twice to verify duplicate prevention) and `pnpm agent:benchmark`. See [the computer-use agent guide](docs/COMPUTER-USE-AGENT.md) for Docker, saved plans, optional language interpretation and evidence.
 
 ```bash
 # Terminal 1: start the local fixture page

@@ -5,7 +5,11 @@ const inputs = { person: 'Alice Smith', note: 'Controlled experiment', occurred_
 test('compiles a real page, replays new inputs across browser restarts, detects drift and verifies effects', async ({ request }) => {
   await request.get('/api/state');
   const compiled = await request.post('/api/compile', { data: {} });
-  expect(await compiled.json()).toHaveProperty('bindings');
+  const model = await compiled.json();
+  expect(model).toHaveProperty('bindings');
+  expect(model.knowledge.schemaVersion).toBe(1);
+  expect(model.knowledge.operations[0].contract.verification.kind).toBe('independent-state');
+  expect((await (await request.get('/api/site-knowledge')).json()).versions).toHaveLength(1);
   expect(compiled.ok()).toBe(true);
   const requestId = randomUUID();
   const run = await request.post('/api/run', { data: { requestId, inputs } });
@@ -13,6 +17,9 @@ test('compiles a real page, replays new inputs across browser restarts, detects 
   expect(receipt.status).toBe('verified');
   expect(receipt.assertions).toHaveLength(5);
   expect(receipt.metrics.browserActions).toBe(5);
+  expect(receipt.audit.filter((entry: any) => entry.risk === 'write-benign' && entry.status === 'completed')).toHaveLength(5);
+  expect(receipt.audit.filter((entry: any) => entry.risk === 'write-benign' && entry.status === 'started')).toHaveLength(5);
+  expect(JSON.stringify(receipt.audit)).not.toContain(inputs.note);
   expect(JSON.stringify(receipt.observations)).not.toMatch(/"ref":"e\d+"/);
   expect((await (await request.post('/api/run', { data: { requestId, inputs } })).json()).id).toBe(requestId);
   expect((await (await request.get('/api/state')).json()).interactions).toHaveLength(1);
@@ -45,6 +52,13 @@ test('compiles a real page, replays new inputs across browser restarts, detects 
   const evidence = await (await request.get('/api/export')).json();
   expect(evidence.receipts).toHaveLength(5);
   expect(evidence.feedback).toHaveLength(1);
+  const history = await (await request.get('/api/site-knowledge')).json();
+  expect(history.versions.length).toBeGreaterThan(1);
+  expect((await request.post('/api/site-knowledge/forget', { data: {} })).ok()).toBe(true);
+  expect((await (await request.get('/api/site-knowledge')).json()).versions).toEqual([]);
+  const forgotten = await (await request.get('/api/state')).json();
+  expect(forgotten.model).toBeNull();
+  expect(forgotten.receipts).toHaveLength(5);
 });
 
 test('isolates sessions, rejects cross-site writes and never accepts external URLs', async ({ playwright, request }) => {
@@ -54,6 +68,8 @@ test('isolates sessions, rejects cross-site writes and never accepts external UR
     const isolated = await (await other.get('/api/state')).json();
     expect(isolated.receipts).toEqual([]);
     expect(isolated.model).toBeNull();
+    expect((await (await other.get('/api/site-knowledge')).json()).versions).toEqual([]);
+    expect((await other.post('/api/site-knowledge/forget', { data: {} })).status()).toBe(403);
     expect((await other.post('/api/compile', { data: {} })).status()).toBe(403);
     expect((await request.post('/api/variant', { headers: { 'sec-fetch-site': 'cross-site' }, data: { variant: 'renamed' } })).status()).toBe(403);
     expect((await request.post('/api/run', { data: { requestId: randomUUID(), inputs, url: 'https://example.com' } })).status()).toBe(400);

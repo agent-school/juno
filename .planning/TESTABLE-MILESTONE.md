@@ -2,7 +2,7 @@
 
 ## Current reality
 
-Browser Core is the only complete roadmap phase. Phase 01.1 has three plans and no implementation summaries. Phase 2 has no executable plans. The lab is a separately scoped GSD quick task, not completion of phases 2–5.
+Browser Core and the Phase 2 guarded execution boundary are complete. Phase 01.1 now has real Windows Server 2022 / Chrome Stable / Docker Desktop WSL2 evidence, including dedicated-profile safety, host-Node-free semantic execution and lifecycle testing. Two startup Ctrl-C races were reproduced and corrected; the final revision passed 12/12 real Chrome interruption trials. Enabled-firewall enforcement remains open under RUNTIME-03. Phase 3 has a verified typed site-memory substrate; broader site compilation remains in progress. These increments do not establish authenticated-site automation or Muse parity.
 
 The newer Notion experiments (September 2026) recommend a controlled Rolo operation, then external read-only Canvas. AGENTS/PROJECT still describe Instagram as the first proof. Preserve the Instagram feasibility question, but recommend Rolo → Canvas as the next validation sequence; get Jack's decision before changing the product's first-market thesis.
 
@@ -27,8 +27,9 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 | UI-01 | Recorded agent UI trial of research → explicit memory → refresh, recovery, navigation and regression fixes | Passed full flow on 64ad951 and targeted final regression on 18bcdf9; nonzero diffs, naturally long polling, partial/interrupted outcomes, physical mobile and feedback confirmation excluded |
 | UAT-01 | Jack completes lab checklist and submits feedback | Awaiting user trial |
 | UAT-02 | Jack completes live task → remember → refresh → correct/forget loop | Recorded agent trial passed; awaiting Jack's own trial |
-| RUNTIME-01..05 | Execute existing 01.1 plans including Windows host-browser smoke test | Not implemented |
-| SAFE-01..05 | Full code-enforced guard, confirmations, audit, injection boundaries, kill switch | Not implemented |
+| RUNTIME-01..06 | Execute 01.1 plans including Windows host-browser smoke matrix | Real Windows matrix recorded; 01/02/04/05/06 verified for the tested configuration. Firewall enforcement keeps RUNTIME-03 open; see 01.1-WINDOWS-EVIDENCE.md |
+| SAFE-01..06 | Classification, confirmation, audit, injection boundary and kill switch | Passed guarded API/unit/browser checks and hosted audit/replay UI; external-account and destructive-confirmation UI validation remain outside this increment |
+| SITE-01 | Typed semantic contracts, structure versions, isolated durable history and forgetting | Passed knowledge unit/API checks and hosted compile/replay/drift/forget/recompile UI. Broader site discovery remains open |
 | ROLO-01 | Real `capture_interaction(person,note,occurred_at,next_action)` with real application-state verifier and one UI mutation | Not implemented |
 | EVAL-01 | Repeated Rolo runs vs named baseline: success, latency, actions, tokens/cost, failure categories | Not implemented |
 | CANVAS-01 | Read-only upcoming-coursework over several authenticated GT courses, sources and failure trace | Not implemented |
@@ -36,7 +37,7 @@ The newer Notion experiments (September 2026) recommend a controlled Rolo operat
 ## Recommended next increments
 
 1. Complete the hosted research/memory and lab user trials. Convert exported feedback into small GSD tasks with run IDs, expected/actual state and exact acceptance evidence. Permanent hosting is verified; retain the monitoring caveat.
-2. Complete the existing 01.1 Windows runtime plan and Phase 2 guard before connecting a browser that can mutate real accounts. The lab's fixture confinement is not a substitute.
+2. Close the documented Phase 01.1 firewall enforcement gate and broaden Phase 3 compiler validation before authenticated-site work. Phase 2 guard is verified; fixture confinement is not a substitute for real-account boundaries.
 3. Add the real Rolo adapter for the same typed contract and a trusted application-state verifier. Deliberately rename/move a control and preserve the old call. Keep Rolo-specific bindings out of the operation contract.
 4. Run a small predefined suite repeatedly against a named baseline under the same conditions. Include every failed/uncertain attempt; report compile cost separately from replay cost. Do not claim speed/reliability gains from one clean run.
 5. Move to Canvas read-only extraction only after Rolo's verified loop survives a mutation. Record inaccessible courses/external tools; do not submit coursework. Prefer APIs for later calendar writes.
