@@ -116,7 +116,7 @@ test('general loop composes navigation, comparison and extraction across unrelat
       const input = JSON.parse(JSON.parse(init!.body as string).messages.find((message: { role: string }) => message.role === 'user').content);
       nativeCalls++; expect(nativeReview.answer).toBeUndefined(); expect(nativeReview.citations).toEqual([]);
       if (nativeCalls === 5) { expect(input.reviewDraft).toBeUndefined(); expect(input.feedback).toContain('Source consistency'); }
-      const result = input.parts ? { checks: input.parts.map((part: { id: number }) => ({ id: part.id, issue: nativeCalls === 4 ? 'scope' : 'none', note: 'Check the source scope' })) }
+      const result = input.parts ? { checks: Object.fromEntries(input.parts.map((part: { id: string }) => [part.id, nativeCalls === 4 ? 'scope' : 'none'])) }
         : { action: 'finish', answer: nativeCalls <= 3 ? 'North is private [p1].' : 'North is a public comparison product [p1].', citations: [{ pageId: 'p1', quoteId: nativeCalls <= 2 ? 'invented' : 'q0-1' }] };
       return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify(result) } }] }));
     };

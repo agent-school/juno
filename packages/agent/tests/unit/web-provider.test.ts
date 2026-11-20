@@ -17,7 +17,7 @@ it('resolves evidence IDs to the host’s exact observed punctuation and rejects
   expect(validateAnswer(decision, [page]).citations[0]?.quote).toBe(page.text);
   expect(decision.citations[0]).not.toHaveProperty('quoteId');
   quoteId = 'invented';
-  await expect(infer(request, new AbortController().signal)).rejects.toThrow('unknown source excerpt');
+  await expect(infer(request, new AbortController().signal)).rejects.toThrow(/unknown source excerpt.*citations\[0\]\.quoteId.*p1: q0-1/);
   vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ action: 'finish', answer: 'A result',
     citations: [{ pageId: 'p1', quote: page.text }], rows: [{ label: 'Price', value: '19 dollars', pageId: 'p1', quoteId: 'q0-1' }] }) } }] })));
   const rejected = await infer(request, new AbortController().signal).catch(error => error);
@@ -34,19 +34,20 @@ it('resolves evidence IDs to the host’s exact observed punctuation and rejects
   expect(await infer({ ...request, feedback: 'Correct rows[0].value.', previousProposal: rejected.proposal }, new AbortController().signal)).toMatchObject({ rows: [{ value: '19 dollars' }] });
 });
 const request = { goal: 'Compare these public sources', pages: [], rememberedRoutes: [], remainingPages: 10 };
-it('requires every draft part to pass a separate review and keeps critique text out of receipt errors', async () => {
-  const draft = { action: 'finish' as const, answer: 'Every version has the same support policy.', citations: [{ pageId: 'p1', quote: 'Version 27 starts a new support policy.' }], rows: [] };
-  let checks: unknown = [{ id: 0, issue: 'scope', note: 'untrusted-review-sentinel'.repeat(12) }];
+it('requires a valid issue code for every draft part and keeps draft claims out of review errors', async () => {
+  const draft = { action: 'finish' as const, answer: 'Every version has the same support policy.\n\nVersion 27 is listed.', citations: [{ pageId: 'p1', quote: 'Version 27 starts a new support policy.' }], rows: [] };
+  let checks: unknown = { part_0: 'scope', part_1: 'none' };
   vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ checks }) } }] })));
   const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
   const rejected = await infer({ ...request, reviewDraft: draft }, new AbortController().signal).catch(error => error);
   if (!(rejected instanceof ModelOutputError)) throw new Error('Expected a source review rejection');
-  expect(rejected.message).toContain('0 (scope)'); expect(rejected.message).not.toContain('untrusted-review-sentinel');
-  expect(rejected.proposal).toMatchObject({ draft, review: { checks } });
-  checks = [{ id: 0, issue: 'none', note: 'Supported with source conditions' }];
+  expect(rejected.message).toContain('part_0 (scope)'); expect(rejected.message).not.toContain('same support policy');
+  expect(rejected.proposal).toMatchObject({ draft, issues: [{ id: 'part_0', issue: 'scope', text: 'Every version has the same support policy.' }] });
+  checks = { part_1: 'none', part_0: 'none' };
   expect(await infer({ ...request, reviewDraft: draft }, new AbortController().signal)).toEqual(draft);
-  checks = [];
-  await expect(infer({ ...request, reviewDraft: draft }, new AbortController().signal)).rejects.toThrow('unsupported source review');
+  for (checks of [{ part_0: 'none' }, { part_0: 'none', part_1: 'okay' }, { part_0: 'none', part_1: 'none', part_2: 'none' }]) {
+    await expect(infer({ ...request, reviewDraft: draft }, new AbortController().signal)).rejects.toThrow('unsupported source review');
+  }
 });
 afterEach(() => vi.unstubAllGlobals());
 it('never marks discarded source text complete and retains a short final answer in a citable excerpt', async () => {
@@ -102,7 +103,7 @@ it('reviews many long and multibyte sources within budget while retaining cited 
     const cited = context.sources.find((source: { id: string }) => source.id === 'p4');
     expect(JSON.stringify(cited)).toContain(quote); expect(JSON.stringify(cited)).toContain(condition);
     expect(cited.partial).toBe(true);
-    const checks = context.parts.map((part: { id: number }) => ({ id: part.id, issue: 'none', note: '' }));
+    const checks = Object.fromEntries(context.parts.map((part: { id: string }) => [part.id, 'none']));
     return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ checks }) } }] }));
   });
   const infer = createWebInterpreter({ apiKey: 'private', model: 'test' });
