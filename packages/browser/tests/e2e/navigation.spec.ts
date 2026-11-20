@@ -99,8 +99,11 @@ test.describe('tracer walking skeleton: load → read → act', () => {
     const page = await s.launch();
 
     await s.goto('https://example.com/');
+    expect(new URL(page.url()).hostname).toBe('example.com');
+    // IANA removed the Example Domain heading in 2026. The documentation
+    // link remains semantic evidence that the public page loaded.
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Example Domain' }),
+      page.getByRole('link', { name: /Learn more|More information/i }),
     ).toBeVisible();
   });
 });

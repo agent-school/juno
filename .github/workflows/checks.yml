@@ -1,0 +1,22 @@
+name: Juno checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install -g pnpm@11.24.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @juno/browser exec playwright install --with-deps chrome
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm test:e2e
